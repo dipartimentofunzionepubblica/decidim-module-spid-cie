@@ -1,0 +1,63 @@
+@import 'button';
+
+.spid-selector {
+  background-color: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  place-items: center;
+  display: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.25s ease-in-out;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+
+  .spid-alert {
+    background-color: white;
+    align-items: start;
+    max-width: 500px;
+    padding: 20px;
+    z-index: 10;
+    margin-top: 100px;
+    margin-bottom: 20px;
+  }
+
+  .spid-container {
+    //display: none;
+    //visibility: hidden;
+    opacity: 0;
+    transform: translateY(60px);
+    transition: all 0.25s ease-in-out;
+    background-color: #06c;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 3px;
+    padding: 0px;
+    border: 3px solid #06c;
+    border-radius: 3px;
+
+    [data-idp] {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      background-color: white;
+      cursor: pointer;
+
+      img {
+        max-width: 125px;
+        max-height: 35px;
+        padding: 17px;
+        box-sizing: initial;
+      }
+      input[type="submit"], button[type="submit"] {
+        display: none !important;
+      }
+    }
+  }
+}

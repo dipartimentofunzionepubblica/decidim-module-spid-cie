@@ -1,0 +1,94 @@
+development:
+  local:
+    metadata_url: 'https://localhost:8443/metadata.xml'
+    validate_cert: false
+    protocols:
+      - SAML
+    entityName: validator
+    logo: spid-idp-dummy.svg
+  local2:
+    metadata_url: 'https://localhost:8443/demo/metadata.xml'
+    validate_cert: false
+    protocols:
+      - SAML
+    entityName: demo
+    logo: spid-idp-dummy.svg
+staging:
+  demo:
+    metadata_url: 'https://demo.spid.gov.it/metadata.xml'
+    validate_cert: true
+    protocols:
+      - SAML
+    entityName: Remote Demo
+    logo: spid-idp-dummy.svg
+  poste_test:
+    metadata_url: 'http://spidposte.test.poste.it/jod-fs/metadata/idp.xml'
+    validate_cert: false
+    protocols:
+      - SAML
+    entityName: Poste ID
+    logo: spid-idp-posteid.svg
+production:
+  aruba:
+    metadata_url: 'https://loginspid.aruba.it/metadata'
+    validate_cert: true
+    protocols:
+      - SAML
+    entityName: Aruba ID
+    logo: spid-idp-arubaid.svg
+  infocert:
+    metadata_url: 'https://identity.infocert.it/metadata/metadata.xml'
+    validate_cert: true
+    protocols:
+      - SAML
+    entityName: 'Infocert '
+    logo: spid-idp-infocertid.svg
+  namirial:
+    metadata_url: 'https://idp.namirialtsp.com/idp/metadata'
+    validate_cert: true
+    protocols:
+      - SAML
+    entityName: Namirial ID
+    logo: spid-idp-namirialid.svg
+  poste:
+    metadata_url: 'https://posteid.poste.it/jod-fs/metadata/metadata.xml'
+    validate_cert: true
+    protocols:
+      - SAML
+    entityName: Poste ID
+    logo: spid-idp-posteid.svg
+  spiditalia:
+    metadata_url: 'https://spid.register.it/login/metadata'
+    validate_cert: true
+    protocols:
+      - SAML
+    entityName: SPIDItalia Register.it
+    logo: spid-idp-spiditalia.svg
+  sielte:
+    metadata_url: 'https://identity.sieltecloud.it/simplesaml/metadata.xml'
+    validate_cert: true
+    protocols:
+      - SAML
+    entityName: Sielte
+    logo: spid-idp-sielteid.svg
+  tim:
+    metadata_url: 'https://login.id.tim.it/spid-services/MetadataBrowser/idp'
+    validate_cert: true
+    protocols:
+      - SAML
+    entityName: Tim ID
+    logo: spid-idp-timid.svg
+  intesa:
+    metadata_url: 'https://spid.intesa.it/metadata/metadata.xml'
+    validate_cert: true
+    protocols:
+      - SAML
+    entityName: Intesa ID
+    logo: spid-idp-intesaid.svg
+  lepida:
+    metadata_url: 'https://id.lepida.it/idp/shibboleth'
+    validate_cert: true
+    protocols:
+      - SAML
+    entityName: Lepida ID
+    logo: spid-idp-lepidaid.svg

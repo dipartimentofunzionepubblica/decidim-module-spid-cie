@@ -1,0 +1,81 @@
+---
+en:
+  activerecord:
+    errors:
+      models:
+        decidim/user:
+          attributes:
+            email:
+              cant_recover_password_due_spid: Devi effettuare l'accesso tramite SPID
+  decidim:
+    admin:
+      filters:
+        officialized_at_nulla:
+          label: test
+    authorization_handlers:
+      ciao_identity:
+        explanation: "Test"
+    spid:
+      slo_request:
+        failure: Il logout non è andato a buon fine
+        success: Logout completato con successo
+      devise:
+        invitations:
+          edit:
+            header: Completa la registrazione
+            subtitle: Effettua il login tramite SPID o CIE
+      omniauth_callbacks:
+        failure:
+          success_status: "Si è verificato un errore durante il login."
+          already_authorized: "Utente già loggato"
+          identity_bound_to_other_user: "Si è verificato un errore durante il login."
+          session_expiration: "Sessione scaduta"
+          conditions: ""
+        create:
+          email_already_exists: Another account is using the same email address
+          email_different: The email address entered is different from that of the invitation
+        new:
+          complete_profile: Complete profile
+          nickname_help: Your alias in %{organization}. Can only contain letters, numbers, '-' and '_'.
+          sign_up: Please complete your profile
+          subtitle: Please fill in the following form in order to complete the sign up
+          username_help: Public name that appears on your posts. With the aim of guaranteeing the anonymity, can be any name.
+      verification:
+        authorizations:
+          create:
+            success: You have been successfully authorized through SPID
+
+
+
+      spid:
+        info_message: Se è la prima volta che accedi a questa piattaforma, ignora questo messaggio. Invece per collegare la vecchia utenza effettuare prima il login e in seguito effettuare il login dal profilo.
+    system:
+      organizations:
+        omniauth_settings:
+          spid:
+            tenant_name: "Inserire il \"name\" utilizzato per indetificare le configurazioni tenant."
+    components:
+      spid:
+        name: Spid
+#---
+#en:
+#  decidim:
+#    authorization_handlers:
+#      msad_identity:
+#        explanation: Identify yourself using the Active Directory identity service.
+#        name: Active Directory identity
+#    msad:
+#      omniauth_callbacks:
+#        failure:
+#          already_authorized: Another user has already authorized themselves with the same identity.
+#          conditions: The authentication request was not handled within an allowed timeframe. Please try again.
+#          identity_bound_to_other_user: Another user has already been identified using this identity. Please sign out and sign in again directly using Active Directory.
+#          invalid_data: You cannot be authenticated through Active Directory.
+#          session_expiration: Authentication session expired. Please try again.
+#          success_status: Authentication failed or cancelled. Please try again.
+#      verification:
+#        authorizations:
+#          create:
+#            success: You have been successfully authorized through Active Directory
+#          destroy:
+#            success: Authorization sucessfully reset.

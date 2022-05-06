@@ -1,0 +1,22 @@
+<div class="wrapper">
+  <div class="row collapse">
+    <div class="row collapse">
+      <div class="columns large-8 large-centered text-center page-title">
+        <h1><%= t "decidim.spid.devise.invitations.edit.header" %></h1>
+
+        <p><%= t("decidim.spid.devise.invitations.edit.subtitle").html_safe %></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="columns large-6 medium-10 medium-centered">
+        <%= render partial: 'decidim/spid/spid', locals: {
+          size: :xl,
+          url: decidim_spid.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:spid, :tenant_name)}_omniauth_authorize_url"),
+          method: :post,
+          origin: request.original_url
+        } %>
+      </div>
+    </div>
+  </div>
+</div>
