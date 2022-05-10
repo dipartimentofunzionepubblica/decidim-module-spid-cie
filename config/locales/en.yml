@@ -6,7 +6,7 @@ en:
         decidim/user:
           attributes:
             email:
-              cant_recover_password_due_spid: Devi effettuare l'accesso tramite SPID
+              cant_recover_password_due_spid: You must login via SPID
   decidim:
     admin:
       filters:
@@ -18,29 +18,26 @@ en:
     admin_log:
       identity:
         logout: "%{user_name} logged out with provider %{resource_name} %{space_name}"
-        login: "%{user_name} logged in with prmovider %{resource_name} %{space_name}"
+        login: "%{user_name} logged in with provider %{resource_name} %{space_name}"
         registration: "%{user_name} registered with provider %{resource_name} %{space_name} "
-    authorization_handlers:
-      ciao_identity:
-        explanation: "Test"
+    components:
+      spid:
+        name: Spid
     spid:
       admin:
         actions:
           export: Export users
-      slo_request:
-        failure: Il logout non è andato a buon fine
-        success: Logout completato con successo
       devise:
         invitations:
           edit:
-            header: Completa la registrazione
-            subtitle: Effettua il login tramite SPID o CIE
+            header: Complete registration
+            subtitle: Login via SPID or CIE
       omniauth_callbacks:
         failure:
-          success_status: "Si è verificato un errore durante il login."
-          already_authorized: "Utente già loggato"
-          identity_bound_to_other_user: "Si è verificato un errore durante il login."
-          session_expiration: "Sessione scaduta"
+          success_status: "An error occurred while logging in."
+          already_authorized: "User already logged in"
+          identity_bound_to_other_user: "An error occurred while logging in."
+          session_expiration: "Session expired"
           conditions: ""
         create:
           email_already_exists: Another account is using the same email address
@@ -51,44 +48,19 @@ en:
           sign_up: Please complete your profile
           subtitle: Please fill in the following form in order to complete the sign up
           username_help: Public name that appears on your posts. With the aim of guaranteeing the anonymity, can be any name.
+      slo_request:
+        failure: The logout was not successful
+        success: Logout completed successfully
+      spid:
+        info_message: If this is your first time accessing this platform, please ignore this message. Instead, to connect the old user log in first and then log in from the profile.
       verification:
         authorizations:
           create:
             success: You have been successfully authorized through SPID
-
-
-
-      spid:
-        info_message: Se è la prima volta che accedi a questa piattaforma, ignora questo messaggio. Invece per collegare la vecchia utenza effettuare prima il login e in seguito effettuare il login dal profilo.
     system:
       organizations:
         omniauth_settings:
           spid:
-            tenant_name: "Inserire il \"name\" utilizzato per indetificare le configurazioni tenant."
-            certificate: "Il certificato scade il %{date}"
-            new_certificate: "Il nuovo certificato scade il %{date}"
-    components:
-      spid:
-        name: Spid
-#---
-#en:
-#  decidim:
-#    authorization_handlers:
-#      msad_identity:
-#        explanation: Identify yourself using the Active Directory identity service.
-#        name: Active Directory identity
-#    msad:
-#      omniauth_callbacks:
-#        failure:
-#          already_authorized: Another user has already authorized themselves with the same identity.
-#          conditions: The authentication request was not handled within an allowed timeframe. Please try again.
-#          identity_bound_to_other_user: Another user has already been identified using this identity. Please sign out and sign in again directly using Active Directory.
-#          invalid_data: You cannot be authenticated through Active Directory.
-#          session_expiration: Authentication session expired. Please try again.
-#          success_status: Authentication failed or cancelled. Please try again.
-#      verification:
-#        authorizations:
-#          create:
-#            success: You have been successfully authorized through Active Directory
-#          destroy:
-#            success: Authorization sucessfully reset.
+            tenant_name: "Enter the \"name\" used to identify tenant configurations."
+            certificate: "The certificate expires on %{date}"
+            new_certificate: "The new certificate expires on %{date}"

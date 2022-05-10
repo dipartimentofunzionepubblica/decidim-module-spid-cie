@@ -1,0 +1,66 @@
+---
+it:
+  activerecord:
+    errors:
+      models:
+        decidim/user:
+          attributes:
+            email:
+              cant_recover_password_due_spid: Devi effettuare l'accesso tramite SPID
+  decidim:
+    admin:
+      filters:
+        spid_presence:
+          label: SPID
+          values:
+            'false': Non abilitato
+            'true': Abilitato
+    admin_log:
+      identity:
+        logout: "%{user_name} ha effettuato il logout con il provider %{resource_name} %{space_name}"
+        login: "%{user_name}  ha effettuato il login con il provider %{resource_name} %{space_name}"
+        registration: "%{user_name} si è registrato con il provider %{resource_name} %{space_name} "
+    components:
+      spid:
+        name: Spid
+    spid:
+      admin:
+        actions:
+          export: Export utenti
+      devise:
+        invitations:
+          edit:
+            header: Completa la registrazione
+            subtitle: Effettua il login tramite SPID o CIE
+      omniauth_callbacks:
+        failure:
+          success_status: "Si è verificato un errore durante il login."
+          already_authorized: "Utente già loggato"
+          identity_bound_to_other_user: "Si è verificato un errore durante il login."
+          session_expiration: "Sessione scaduta"
+          conditions: ""
+        create:
+          email_already_exists: Un altro account utilizza lo stesso indirizzo email
+          email_different: L'indirizzo email inserito è diverso da quello dell'invito
+        new:
+          complete_profile: Completa il profile
+          nickname_help: Il tuo alias in %{organization}. Può contenere solo lettere, numeri, '-' e '_'.
+          sign_up: Completa il tuo profilo
+          subtitle: Si prega di compilare il seguente modulo per completare la registrazione
+          username_help: Username che appare nei tuoi post. Al fine di garantire l'anonimato, può essere qualsiasi nome.
+      slo_request:
+        failure: Il logout non è andato a buon fine
+        success: Logout completato con successo
+      spid:
+        info_message: Se è la prima volta che accedi a questa piattaforma, ignora questo messaggio. Invece per collegare la vecchia utenza effettuare prima il login e in seguito effettuare il login dal profilo.
+      verification:
+        authorizations:
+          create:
+            success: Sei stato autorizzato con successo tramite SPID
+    system:
+      organizations:
+        omniauth_settings:
+          spid:
+            tenant_name: "Inserire il \"name\" utilizzato per idetificare le configurazioni tenant."
+            certificate: "Il certificato scade il %{date}"
+            new_certificate: "Il nuovo certificato scade il %{date}"
