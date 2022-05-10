@@ -26,7 +26,7 @@ module Decidim
         response = r.response
         valid = r.valid?
         if valid
-          session[:"#{session_prefix}uid"] = response.name_id.try(:strip)
+          session[:"#{session_prefix}uid"] = response.attributes[options.uid_attribute] || response.name_id.try(:strip)
           session[:"#{session_prefix}index"] = r.session_index
           session[:"#{session_prefix}login_time"] = Time.now
           msg = I18n.t('spid.sso_request.success')

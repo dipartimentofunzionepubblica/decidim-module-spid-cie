@@ -96,6 +96,7 @@ module Decidim
             provider: oauth_data[:provider],
             uid: user_identifier
           )
+          Decidim::ActionLogger.log(:login, user, identity, {}) if identity
           return identity if identity
 
           # Check that the identity is not already bound to another user.
@@ -107,11 +108,15 @@ module Decidim
 
           raise IdentityBoundToOtherUserError if id
 
-          user.identities.create!(
+          i = user.identities.create!(
             organization: organization,
             provider: oauth_data[:provider],
             uid: user_identifier
           )
+
+          Decidim::ActionLogger.log(:registration, user, i, {})
+
+          i
         end
 
         # The authorize_user! method will be performed when the sign in attempt

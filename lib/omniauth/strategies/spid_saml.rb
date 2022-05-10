@@ -137,7 +137,7 @@ module OmniAuth
 
       def find_attribute_by(keys)
         keys.each do |key|
-          return @attributes[key] if @attributes[key]
+          return @attributes[key] if @attributes && @attributes[key]
         end
 
         nil

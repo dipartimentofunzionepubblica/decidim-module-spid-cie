@@ -8,6 +8,8 @@ module Decidim
 
       def destroy
         if session.delete("decidim-spid.signed_in")
+          i = current_user.identities.find_by(uid: session["#{Decidim::Spid::Utils.session_prefix}uid"]) rescue nil
+          Decidim::ActionLogger.log(:logout, current_user, i, {}) if i
           redirect_to decidim_spid.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:spid, :tenant_name)}_omniauth_spslo_url")
         else
           super

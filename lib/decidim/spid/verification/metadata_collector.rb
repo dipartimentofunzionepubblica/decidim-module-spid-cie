@@ -20,7 +20,6 @@ module Decidim
 
         attr_reader :tenant, :saml_attributes
 
-        #todo: remove
         def collect
           return {} if saml_attributes.blank?
           tenant.metadata_attributes.map do |key, defs|

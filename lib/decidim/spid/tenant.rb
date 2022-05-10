@@ -35,17 +35,6 @@ module Decidim
         '.keys/new_certificate.pem'
       end
 
-      # The SLO requests to ADFS need to be signed in order for them to work
-      # properly. For ADFS, the sign out requests need to be signed which
-      # requires a certificate and private key to be defined for the tenant.
-      # If you are using ADFS and cannot configure a certificate and private
-      # key, you can disable the SP initiated sign out requests (SPSLO) by
-      # setting this configuration to `true`.
-      config_accessor :disable_spslo do
-        false
-        #todo: rimuovere questa credo
-      end
-
       # Defines how the session gets cleared when the OmniAuth strategy logs the
       # user out. This has been customized to preserve the flash messages and the
       # stored redirect location in the session after the session is destroyed.
@@ -65,16 +54,20 @@ module Decidim
       # These are extra attributes that can be stored for the authorization
       # metadata. Define these as follows:
       #
-      # Decidim::Msad.configure do |config|
+      # Decidim::Spid.configure do |config|
       #   # ...
       #   config.metadata_attributes = {
-      #     primary_group_sid: "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarygroupsid",
-      #     groups: { name: "http://schemas.xmlsoap.org/claims/Group", type: :multi }
+      #     name: "name",
+      #     surname: "familyName"
       #   }
       # end
       config_accessor :metadata_attributes do
-        #todo: questo non so a che serve. Forse eliminare
         {}
+      end
+
+      # Fields to exclude from export due GDPR policy. Array of key from metadata_attributes
+      config_accessor :export_exclude_attributes do
+        []
       end
 
       # Extra metadata to be included in the service provider metadata. Define as
@@ -111,16 +104,6 @@ module Decidim
       config_accessor :extra do
         {}
       end
-
-      # Defines whether registered users are automatically subscribed to the
-      # newsletters during the OmniAuth registration flow. This is only updated
-      # during the first login, so users can still unsubscribe if they later
-      # decide they don't want to receive the newsletter and later logins will not
-      # change the subscription state.
-      # config_accessor :registration_newsletter_subscriptions do
-      #   #todo: rimuovere
-      #   false
-      # end
 
       # Allows customizing the authorization workflow e.g. for adding custom
       # workflow options or configuring an action authorizer for the
@@ -159,7 +142,7 @@ module Decidim
       end
 
       config_accessor :uid_attribute do
-        :email
+        :spidCode
       end
 
       def initialize
@@ -207,17 +190,13 @@ module Decidim
         {
           name: name,
           strategy_class: OmniAuth::Strategies::SpidSaml,
-          # idp_metadata_file: idp_metadata_file,
-          # idp_metadata_url: idp_metadata_url,
           sp_entity_id: sp_entity_id,
           sp_name_qualifier: sp_entity_id,
           idp_slo_session_destroy: idp_slo_session_destroy,
-          # sp_metadata: sp_metadata,
           sp_metadata: {},
           certificate: certificate,
           private_key: private_key,
           new_certificate: new_certificate,
-          # Define the assertion and SLO URLs for the metadata.
           assertion_consumer_service_url: "#{sp_entity_id}users/auth/#{config.name}/callback",
           single_logout_service_url: "#{sp_entity_id}users/auth/#{config.name}/slo",
           config: config
@@ -299,17 +278,6 @@ module Decidim
           end
         end
       end
-
-      # def auto_email_for(organization, identifier_digest)
-      #   domain = auto_email_domain || organization.host
-      #   "#{name}-#{identifier_digest}@#{domain}"
-      # end
-      #
-      # def auto_email_matches?(email)
-      #   return false unless auto_email_domain
-      #
-      #   email =~ /^#{name}-[a-z0-9]{32}@#{auto_email_domain}$/
-      # end
 
       # Used to determine the default service provider entity ID in case not
       # specifically set by the `sp_entity_id` configuration option.

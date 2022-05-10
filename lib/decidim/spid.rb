@@ -8,12 +8,15 @@
 # require "decidim/spid/version"
 # require "omniauth/stategies/spid_SAML"
 
-require "omniauth/strategies/spid_SAML"
+require "omniauth/strategies/spid_saml"
 
 require_relative "spid/version"
 require_relative "spid/engine"
+require_relative "spid/admin"
+require_relative "spid/admin_engine"
 require_relative "spid/authentication"
 require_relative "spid/verification"
+require_relative "spid/component"
 # require_relative "msad/mail_interceptors"
 
 module Decidim

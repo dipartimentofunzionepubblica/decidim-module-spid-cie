@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+require "rails"
+require "active_support/all"
+
+require "decidim/core"
+
 module Decidim
   module Spid
     # This is the engine that runs on the public interface of `Spid`.
@@ -11,12 +16,25 @@ module Decidim
 
       routes do
         # Add admin engine routes here
-        # resources :spid do
-        #   collection do
-        #     resources :exports, only: [:create]
-        #   end
-        # end
-        # root to: "spid#index"
+        scope :admin do
+          scope :spid do
+            resources :exports, only: [:index]
+          end
+        end
+      end
+
+      initializer "decidim_spid_admin.mount_routes", before: "decidim_admin.mount_routes" do
+        # Mount the engine routes to Decidim::Core::Engine because otherwise
+        # they would not get mounted properly.
+        Decidim::Admin::Engine.routes.append do
+          mount Decidim::Spid::AdminEngine => "/"
+        end
+      end
+
+      initializer "decidim_spid.action_controller" do |_app|
+        ActiveSupport.on_load :action_controller do
+          helper Decidim::Spid::Admin::SpidHelper if respond_to?(:helper)
+        end
       end
 
       def load_seed

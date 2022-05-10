@@ -10,12 +10,23 @@ en:
   decidim:
     admin:
       filters:
-        officialized_at_nulla:
-          label: test
+        spid_presence:
+          label: SPID
+          values:
+            'false': Not enabled
+            'true': Enabled
+    admin_log:
+      identity:
+        logout: "%{user_name} logged out with provider %{resource_name} %{space_name}"
+        login: "%{user_name} logged in with prmovider %{resource_name} %{space_name}"
+        registration: "%{user_name} registered with provider %{resource_name} %{space_name} "
     authorization_handlers:
       ciao_identity:
         explanation: "Test"
     spid:
+      admin:
+        actions:
+          export: Export users
       slo_request:
         failure: Il logout non è andato a buon fine
         success: Logout completato con successo
@@ -54,6 +65,8 @@ en:
         omniauth_settings:
           spid:
             tenant_name: "Inserire il \"name\" utilizzato per indetificare le configurazioni tenant."
+            certificate: "Il certificato scade il %{date}"
+            new_certificate: "Il nuovo certificato scade il %{date}"
     components:
       spid:
         name: Spid

@@ -48,7 +48,6 @@ module Decidim
 
         # Normal authentication request, proceed with Decidim's internal logic.
         send(:create)
-        # Decidim::ActionLogger.log( "spid-login", current_user, nil)
 
       rescue Decidim::Spid::Authentication::ValidationError => e
         fail_authorize(e.validation_key)
@@ -84,6 +83,12 @@ module Decidim
           return redirect_to after_omniauth_failure_path_for(resource_name)
         end
 
+        existing_identity = Identity.find_by(
+          user: current_organization.users,
+          provider: @form.provider,
+          uid: @form.uid
+        )
+
         CreateOmniauthRegistration.call(@form, verified_e) do
           on(:ok) do |user|
             # Se l'identità SPID è già utilizzata da un'altro account
@@ -92,7 +97,6 @@ module Decidim
               return redirect_to after_omniauth_failure_path_for(resource_name)
             end
 
-            t("decidim.devise.omniauth_registrations.create.email_already_exists")
             # match l'utente dell'invitation token passato come relay_state in SPID Strategy,
             # associo l'identity SPID all'utente creato nell'invitation e aggiorno l'email dell'utente con quella dello SPID.
             if invitation_token.present? && invited_user.present? && invited_user.email == user.email
@@ -104,11 +108,15 @@ module Decidim
               user.password_confirmation = token
               user.save(validate: false)
               user.accept_invitation!
-              # # user.email = verified_e
-              # resource_class.accept_invitation!(devise_parameter_sanitizer.sanitize(:accept_invitation).merge(invitation_token: invitation_token))
             end
 
             if user.active_for_authentication?
+              if existing_identity
+                Decidim::ActionLogger.log(:login, user, existing_identity, {})
+              else
+                i = user.identities.find_by(uid: session["#{Decidim::Spid::Utils.session_prefix}uid"]) rescue nil
+                Decidim::ActionLogger.log(:registration, user, i, {})
+              end
               sign_in_and_redirect user, verified_email: verified_e, event: :authentication
               set_flash_message :notice, :success, kind: @form.provider.capitalize
             else
@@ -139,28 +147,6 @@ module Decidim
         saml_response = strategy.response_object if strategy
         return super unless saml_response
 
-        # In case we want more info about the returned status codes, use the
-        # code below.
-        #
-        # Status codes:
-        #   Requester = A problem with the request OR the user cancelled the
-        #               request at the identity provider.
-        #   Responder = The handling of the request failed.
-        #   VersionMismatch = Wrong version in the request.
-        #
-        # Additional state codes:
-        #   AuthnFailed = The authentication failed OR the user cancelled
-        #                 the process at the identity provider.
-        #   RequestDenied = The authenticating endpoint (which the
-        #                   identity provider redirects to) rejected the
-        #                   authentication.
-        # if !saml_response.send(:validate_success_status) && !saml_response.status_code.nil?
-        #   codes = saml_response.status_code.split(" | ").map do |full_code|
-        #     full_code.split(":").last
-        #   end
-        # end
-
-        # Some extra validation checks
         validations = [
           # The success status validation fails in case the response status
           # code is something else than "Success". This is most likely because

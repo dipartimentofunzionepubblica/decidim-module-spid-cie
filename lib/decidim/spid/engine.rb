@@ -2,7 +2,6 @@
 
 require "rails"
 require "decidim/core"
-# require 'omniauth/request_forgery_protection'
 
 module Decidim
   module Spid
@@ -40,14 +39,14 @@ module Decidim
         end
       end
 
-      # initializer 'decidim_spid.include_concerns' do
-      #   Decidim::Admin::OfficializationsController.send(:include, Decidim::Admin::Officializations::Filterable2)
-      # end
-
-
-      initializer "decidim_spid.assets.precompile" do |app|
+      initializer "decidim_spid.assets" do |app|
         app.config.assets.precompile += %w(decidim/spid/*)
       end
+
+      initializer 'decidim_spid.include_concerns' do
+        Decidim::Admin::OfficializationsController.send(:include, Decidim::Admin::Officializations::FilterableOverrides)
+      end
+
 
       initializer "decidim_spid.setup", before: "devise.omniauth" do
         Decidim::Spid.setup!
