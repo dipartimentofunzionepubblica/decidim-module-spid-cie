@@ -11,7 +11,7 @@
     <div class="row">
       <div class="columns large-6 medium-10 medium-centered">
         <%= render partial: 'decidim/spid/spid', locals: {
-          size: :xl,
+          size: current_organization.enabled_omniauth_providers.dig(:spid, :size).to_sym,
           url: decidim_spid.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:spid, :tenant_name)}_omniauth_authorize_url"),
           method: :post,
           origin: request.original_url

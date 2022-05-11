@@ -72,7 +72,9 @@ en:
             tenant_name: "Enter the \"name\" used to identify tenant configurations."
             certificate: "The certificate expires on %{date}"
             new_certificate: "The new certificate expires on %{date}"
+            size: "Size must to be in [ s, m, l, xl]. Default: m"
           cie:
             tenant_name: "Enter the \"name\" used to identify tenant configurations."
             certificate: "The certificate expires on %{date}"
             new_certificate: "The new certificate expires on %{date}"
+            size: "Size must to be in [ s, m, l, xl]. Default: m"

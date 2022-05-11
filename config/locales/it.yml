@@ -72,7 +72,9 @@ it:
             tenant_name: "Inserire il \"name\" utilizzato per idetificare le configurazioni tenant."
             certificate: "Il certificato scade il %{date}"
             new_certificate: "Il nuovo certificato scade il %{date}"
+            size: "Size deve essere in [ s, m, l, xl]. Default: m"
           cie:
             tenant_name: "Inserire il \"name\" utilizzato per idetificare le configurazioni tenant."
             certificate: "Il certificato scade il %{date}"
             new_certificate: "Il nuovo certificato scade il %{date}"
+            size: "Size deve essere in [ s, m, l, xl]. Default: m"

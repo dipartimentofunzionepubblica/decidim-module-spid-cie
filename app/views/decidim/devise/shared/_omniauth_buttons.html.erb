@@ -4,14 +4,14 @@
       <%- current_organization.enabled_omniauth_providers.keys.each do |provider| %>
         <%- if provider == :spid %>
           <%= render partial: 'decidim/spid/spid', locals: {
-            size: :xl,
+            size: current_organization.enabled_omniauth_providers.dig(:spid, :size).to_sym,
             url: decidim_spid.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:spid, :tenant_name)}_omniauth_authorize_url"),
             method: :post
 
           } %>
         <% elsif provider == :cie %>
           <%= render partial: 'decidim/cie/cie', locals: {
-            size: :xl,
+            size: current_organization.enabled_omniauth_providers.dig(:cie, :size).to_sym,
             url: decidim_cie.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:cie, :tenant_name)}_omniauth_authorize_url"),
             method: :post
           } %>
