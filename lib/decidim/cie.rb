@@ -1,22 +1,19 @@
 # frozen_string_literal: true
 
-require "omniauth/strategies/spid_saml"
+require "omniauth/strategies/cie_saml"
 
-require_relative "spid/version"
-require_relative "spid/engine"
-require_relative "spid/admin"
-require_relative "spid/admin_engine"
-require_relative "spid/authentication"
-require_relative "spid/verification"
-require_relative "spid/component"
-
-require_relative "cie"
+require_relative "cie/engine"
+require_relative "cie/admin"
+require_relative "cie/admin_engine"
+require_relative "cie/authentication"
+require_relative "cie/verification"
+require_relative "cie/component"
 
 module Decidim
-  # This namespace holds the logic of the `Spid` component. This component
-  # allows users to create spid in a participatory space.
-  module Spid
-    autoload :Tenant, "decidim/spid/tenant"
+  # This namespace holds the logic of the `Cie` component. This component
+  # allows users to create cie in a participatory space.
+  module Cie
+    autoload :Tenant, "decidim/cie/tenant"
 
     class << self
       def tenants
@@ -28,12 +25,12 @@ module Decidim
       end
 
       def configure(&block)
-        tenant = Decidim::Spid::Tenant.new(&block)
+        tenant = Decidim::Cie::Tenant.new(&block)
         tenants.each do |existing|
           if tenant.name == existing.name
             raise(
               TenantSameName,
-              "Please define an individual name for the Spid tenant. The name \"#{tenant.name}\" is already in use."
+              "Please define an individual name for the Cie tenant. The name \"#{tenant.name}\" is already in use."
             )
           end
 
@@ -47,14 +44,14 @@ module Decidim
       end
 
       def setup!
-        raise "Spid module is already initialized!" if initialized?
+        raise "Cie module is already initialized!" if initialized?
 
         @initialized = true
         tenants.each(&:setup!)
       end
 
       def find_tenant(name)
-        Decidim::Spid.tenants.select { |a| a.name == name}.try(:first)
+        Decidim::Cie.tenants.select { |a| a.name == name}.try(:first)
       end
 
       private

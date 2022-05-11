@@ -8,10 +8,16 @@
         <%- current_organization.enabled_omniauth_providers.keys.each do |provider| %>
           <%- if provider == :spid %>
             <%= render partial: 'decidim/spid/spid', locals:  {
-              size: :xl,
+              size: :l,
               url: decidim_spid.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:spid, :tenant_name)}_omniauth_authorize_url"),
               method: :post
 
+            } %>
+          <% elsif provider == :cie %>
+            <%= render partial: 'decidim/cie/cie', locals: {
+              size: :l,
+              url: decidim_cie.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:cie, :tenant_name)}_omniauth_authorize_url"),
+              method: :post
             } %>
           <% else %>
             <%= link_to decidim.send("user_#{provider}_omniauth_authorize_path"), class: "button button--social button--#{normalize_provider_name(provider)} button--social--mini", method: :post do %>

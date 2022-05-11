@@ -7,6 +7,10 @@
     <p class="help-text"><%= t("enabled_by_default", scope: i18n_scope) %></p>
   <% end %>
 
+  <% if [:cie, :spid].include?(provider) %>
+    <p class="help-text"><%= t("validation_alert", scope: i18n_scope) %></p>
+  <% end %>
+
   <div class="card-section">
     <%= f.check_box(
           "omniauth_settings_#{provider}_enabled",
@@ -23,6 +27,15 @@
     <% if provider == :spid && (tenant = Decidim::Spid.tenants.find { |t| t.name == f.object.try(:omniauth_settings_spid_tenant_name) } ) %>
       <% if tenant.certificate.present? && (c = OpenSSL::X509::Certificate.new(tenant.certificate) rescue nil)  %>
           <p class="help-text"><%= t("certificate", scope: "#{i18n_scope}.#{provider}", date: c.not_after) %></p>
+      <% end %>
+      <% if tenant.new_certificate.present? && (nc = OpenSSL::X509::Certificate.new(tenant.new_certificate) rescue nil)  %>
+        <p class="help-text"><%= t("new_certificate", scope: "#{i18n_scope}.#{provider}", date: nc.not_after) %></p>
+      <% end %>
+    <% end %>
+
+    <% if provider == :cie && (tenant = Decidim::Cie.tenants.find { |t| t.name == f.object.try(:omniauth_settings_cie_tenant_name) } ) %>
+      <% if tenant.certificate.present? && (c = OpenSSL::X509::Certificate.new(tenant.certificate) rescue nil)  %>
+        <p class="help-text"><%= t("certificate", scope: "#{i18n_scope}.#{provider}", date: c.not_after) %></p>
       <% end %>
       <% if tenant.new_certificate.present? && (nc = OpenSSL::X509::Certificate.new(tenant.new_certificate) rescue nil)  %>
         <p class="help-text"><%= t("new_certificate", scope: "#{i18n_scope}.#{provider}", date: nc.not_after) %></p>

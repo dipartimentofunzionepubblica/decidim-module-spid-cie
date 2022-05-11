@@ -6,12 +6,17 @@ en:
         decidim/user:
           attributes:
             email:
-              cant_recover_password_due_spid: You must login via SPID
+              cant_recover_password_due_spid: You must login via SPID or CIE ID
   decidim:
     admin:
       filters:
         spid_presence:
           label: SPID
+          values:
+            'false': Not enabled
+            'true': Enabled
+        cie_presence:
+          label: CIE ID
           values:
             'false': Not enabled
             'true': Enabled
@@ -23,6 +28,8 @@ en:
     components:
       spid:
         name: Spid
+      cie:
+        name: CIE ID
     spid:
       admin:
         actions:
@@ -60,7 +67,12 @@ en:
     system:
       organizations:
         omniauth_settings:
+          validation_alert: "The \"name\" must also be different between the SPID and CIE configurations."
           spid:
+            tenant_name: "Enter the \"name\" used to identify tenant configurations."
+            certificate: "The certificate expires on %{date}"
+            new_certificate: "The new certificate expires on %{date}"
+          cie:
             tenant_name: "Enter the \"name\" used to identify tenant configurations."
             certificate: "The certificate expires on %{date}"
             new_certificate: "The new certificate expires on %{date}"

@@ -1,21 +1,21 @@
 require 'omniauth'
 require 'ruby-saml'
-require 'decidim/spid/utils'
-require 'decidim/spid/models'
+require 'decidim/cie/utils'
+require 'decidim/cie/models'
 
 module OmniAuth
   module Strategies
-    class SpidSaml
+    class CieSaml
       include OmniAuth::Strategy
 
       def self.inherited(subclass)
         OmniAuth::Strategy.included(subclass)
       end
 
-      include Decidim::Spid::Utils
+      include Decidim::Cie::Utils
       def initialize(app, *args, &block)
         super
-        Decidim::Spid::Utils.current_name = options[:name]
+        Decidim::Cie::Utils.current_name = options[:name]
         options[:sp_name_qualifier] = options[:sp_entity_id] if options[:sp_name_qualifier].nil?
         options[:issuer] = options[:sp_entity_id]
 
@@ -27,7 +27,7 @@ module OmniAuth
           options.delete(key) if options[key].nil?
         end
 
-        tenant = Decidim::Spid.find_tenant(options[:name])
+        tenant = Decidim::Cie.find_tenant(options[:name])
         @options = OmniAuth::Strategy::Options.new(options.merge(tenant ? tenant.config: {}))
       end
 
@@ -42,7 +42,7 @@ module OmniAuth
         { :name => 'first_name', :name_format => 'urn:oasis:names:tc:SAML:2.0:attrname-format:basic', :friendly_name => 'Given name' },
         { :name => 'last_name', :name_format => 'urn:oasis:names:tc:SAML:2.0:attrname-format:basic', :friendly_name => 'Family name' }
       ]
-      option :attribute_service_name, I18n.t('decidim_spid.required_attributes')
+      option :attribute_service_name, I18n.t('decidim_cie.required_attributes')
       option :attribute_statements, {
         name: ["name"],
         email: ["email", "mail"],
@@ -60,7 +60,7 @@ module OmniAuth
       def sso_params
         sso_params = {}
         sso_params[:sso] = { idp: request.params.dig("sso", "idp") }
-        sso_params[:spid_level] = options.spid_level
+        sso_params[:cie_level] = options.cie_level
         sso_params[:host] = options.sp_entity_id
         sso_params[:relay_state] = Base64.strict_encode64(request.params.dig("sso", "origin").presence || options.relay_state || options.sp_entity_id )
         sso_params

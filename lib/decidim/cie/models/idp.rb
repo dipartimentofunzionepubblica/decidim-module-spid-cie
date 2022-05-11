@@ -1,6 +1,6 @@
 require 'rails'
 module Decidim
-  module Spid
+  module Cie
     class Idp
 
       attr_reader :metadata_url
@@ -32,7 +32,7 @@ module Decidim
       end
 
       def self.list
-        list = YAML.load_file(Rails.root.join('config', 'idp_list.yml')).dig("#{Rails.env}").dig("spid")
+        list = YAML.load_file(Rails.root.join('config', 'idp_list.yml')).dig("#{Rails.env}").dig("cie")
       end
 
     end

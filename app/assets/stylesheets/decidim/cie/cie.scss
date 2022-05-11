@@ -1,0 +1,109 @@
+
+.cie-container {
+  //transform: translateY(60px);
+  transition: all 0.25s ease-in-out;
+  //background-color: #06c;
+  //gap: 3px;
+  padding: 0px;
+  margin-bottom: 5px;
+  //border: 3px solid #06c;
+  border-radius: 3px;
+
+  .cie-italia-it-button {
+    display: inline-block;
+    position: relative;
+    padding: 0;
+    color: #fff;
+    font-family: 'Titillium Web', HelveticaNeue, Helvetica Neue, Helvetica, Arial, Lucida Grande,
+    sans-serif;
+    font-weight: 600;
+    line-height: 1em;
+    text-decoration: none;
+    border: 0;
+    text-align: center;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 3px;
+  }
+
+  .cie-italia-it-button-icon,
+  .cie-italia-it-button-text {
+    display: block;
+    float: left;
+  }
+
+  .cie-italia-it-button-icon {
+    margin: 0 -0.4em 0 0;
+    padding: 0.6em 0.8em 0.5em;
+    border-right: rgba(255, 255, 255, 0.1) 0.1em solid;
+  }
+
+  .cie-italia-it-button-text {
+    padding: 0.95em 1em 0.85em 1em;
+    font-size: 1.15em;
+    text-align: center;
+  }
+
+  svg {
+    width: 1.8em;
+    height: 1.8em;
+    fill: #fff;
+  }
+
+  .cie-italia-it-block {
+    display: block;
+  }
+
+  .cie-italia-it-button-size-s {
+    font-size: 10px;
+    width: 127px;
+    height: 25px;
+    border: 0;
+  }
+
+  .cie-italia-it-button-size-m {
+    font-size: 15px;
+    width: 191px;
+    height: 38px;
+    border: 0;
+  }
+
+  .cie-italia-it-button-size-l {
+    font-size: 20px;
+    width: 255px;
+    height: 51px;
+    border: 0;
+  }
+
+  .cie-italia-it-button-size-xl {
+    font-size: 25px;
+    width: 318px;
+    height: 63px;
+    border: 0;
+  }
+
+  .button-cie {
+    background-color: #06c;
+    color: #fff;
+  }
+
+  .button-cie svg {
+    fill: #fff;
+  }
+
+  .button-cie:hover {
+    background-color: #036;
+    color: #fff;
+  }
+
+  .button-cie:active {
+    background-color: #83beed;
+    color: #036;
+  }
+
+  [data-idp] {
+    input[type="submit"], button[type="submit"] {
+      display: none !important;
+    }
+  }
+}
