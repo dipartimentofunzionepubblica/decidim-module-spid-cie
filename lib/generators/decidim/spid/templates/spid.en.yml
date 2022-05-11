@@ -1,0 +1,6 @@
+en:
+  decidim:
+    authorization_handlers:
+      <%= tenant_name %>_identity:
+      name: "SPID"
+      explanation: "Connect your account by logging in with SPID"

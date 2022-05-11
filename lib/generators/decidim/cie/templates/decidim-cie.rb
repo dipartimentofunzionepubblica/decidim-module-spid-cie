@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Decidim::Spid.configure do |config|
+Decidim::Cie.configure do |config|
   # Define the name for the tenant. Only lowercase characters and underscores
   # are allowed. If you only have a single AD tenant, you don't need to
   # configure its name. When not configured, it will default to "msad". When you
@@ -52,8 +52,8 @@ Decidim::Spid.configure do |config|
   # Attribute to match user
   config.uid_attribute = :spidCode
 
-  # Il livello SPID richiesto dall'app
-  config.spid_level = 2
+  # Il livello CIE richiesto dall'app
+  config.cie_level = 2
 
   # Link per reindirizzare dopo il login
   config.relay_state = '/'

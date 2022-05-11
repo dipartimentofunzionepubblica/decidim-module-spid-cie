@@ -12,8 +12,9 @@ Space.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem "decidim-spid"
+rails generate decidim:spid:install TENANT_NAME ENTITY_ID
 ```
+dove ```Tenant_name``` è una stringa univocamente il tenant all'interno dell'app 
 
 And then execute:
 

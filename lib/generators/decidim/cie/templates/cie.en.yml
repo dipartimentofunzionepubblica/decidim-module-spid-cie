@@ -1,0 +1,6 @@
+en:
+  decidim:
+    authorization_handlers:
+      <%= tenant_name %>_identity:
+      name: "CIE ID"
+      explanation: "Connect your account by logging in with CIE ID"
