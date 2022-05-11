@@ -4,7 +4,14 @@ source "https://rubygems.org"
 
 ruby RUBY_VERSION
 
-gem "decidim", git: "https://github.com/decidim/decidim"
+# Inside the development app, the relative require has to be one level up, as
+# the Gemfile is copied to the development_app folder (almost) as is.
+base_path = ""
+base_path = "../" if File.basename(__dir__) == "development_app"
+require_relative "#{base_path}lib/decidim/spid/version"
+DECIDIM_VERSION = Decidim::Spid.version
+
+gem "decidim", DECIDIM_VERSION
 gem "decidim-spid", path: "."
 
 gem "puma", ">= 4.3"
@@ -14,7 +21,8 @@ gem "uglifier", "~> 4.1"
 group :development, :test do
   gem "byebug", "~> 11.0", platform: :mri
 
-  gem "decidim-dev", git: "https://github.com/decidim/decidim"
+  gem "decidim-dev", DECIDIM_VERSION
+  gem "rspec-rails"
 end
 
 group :development do
