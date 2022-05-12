@@ -7,7 +7,6 @@ module Decidim
       include Decidim::Spid::Utils
 
       def destroy
-        Rails.logger.info("session", session.inspect)
         if session.delete("decidim-cie.signed_in")
           i = current_user.identities.find_by(uid: session["#{Decidim::Cie::Utils.session_prefix}uid"]) rescue nil
           Decidim::ActionLogger.log(:logout, current_user, i, {}) if i
