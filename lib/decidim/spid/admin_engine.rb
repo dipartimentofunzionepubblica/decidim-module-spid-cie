@@ -33,7 +33,7 @@ module Decidim
 
       initializer "decidim_spid.action_controller" do |_app|
         ActiveSupport.on_load :action_controller do
-          helper Decidim::Spid::Admin::SpidHelper
+          helper Decidim::Spid::Admin::SpidHelper if respond_to?(:helper)
         end
       end
 
