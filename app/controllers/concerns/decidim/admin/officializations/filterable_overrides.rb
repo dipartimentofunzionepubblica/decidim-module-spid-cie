@@ -1,16 +1,12 @@
-require "active_support/concern"
-
 module Decidim
   module Admin
     module Officializations
       module FilterableOverrides
+
         extend ActiveSupport::Concern
 
         included do
           include Decidim::Admin::Filterable
-
-          helper Decidim::LayoutHelper
-          helper Decidim::Spid::Admin::SpidHelper
 
           private
 
@@ -24,6 +20,14 @@ module Decidim
                 c = c.left_joins(:identities).where(decidim_identities: { id: nil }).or(c.left_joins(:identities).where.not(decidim_identities: { id: spid_ids }))
               end
             end
+            cie_filter = to_boolean(ransack_params.delete(:cie_presence))
+            if !cie_filter.nil?
+              if cie_filter
+                c = c.left_joins(:identities).where(decidim_identities: { id: cie_ids })
+              else
+                c = c.left_joins(:identities).where(decidim_identities: { id: nil }).or(c.left_joins(:identities).where.not(decidim_identities: { id: cie_ids }))
+              end
+            end
             c
           end
 
@@ -32,7 +36,7 @@ module Decidim
           end
 
           def filters
-            [:officialized_at_null, :spid_presence]
+            [:officialized_at_null, :spid_presence, :cie_presence]
           end
 
           def to_boolean(str)
@@ -42,6 +46,10 @@ module Decidim
 
           def spid_ids
             Decidim::Identity.where(provider: Decidim::Spid.tenants.map(&:name)).pluck(:id)
+          end
+
+          def cie_ids
+            Decidim::Identity.where(provider: Decidim::Cie.tenants.map(&:name)).pluck(:id)
           end
         end
       end

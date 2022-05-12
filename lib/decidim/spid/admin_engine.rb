@@ -31,15 +31,9 @@ module Decidim
         end
       end
 
-      initializer "decidim_spid.action_controller" do |_app|
-        ActiveSupport.on_load :action_controller do
-          helper Decidim::Spid::Admin::SpidHelper if respond_to?(:helper)
-        end
-      end
-
-      # per forzare il reload degli helper. Necessario sicuramente in sviluppo
       config.to_prepare do
-        ApplicationController.helper(Decidim::LayoutHelper)
+        Decidim::Admin::OfficializationsController.send(:include, Decidim::Admin::Officializations::FilterableOverrides)
+        Decidim::Admin::OfficializationsController.send(:helper, Decidim::Spid::Admin::ApplicationHelper)
       end
 
       def load_seed

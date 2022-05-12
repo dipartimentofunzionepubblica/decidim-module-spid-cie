@@ -43,15 +43,6 @@ module Decidim
         app.config.assets.precompile += %w(decidim/spid/*)
       end
 
-      initializer 'decidim_spid.include_concerns' do
-        Decidim::Admin::OfficializationsController.send(:include, Decidim::Admin::Officializations::FilterableOverrides)
-      end
-
-      # per forzare il reload degli helper. Necessario sicuramente in sviluppo
-      config.to_prepare do
-        ApplicationController.helper(Decidim::LayoutHelper)
-      end
-
       initializer "decidim_spid.setup", before: "devise.omniauth" do
         Decidim::Spid.setup!
       end

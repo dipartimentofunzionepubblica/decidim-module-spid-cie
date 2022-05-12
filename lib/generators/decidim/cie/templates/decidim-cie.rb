@@ -3,13 +3,13 @@
 Decidim::Cie.configure do |config|
   # Define the name for the tenant. Only lowercase characters and underscores
   # are allowed. If you only have a single AD tenant, you don't need to
-  # configure its name. When not configured, it will default to "msad". When you
+  # configure its name. When not configured, it will default to "cie". When you
   # want to connect to multiple tenants, you will need to define a unique name
   # for each tenant.
   config.name = "<%= tenant_name %>"
 
   # Define the service provider entity ID:
-  # config.sp_entity_id = "https://www.example.org/users/auth/msad/metadata"
+  # config.sp_entity_id = "https://www.example.org/users/auth/cie/metadata/"
   # Or define it in your application configuration and apply it here:
   config.sp_entity_id = "<%= entity_id %>"
 

@@ -2,16 +2,10 @@
 
 module Decidim
   module Spid
-    # Custom helpers, scoped to the spid engine.
     module Admin
-      module SpidHelper
+      # Custom helpers, scoped to the spid engine.
 
-        # include Decidim::Proposals::ApplicationHelper
-        # include Decidim::Proposals::Engine.routes.url_helpers
-        # include Decidim::LayoutHelper
-        # include Decidim::ResourceReferenceHelper
-        # include Decidim::TranslatableAttributes
-        # include Decidim::CardHelper
+      module ApplicationHelper
 
         def cie_icon
           content_tag :span, class: 'cie-badge' do

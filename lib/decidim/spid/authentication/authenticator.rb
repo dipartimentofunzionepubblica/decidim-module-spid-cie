@@ -71,7 +71,7 @@ module Decidim
 
         # User is only identified in case they were already logged in during the
         # authentication flow. This can happen in case the service allows public
-        # registrations and authorization through MSAD is enabled in the user's
+        # registrations and authorization through Spid is enabled in the user's
         # profile. This adds a new identity to an existing user unless the
         # identity is already bound to another user profile which would happen
         # e.g. in the following situation:
@@ -82,7 +82,7 @@ module Decidim
         #   in Decidim using the registration form with another email address.
         # - Now, they sign in to the service using the manually created account.
         # - They go to the authorization view to authorize themselves through
-        #   MSAD (which adds the authorization metadata information that might
+        #   Spid (which adds the authorization metadata information that might
         #   be required in order to perform actions).
         # - Now the person has two accounts, one of which is already bound to a
         #   user's OmniAuth identity.

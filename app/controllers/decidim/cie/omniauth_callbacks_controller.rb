@@ -25,7 +25,7 @@ module Decidim
 
           # Make sure the user has an identity created in order to aid future
           # Active Directory sign ins. In case this fails, it will raise a
-          # Decidim::Msad::Authentication::IdentityBoundToOtherUserError
+          # Decidim::Cie::Authentication::IdentityBoundToOtherUserError
           # which is handled below.
           authenticator.identify_user!(current_user)
 

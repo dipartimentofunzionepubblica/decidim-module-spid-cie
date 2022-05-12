@@ -56,7 +56,8 @@ module Decidim
           officialized_at: user.officialized_at,
           officialized_as: user.officialized_as,
           identities: serialize_identities,
-          spid: serialize_metadata
+          spid: spid_serialize_metadata,
+          cie: cie_serialize_metadata
         }
       end
 
@@ -64,9 +65,17 @@ module Decidim
 
       attr_reader :user
 
-      def serialize_metadata
-        tenant_name = user.organization.enabled_omniauth_providers.dig(:spid, :tenant_name)
-        tenant = Decidim::Spid.tenants.find { |t| t.name == tenant_name }
+      def spid_serialize_metadata
+        serialize_metadata(:spid)
+      end
+
+      def cie_serialize_metadata
+        serialize_metadata(:cie)
+      end
+
+      def serialize_metadata(current_type)
+        tenant_name = user.organization.enabled_omniauth_providers.dig(current_type, :tenant_name)
+        tenant = "Decidim::#{current_type.to_s.classify}".constantize.tenants.find { |t| t.name == tenant_name }
         return {} if tenant.blank?
 
         auth = Decidim::Authorization.find_by(decidim_user_id: user.id, name: "#{tenant_name}_identity")
