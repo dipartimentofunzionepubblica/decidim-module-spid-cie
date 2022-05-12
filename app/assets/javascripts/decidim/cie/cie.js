@@ -1,16 +1,16 @@
 'use strict';
 
-var _popup = function _popup() {
+var _popupCie = function _popup() {
     var buttons = document.querySelectorAll('.cie-italia-it-button');
     var popupContainer = document.querySelector('.cie-container');
 
     if (buttons.length > 0) {
         (function () {
 
-            popupContainer.querySelectorAll( "[data-idp]").forEach(function (button) {
+            popupContainer.querySelectorAll( "[data-idp] img").forEach(function (button) {
                 button.addEventListener('click', function (e) {
                     e.stopPropagation();
-                    button.querySelector( "form").submit();
+                    button.closest( "form").submit();
                 });
             });
         })();
@@ -18,9 +18,9 @@ var _popup = function _popup() {
 };
 
 document.addEventListener("DOMContentLoaded", function (event) {
-    _popup();
+    _popupCie();
 });
 
 document.addEventListener('turbolinks:load', function () {
-    _popup();
+    _popupCie();
 });

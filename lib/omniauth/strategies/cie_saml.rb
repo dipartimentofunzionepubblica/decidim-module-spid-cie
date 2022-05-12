@@ -214,8 +214,8 @@ module OmniAuth
       end
 
       def other_phase_for_metadata
-        metadata = Decidim::Spid::Metadata.new
-        xml = metadata.to_xml(Decidim::Spid::Settings::Metadata.new(options))
+        metadata = Decidim::Cie::Metadata.new
+        xml = metadata.to_xml(Decidim::Cie::Settings::Metadata.new(options))
         Rack::Response.new(xml, 200, { "Content-Type" => "application/xml" }).finish
       end
 

@@ -11,7 +11,7 @@ module Decidim
         # include Decidim::LayoutHelper
         # include Decidim::ResourceReferenceHelper
         # include Decidim::TranslatableAttributes
-        include Decidim::CardHelper
+        # include Decidim::CardHelper
 
         def cie_icon
           content_tag :span, class: 'cie-badge' do

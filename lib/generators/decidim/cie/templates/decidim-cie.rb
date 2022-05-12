@@ -19,22 +19,12 @@ Decidim::Cie.configure do |config|
     name: "name",
     surname: "familyName",
     fiscal_code: 'fiscalNumber',
-    gender: 'gender',
     birthday: 'dateOfBirth',
-    birthplace: "placeOfBirth",
-    company_name: "companyName",
-    registered_office: "registeredOffice",
-    iva_code: "ivaCode",
-    id_card: 'idCard',
-    mobile_phone: 'mobilePhone',
-    email: 'email',
-    address: 'address',
-    digital_address: 'digitalAddress'
   }
 
   # Fields to exclude from export due GDPR policy. Array of key from metadata_attributes
   config.export_exclude_attributes = [
-    :name, :surname, :fiscal_code, :company_name, :registered_office, :email, :iva_code
+    :name, :surname, :fiscal_code
   ]
 
   # Percorso relativo alla root dell'app della chiave privata
@@ -50,7 +40,7 @@ Decidim::Cie.configure do |config|
   config.sha = 256
 
   # Attribute to match user
-  config.uid_attribute = :spidCode
+  config.uid_attribute = :fiscalNumber
 
   # Il livello CIE richiesto dall'app
   config.cie_level = 2
@@ -77,16 +67,6 @@ Decidim::Cie.configure do |config|
     { name: "name", friendly_name: 'Nome', is_required: true },
     { name: 'familyName', friendly_name: 'Cognome', is_required: true },
     { name: "fiscalNumber", friendly_name: 'Codice Fiscale', is_required: true },
-    { name: "spidCode", friendly_name: 'Codice SPID', is_required: true },
-    { name: "email", friendly_name: 'Email', is_required: true },
-    { name: "gender", friendly_name: 'Genere', is_required: true },
     { name: "dateOfBirth", friendly_name: 'Data di nascita', is_required: true },
-    { name: "placeOfBirth", friendly_name: 'Luogo di nascita', is_required: true },
-    { name: "registeredOffice", friendly_name: 'registeredOffice', is_required: true },
-    { name: "ivaCode", friendly_name: 'Partita IVA', is_required: true },
-    { name: "idCard", friendly_name: 'ID Carta', is_required: true },
-    { name: "mobilePhone", friendly_name: 'Numero di telefono', is_required: true },
-    { name: "address", friendly_name: 'Indirizzo', is_required: true },
-    { name: "digitalAddress", friendly_name: 'Indirizzo digitale', is_required: true }
   ]
 end

@@ -142,7 +142,7 @@ module Decidim
       end
 
       config_accessor :uid_attribute do
-        :cieCode
+        :fiscalNumber
       end
 
       def initialize
