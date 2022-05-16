@@ -59,7 +59,7 @@ module Decidim
           cp = root.add_element("md:ContactPerson", 'contactType' => 'billing')
             ce = cp.add_element("md:Extensions")
             ce.add_namespace('fpa', 'https://spid.gov.it/invoicing-extensions')
-              cc = cp.add_element("fpa:CessionarioCommittente")
+              cc = ce.add_element("fpa:CessionarioCommittente")
                 da = cc.add_element("fpa:DatiAnagrafici")
                   idi = da.add_element("fpa:IdFiscaleIVA")
                     idi.add_element("fpa:IdPaese").text = c[:id_paese] if c[:id_paese]
