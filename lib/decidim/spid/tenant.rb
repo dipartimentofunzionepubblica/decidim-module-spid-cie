@@ -96,6 +96,10 @@ module Decidim
         {}
       end
 
+      config_accessor :contact_people_billing do
+        {}
+      end
+
       config_accessor :fields do
         {}
       end

@@ -63,6 +63,9 @@ Decidim::Cie.configure do |config|
     company: 'Nome organizzazione S.p.a', number: '+39061111111', givenName: "Name"
   }
 
+  # Obbligatorio solo per soggetti privati
+  config.contact_people_billing = {}
+
   config.fields = [
     { name: "name", friendly_name: 'Nome', is_required: true },
     { name: 'familyName', friendly_name: 'Cognome', is_required: true },
