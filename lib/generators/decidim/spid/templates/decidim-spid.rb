@@ -44,7 +44,7 @@ Decidim::Spid.configure do |config|
   config.certificate_path = '.keys/certificate.pem'
 
   # Percorso relativo alla root dell'app del nuovo certificato
-  # config.new_certificate_path = '.keys/new_certificate.pem'
+  config.new_certificate_path = nil
 
   # Livello di crittografia SHA per la generazione delle signature
   config.sha = 256
