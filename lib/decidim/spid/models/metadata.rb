@@ -62,17 +62,17 @@ module Decidim
               cc = cp.add_element("fpa:CessionarioCommittente")
                 da = cc.add_element("fpa:DatiAnagrafici")
                   idi = da.add_element("fpa:IdFiscaleIVA")
-                    idi.add_element("fpa:IdPaese").text c[:id_paese] if c[:id_paese]
-                    idi.add_element("fpa:IdCodice").text c[:id_codice] if c[:id_codice]
+                    idi.add_element("fpa:IdPaese").text = c[:id_paese] if c[:id_paese]
+                    idi.add_element("fpa:IdCodice").text = c[:id_codice] if c[:id_codice]
                   a = da.add_element("fpa:Anagrafica")
-                    a.add_element("fpa:Denominazione").text c[:denominazione] if c[:denominazione]
+                    a.add_element("fpa:Denominazione").text = c[:denominazione] if c[:denominazione]
                 s = cc.add_element("fpa:Sede")
-                  s.add_element("fpa:Indirizzo").text c[:indirizzo] if c[:indirizzo]
-                  s.add_element("fpa:NumeroCivico").text c[:numero_civico] if c[:numero_civico]
-                  s.add_element("fpa:CAP").text c[:cap] if c[:cap]
-                  s.add_element("fpa:Comune").text c[:comune] if c[:comune]
-                  s.add_element("fpa:Provincia").text c[:provincia] if c[:provincia]
-                  s.add_element("fpa:Nazione").text c[:nazione] if c[:nazione]
+                  s.add_element("fpa:Indirizzo").text = c[:indirizzo] if c[:indirizzo]
+                  s.add_element("fpa:NumeroCivico").text = c[:numero_civico] if c[:numero_civico]
+                  s.add_element("fpa:CAP").text = c[:cap] if c[:cap]
+                  s.add_element("fpa:Comune").text = c[:comune] if c[:comune]
+                  s.add_element("fpa:Provincia").text = c[:provincia] if c[:provincia]
+                  s.add_element("fpa:Nazione").text = c[:nazione] if c[:nazione]
           cp.add_element("md:Company").text = c[:company] if c[:company]
           cp.add_element("md:GivenName").text = c[:givenName] if c[:givenName]
           cp.add_element("md:EmailAddress").text = c[:email] if c[:email]
