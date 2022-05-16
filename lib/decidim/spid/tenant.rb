@@ -32,7 +32,7 @@ module Decidim
 
       # Percorso relativo alla root dell'app del nuovo certificato
       config_accessor :new_certificate_path do
-        '.keys/new_certificate.pem'
+        nil
       end
 
       # Defines how the session gets cleared when the OmniAuth strategy logs the
