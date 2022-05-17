@@ -18,5 +18,15 @@
         } %>
       </div>
     </div>
+    <div class="row">
+      <div class="columns large-6 medium-10 medium-centered">
+        <%= render partial: 'decidim/cie/cie', locals: {
+          size: current_organization.enabled_omniauth_providers.dig(:cie, :size).to_sym,
+          url: decidim_spid.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:cie, :tenant_name)}_omniauth_authorize_url"),
+          method: :post,
+          origin: request.original_url
+        } %>
+      </div>
+    </div>
   </div>
 </div>
