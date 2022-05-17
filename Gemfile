@@ -9,7 +9,7 @@ ruby RUBY_VERSION
 base_path = ""
 base_path = "../" if File.basename(__dir__) == "development_app"
 require_relative "#{base_path}lib/decidim/spid/version"
-DECIDIM_VERSION = Decidim::Spid.version
+DECIDIM_VERSION = Decidim::Spid.decidim_version
 
 gem "decidim", DECIDIM_VERSION
 gem "decidim-spid", path: "."
