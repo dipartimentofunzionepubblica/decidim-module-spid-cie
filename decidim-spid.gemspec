@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,lib}/**/*", "LICENSE-AGPLv3.txt", "Rakefile", "README.md"]
 
-  s.add_dependency "decidim-core", Decidim::Spid.version
+  s.add_dependency "decidim-core", Decidim::Spid.decidim_version
   s.add_dependency "omniauth", "~> 1.9"
   s.add_dependency 'ruby-saml', '~> 1.14.0'
 end
