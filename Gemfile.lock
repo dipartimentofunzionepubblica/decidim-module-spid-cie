@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    decidim-spid (0.24.3)
+    decidim-spid (0.24.3.1)
       decidim-core (= 0.24.3)
       omniauth (~> 1.9)
       ruby-saml (~> 1.14.0)

@@ -92,11 +92,11 @@ module Decidim
         {}
       end
 
-      config_accessor :contact_people_other do
+      config_accessor :contact_people_administrative do
         {}
       end
 
-      config_accessor :contact_people_billing do
+      config_accessor :contact_people_technical do
         {}
       end
 
