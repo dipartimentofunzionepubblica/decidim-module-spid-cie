@@ -65,7 +65,7 @@ tramite il quale potete accedere alle seguenti configurazioni:
 |config.contact_people_billing|`{}`|Configurazioni relative al service provider (privato). Documentazione: https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider||
 |config.fields|`[ { name: "name", friendly_name: 'Nome', is_required: true }, { name: 'familyName', friendly_name: 'Cognome', is_required: true }, { name: "fiscalNumber", friendly_name: 'Codice Fiscale', is_required: true }, { name: "email", friendly_name: 'Email', is_required: true }]`|Attributi richiesti all'Identity Provider. Configurazioni relative al service providere. Documentazione: https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider|✓|
 
-URL generate con i valori predefiniti
+### URLs
 ```bash
 
 Routes for Decidim::Spid::Engine:
@@ -112,7 +112,7 @@ Per renderizzare il button predefinito:
 ```
 Altrimenti è possibile customizzare la view creando il file app/views/decidim/spid/_spid.html.erb e app/views/decidim/cie/_cie.html.erb.
 
-###Ulteriori info
+### Ulteriori info
 * Una volta associato un'utente esistente ad un utenza SPID o CIE viene inibita la classica autenticazione con email e password ed il recupera password.
 * Il login con SPID o CIE si integra con la registrazione integrativa di decidim presentanto la form di registrazione qualora i dati utenti non soddisfino le validazioni di registarzione.
 * L'utente invitato ad un processo privato viene forzato ad loggarsi con SPID o CIE.
