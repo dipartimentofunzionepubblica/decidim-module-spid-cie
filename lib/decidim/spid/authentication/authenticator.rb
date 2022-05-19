@@ -31,7 +31,7 @@ module Decidim
             name: oauth_data[:info][:name],
             # The nickname is automatically "parametrized" by Decidim core from
             # the name string, i.e. it will be in correct format.
-            # nickname: oauth_data[:info][:nickname] || oauth_data[:info][:name],
+            nickname: oauth_data[:info][:nickname] || oauth_data[:info][:name],
             oauth_signature: user_signature,
             avatar_url: oauth_data[:info][:image],
             raw_data: oauth_hash

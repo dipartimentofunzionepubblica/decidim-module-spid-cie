@@ -10,8 +10,6 @@ module Decidim
       skip_before_action :verify_authenticity_token, only: [:spid, :failure]
       skip_after_action :verify_same_origin_request, only: [:spid, :failure]
 
-      # This is called always after the user returns from the authentication
-      # flow from the Active Directory identity provider.
       def spid
         session["decidim-spid.signed_in"] = true
         session["decidim-spid.tenant"] = tenant.name
@@ -19,14 +17,6 @@ module Decidim
         authenticator.validate!
 
         if user_signed_in?
-          # The user is most likely returning from an authorization request
-          # because they are already signed in. In this case, add the
-          # authorization and redirect the user back to the authorizations view.
-
-          # Make sure the user has an identity created in order to aid future
-          # Active Directory sign ins. In case this fails, it will raise a
-          # Decidim::Spid::Authentication::IdentityBoundToOtherUserError
-          # which is handled below.
           authenticator.identify_user!(current_user)
 
           # Add the authorization for the user

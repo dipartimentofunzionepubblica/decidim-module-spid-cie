@@ -39,8 +39,6 @@ module Decidim
       # user out. This has been customized to preserve the flash messages and the
       # stored redirect location in the session after the session is destroyed.
       config_accessor :idp_slo_session_destroy do
-        # todo: questa deve utilizzare Cie.helpers di default
-        # (attenzione alla gestione del nome)
         proc do |_env, session|
           flash = session["flash"]
           return_to = session["user_return_to"]
@@ -52,15 +50,7 @@ module Decidim
       end
 
       # These are extra attributes that can be stored for the authorization
-      # metadata. Define these as follows:
-      #
-      # Decidim::Cie.configure do |config|
-      #   # ...
-      #   config.metadata_attributes = {
-      #     name: "name",
-      #     surname: "familyName"
-      #   }
-      # end
+      # metadata.
       config_accessor :metadata_attributes do
         {}
       end

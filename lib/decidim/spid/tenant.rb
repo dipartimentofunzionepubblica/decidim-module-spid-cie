@@ -39,8 +39,6 @@ module Decidim
       # user out. This has been customized to preserve the flash messages and the
       # stored redirect location in the session after the session is destroyed.
       config_accessor :idp_slo_session_destroy do
-        # todo: questa deve utilizzare Spid.helpers di default
-        # (attenzione alla gestione del nome)
         proc do |_env, session|
           flash = session["flash"]
           return_to = session["user_return_to"]
@@ -51,43 +49,14 @@ module Decidim
         end
       end
 
-      # These are extra attributes that can be stored for the authorization
-      # metadata. Define these as follows:
-      #
-      # Decidim::Spid.configure do |config|
-      #   # ...
-      #   config.metadata_attributes = {
-      #     name: "name",
-      #     surname: "familyName"
-      #   }
-      # end
       config_accessor :metadata_attributes do
         {}
       end
 
-      # Fields to exclude from export due GDPR policy. Array of key from metadata_attributes
       config_accessor :export_exclude_attributes do
         []
       end
 
-      # Extra metadata to be included in the service provider metadata. Define as
-      # follows:
-      #
-      # Decidim::Spid.configure do |config|
-      #   # ...
-      #   config.sp_metadata = [
-      #     {
-      #       name: "Organization",
-      #       children: [
-      #         {
-      #           name: "OrganizationName",
-      #           attributes: { "xml:lang" => "en-US" },
-      #           content: "Acme"
-      #         }
-      #       ]
-      #     }
-      #   ]
-      # end
       config_accessor :organization do
         {}
       end

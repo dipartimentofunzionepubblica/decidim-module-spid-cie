@@ -1,0 +1,34 @@
+<samlp:Response Destination='http://192.168.1.52/users/auth/ciao/callback' ID='_20edfa74-1037-4ca4-b0df-a1cb37c56e4e'
+                InResponseTo='_452c4229-d553-4b56-b8b5-276dd6d2b800' IssueInstant='2022-05-10T13:01:52Z' Version='2.0'
+                xmlns:saml='urn:oasis:names:tc:SAML:2.0:assertion' xmlns:samlp='urn:oasis:names:tc:SAML:2.0:protocol'>
+  <saml:Issuer Format='urn:oasis:names:tc:SAML:2.0:nameid-format:entity'>https://localhost:8443/demo</saml:Issuer>
+  <samlp:Status>
+    <samlp:StatusCode Value='urn:oasis:names:tc:SAML:2.0:status:Success'/>
+  </samlp:Status>
+  <saml:Assertion ID='_77faeaa5-1d8c-43fc-bfcf-0550c89a06bc' IssueInstant='2022-05-10T13:01:52Z' Version='2.0'
+                  xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:saml='urn:oasis:names:tc:SAML:2.0:assertion'>
+    <saml:Issuer Format='urn:oasis:names:tc:SAML:2.0:nameid-format:entity'>https://localhost:8443/demo</saml:Issuer>
+    <saml:Subject>
+      <saml:NameID Format='urn:oasis:names:tc:SAML:2.0:nameid-format:transient'
+                   NameQualifier='https://localhost:8443/demo'>_2185f760-4e62-4521-9a9a-d8a7899d483b
+      </saml:NameID>
+      <saml:SubjectConfirmation Method='urn:oasis:names:tc:SAML:2.0:cm:bearer'>
+        <saml:SubjectConfirmationData InResponseTo='_452c4229-d553-4b56-b8b5-276dd6d2b800'
+                                      NotOnOrAfter='2022-05-10T13:06:41Z'
+                                      Recipient='http://192.168.1.52/users/auth/ciao/callback'/>
+      </saml:SubjectConfirmation>
+    </saml:Subject>
+    <saml:Conditions NotBefore='2022-05-10T13:01:52Z' NotOnOrAfter='2022-05-10T13:06:41Z'>
+      <saml:AudienceRestriction>
+        <saml:Audience>http://192.168.1.52/</saml:Audience>
+      </saml:AudienceRestriction>
+    </saml:Conditions>
+    <saml:AttributeStatement>
+    </saml:AttributeStatement>
+    <saml:AuthnStatement AuthnInstant='2022-05-10T13:01:52Z' SessionIndex='_d78bb3dd-58e3-4eac-804e-b7602742d96c'>
+      <saml:AuthnContext>
+        <saml:AuthnContextClassRef>https://www.spid.gov.it/SpidL2</saml:AuthnContextClassRef>
+      </saml:AuthnContext>
+    </saml:AuthnStatement>
+  </saml:Assertion>
+</samlp:Response>
