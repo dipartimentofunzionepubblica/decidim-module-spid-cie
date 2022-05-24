@@ -18,7 +18,9 @@
       <hr/>
       <div class="spid-disclaimer">
         <%= I18n.t('decidim.spid.spid.disclaimer') %>
-        <%= link_to I18n.t('decidim.spid.spid.link'), 'http://www.spid.gov.it/', target: '_blank' %>
+        <div>
+          <%= link_to I18n.t('decidim.spid.spid.link'), 'http://www.spid.gov.it/', target: '_blank' %>
+        </div>
       </div>
       <%= image_tag "decidim/spid/spid-agid-logo-lb.svg", alt: "Logo AGID" %>
     </div>

@@ -24,6 +24,14 @@
     z-index: 10;
     margin-top: 100px;
     margin-bottom: 20px;
+    .spid-disclaimer {
+      text-align: left;
+      font-size: 12px;
+      a {
+        display: inline-block;
+        margin-bottom: 20px;
+      }
+    }
     hr {
       margin: 20px auto;
     }
