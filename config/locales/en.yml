@@ -71,6 +71,8 @@ en:
         success: Login completed successfully
       spid:
         info_message: If this is your first time accessing this platform, please ignore this message. Instead, to connect the old user log in first and then log in from the profile.
+        disclaimer: "SPID is the access system that allows you to use the online services of the Public Administration and accredited private individuals with a unique digital identity. If you already have a digital identity, log in with your manager's credentials. If you don't have a digital identity yet, request it from one of the managers."
+        link: More information on SPID
       verification:
         authorizations:
           create:

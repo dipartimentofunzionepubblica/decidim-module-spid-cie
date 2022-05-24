@@ -15,9 +15,16 @@
   <div class="spid-selector">
     <div class="spid-alert">
       <%= I18n.t('decidim.spid.spid.info_message') %>
+      <hr/>
+      <div class="spid-disclaimer">
+        <%= I18n.t('decidim.spid.spid.disclaimer') %>
+        <%= link_to I18n.t('decidim.spid.spid.link'), 'http://www.spid.gov.it/', target: '_blank' %>
+      </div>
+      <%= image_tag "decidim/spid/spid-agid-logo-lb.svg", alt: "Logo AGID" %>
     </div>
     <div class="spid-container">
-      <% Decidim::Spid::Idp.all.each do |k, p| %>
+      <% list = Decidim::Spid::Idp.all
+         list.slice(*list.keys.shuffle).each do |k, p| %>
         <div data-idp="<%= k %>" data-url="">
           <%= form_tag url, method: method do %>
             <%= image_tag "decidim/spid/idp-logos/#{p['logo']}", alt: "#{p['entityName']} Login" %>
