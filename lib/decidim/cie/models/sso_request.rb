@@ -20,6 +20,14 @@ module Decidim
         end
       end
 
+      def issue_instant
+        @request.issue_instant
+      end
+
+      def uuid
+        @request.uuid
+      end
+
     end
 
   end

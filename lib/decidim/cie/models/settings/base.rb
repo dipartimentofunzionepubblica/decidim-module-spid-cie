@@ -25,7 +25,8 @@ module Decidim
             authn_requests_signed: true,
             want_assertions_signed: true,
             logout_requests_signed: true,
-            check_sp_cert_expiration: false # quando il certificato scade viene sollevata un eccezione
+            check_sp_cert_expiration: false, # quando il certificato scade viene sollevata un eccezione
+            strict_audience_validation: true
           }
         end
 

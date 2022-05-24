@@ -26,10 +26,18 @@ en:
         login: "%{user_name} logged in with provider %{resource_name} %{space_name}"
         registration: "%{user_name} registered with provider %{resource_name} %{space_name} "
     components:
+      decidim_spid:
+        name: SPID
+      decidim_cie:
+        name: CIE ID
       spid:
-        name: Spid
+        name: SPID
       cie:
         name: CIE ID
+    cie:
+      sso_request:
+        failure: The login was not successful
+        success: Login completed successfully
     spid:
       admin:
         actions:
@@ -58,6 +66,9 @@ en:
       slo_request:
         failure: The logout was not successful
         success: Logout completed successfully
+      sso_request:
+        failure: The login was not successful
+        success: Login completed successfully
       spid:
         info_message: If this is your first time accessing this platform, please ignore this message. Instead, to connect the old user log in first and then log in from the profile.
       verification:

@@ -30,6 +30,10 @@ it:
         name: Spid
       cie:
         name: CIE ID
+    cie:
+      sso_request:
+        failure: Il login non è andato a buon fine
+        success: Login completato con successo
     spid:
       admin:
         actions:
@@ -58,6 +62,9 @@ it:
       slo_request:
         failure: Il logout non è andato a buon fine
         success: Logout completato con successo
+      sso_request:
+        failure: Il login non è andato a buon fine
+        success: Login completato con successo
       spid:
         info_message: Se è la prima volta che accedi a questa piattaforma, ignora questo messaggio. Invece per collegare la vecchia utenza effettuare prima il login e in seguito effettuare il login dal profilo.
       verification:

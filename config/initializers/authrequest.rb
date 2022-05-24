@@ -8,15 +8,22 @@ module OneLogin
   module RubySaml
     class Authrequest
 
-      def create_xml_document(settings)
+      attr_accessor :issue_instant, :uuid
+
+      def initialize
+        @uuid = OneLogin::RubySaml::Utils.uuid
         time = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%SZ')
+        @issue_instant = time
+      end
+
+      def create_xml_document(settings)
 
         request_doc = XMLSecurity::Document.new
         request_doc.uuid = uuid
 
         root = request_doc.add_element 'samlp:AuthnRequest', { 'xmlns:samlp' => 'urn:oasis:names:tc:SAML:2.0:protocol', 'xmlns:saml' => 'urn:oasis:names:tc:SAML:2.0:assertion' }
         root.attributes['ID'] = uuid
-        root.attributes['IssueInstant'] = time
+        root.attributes['IssueInstant'] = @issue_instant
         root.attributes['Version'] = '2.0'
         # Cambiato idp_sso_service_url
         root.attributes['Destination'] = settings.idp_sso_service_url unless settings.idp_sso_service_url.nil?

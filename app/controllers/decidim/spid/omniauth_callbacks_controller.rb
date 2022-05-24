@@ -152,14 +152,11 @@ module Decidim
           # Checks if the local session should be expired, i.e. if the user
           # took too long time to go through the authorization endpoint.
           :session_expiration,
-          # The NotBefore and NotOnOrAfter conditions failed, i.e. whether the
-          # request is handled within the allowed timeframe by the IdP.
-          :conditions
         ]
         validations.each do |key|
           next if saml_response.send("validate_#{key}")
 
-          flash[:alert] = t(".#{key}")
+          flash[:alert] = failure_message.to_s || t(".#{key}")
           return redirect_to after_omniauth_failure_path_for(resource_name)
         end
 
@@ -186,6 +183,12 @@ module Decidim
       # Disable authorization redirect for the first login
       def first_login_and_not_authorized?(_user)
         false
+      end
+
+      protected
+
+      def failure_message
+        request.respond_to?(:get_header) ? request.get_header("omniauth.error") : request.env["omniauth.error"]
       end
 
       private

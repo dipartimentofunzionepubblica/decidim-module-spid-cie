@@ -11,7 +11,9 @@ module Decidim
 
       def sso_saml(sso_params, options)
         request = Decidim::Spid::SsoRequest.new(sso_params, options)
-        session[:"#{session_prefix}sso_params"] = sso_params
+        session[:"#{session_prefix}sso_params"] = sso_params.merge(
+          issue_instant: request.issue_instant,
+          uuid: request.uuid)
         request.to_saml
       end
 
@@ -29,9 +31,9 @@ module Decidim
           session[:"#{session_prefix}uid"] = response.attributes[options.uid_attribute] || response.name_id.try(:strip)
           session[:"#{session_prefix}index"] = r.session_index
           session[:"#{session_prefix}login_time"] = Time.now
-          msg = I18n.t('spid.sso_request.success')
+          msg = I18n.t('decidim.spid.sso_request.success')
         else
-          msg = I18n.t('spid.sso_request.failure')
+          msg = I18n.t('decidim.spid.sso_request.failure')
         end
         [valid, msg, response]
       end
