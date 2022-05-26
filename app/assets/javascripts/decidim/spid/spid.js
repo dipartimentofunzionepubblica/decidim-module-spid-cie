@@ -15,6 +15,10 @@ var _popup = function _popup() {
     button.onclick = function(e) {
         e.stopPropagation();
         questionContainer.classList.remove('opened')
+        var list = popupContainer.querySelectorAll('div'); // All children
+        for (var i = list.length; i >= 0; i--) {
+            popupContainer.appendChild(list[Math.random() * i | 0]);
+        }
         popupContainer.classList.toggle('opened')
     };
 

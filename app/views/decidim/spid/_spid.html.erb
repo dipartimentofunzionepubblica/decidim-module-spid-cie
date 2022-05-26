@@ -26,8 +26,7 @@
       <%= image_tag "decidim/spid/spid-agid-logo-lb.svg", alt: "Logo AGID" %>
     </div>
     <div class="spid-container">
-      <% list = Decidim::Spid::Idp.all
-         list.slice(*list.keys.shuffle).each do |k, p| %>
+      <% Decidim::Spid::Idp.all.each do |k, p| %>
         <div data-idp="<%= k %>" data-url="">
           <%= form_tag url, method: method do %>
             <%= image_tag "decidim/spid/idp-logos/#{p['logo']}", alt: "#{p['entityName']} Login" %>
