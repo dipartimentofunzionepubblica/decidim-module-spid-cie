@@ -31,9 +31,14 @@ module Decidim
           session[:"#{session_prefix}uid"] = response.attributes[options.uid_attribute] || response.name_id.try(:strip)
           session[:"#{session_prefix}index"] = r.session_index
           session[:"#{session_prefix}login_time"] = Time.now
-          msg = I18n.t('decidim.spid.sso_request.success')
+          msg = 'decidim.spid.sso_request.success'
         else
-          msg = I18n.t('decidim.spid.sso_request.failure')
+          matches = nil
+          if r.errors && r.errors.any?{ |a| matches = a.match(/The status code of the Response was not Success, was Responder => AuthnFailed -> ErrorCode nr(19|2[1-5])/) } && (error_code = matches.try(:[], 1)).present?
+            msg = "decidim.spid.sso_request.failure_#{error_code}"
+          else
+            msg = 'decidim.spid.sso_request.failure'
+          end
         end
         [valid, msg, response]
       end
@@ -47,9 +52,9 @@ module Decidim
           session.delete(:"#{session_prefix}slo_id")
           session.delete(:"#{session_prefix}relay_state")
           session.delete(:"#{session_prefix}login_time")
-          msg = I18n.t('decidim.spid.slo_request.success')
+          msg = 'decidim.spid.slo_request.success'
         else
-          msg = I18n.t('decidim.spid.slo_request.failure')
+          msg = 'decidim.spid.slo_request.failure'
         end
         [valid, msg]
       end

@@ -1,79 +1,118 @@
 @import 'button';
 
-.spid-selector {
-  background-color: rgba(0, 0, 0, 0.2);
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  place-items: center;
-  display: none;
-  visibility: hidden;
-  opacity: 0;
-  transition: all 0.25s ease-in-out;
-  flex-direction: column;
-  align-items: center;
-  justify-content: start;
+.spid-selector-container {
+  display: flex;
+  justify-content: center;
+  .spid-selector {
+    position: relative;
+    display: flex;
+    //place-items: center;
+    //transition: all 0.25s ease-in-out;
+    //flex-direction: column;
+    //align-items: center;
+    //justify-content: start;
 
-  .spid-alert {
-    background-color: white;
-    align-items: start;
-    max-width: 500px;
-    padding: 20px;
-    z-index: 10;
-    margin-top: 100px;
-    margin-bottom: 20px;
-    .spid-disclaimer {
-      text-align: left;
-      font-size: 12px;
-      a {
-        display: inline-block;
-        margin-bottom: 20px;
-      }
-    }
-    hr {
-      margin: 20px auto;
-    }
-    img {
-      max-width: 50%;
-    }
-  }
-
-  .spid-container {
-    //display: none;
-    //visibility: hidden;
-    opacity: 0;
-    transform: translateY(60px);
-    transition: all 0.25s ease-in-out;
-    background-color: #06c;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
-    gap: 3px;
-    padding: 0px;
-    border: 3px solid #06c;
-    border-radius: 3px;
-    z-index: 10;
-
-    [data-idp] {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      background-color: white;
+    .spid-question-mark {
+      width: 22.5px;
+      height: 22.5px;
+      position: absolute;
+      right: -30px;
+      bottom: 0;
+      border: 2px solid gray;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      line-height: 1px;
+      font-weight: 600;
+      color: gray;
+      font-size: 1.1rem;
       cursor: pointer;
-      height: 100%;
+    }
+    .spid-alert {
+      background-color: white;
+      align-items: start;
+      max-width: 500px;
+      clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+      padding: 20px;
+      z-index: 10;
+      //margin-top: 90px;
+      top: 105%;
+      margin-bottom: 20px;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 2px solid darkblue;
+      border-radius: 5px;
+      width: 90vw;
+      .spid-disclaimer {
+        text-align: left;
+        font-size: 12px;
+
+        a {
+          display: inline-block;
+          margin-bottom: 20px;
+        }
+      }
+
+      hr {
+        margin: 20px auto;
+      }
 
       img {
-        max-width: 125px;
-        max-height: 35px;
-        padding: 17px;
-        box-sizing: initial;
+        max-width: 50%;
       }
-      input[type="submit"], button[type="submit"] {
-        display: none !important;
+      &.opened {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      }
+    }
+
+    .spid-container {
+      //display: none;
+      //visibility: hidden;
+      //transition: all 0.25s ease-in-out;
+      clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+      background-color: #06c;
+      display: grid;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      min-width: 200px;
+      align-items: start;
+      gap: 3px;
+      padding: 0px;
+      border: 3px solid #06c;
+      border-radius: 3px;
+      z-index: 10;
+
+      &.opened {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      }
+
+      [data-idp] {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
+        cursor: pointer;
+        height: 70px;
+
+        img {
+          max-width: 125px;
+          max-height: 35px;
+          padding: 17px;
+          box-sizing: initial;
+        }
+
+        input[type="submit"], button[type="submit"] {
+          display: none !important;
+        }
       }
     }
   }
+}
+
+a.italia-it-button:focus {
+  color: white;
 }

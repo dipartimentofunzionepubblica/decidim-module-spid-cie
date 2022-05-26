@@ -60,10 +60,10 @@ module Decidim
       end
 
       def format_issuers
-        format1 = extract_value('/p:Response/a:Issuer/@Format').to_s
-        format2 = extract_value('/p:Response/a:Assertion/a:Issuer/@Format').to_s
-        return true if format1.present? && format1 == "urn:oasis:names:tc:SAML:2.0:nameid-format:entity" &&
-          format2.present? && format2 == "urn:oasis:names:tc:SAML:2.0:nameid-format:entity"
+        format1 = extract_value('/p:Response/a:Issuer/@Format')
+        format2 = extract_value('/p:Response/a:Assertion/a:Issuer/@Format')
+        return true if (format1.nil? || format1.present? && format1.to_s == "urn:oasis:names:tc:SAML:2.0:nameid-format:entity") &&
+          format2.present? && format2.to_s == "urn:oasis:names:tc:SAML:2.0:nameid-format:entity"
 
         append_error("Issuer Format non conforme")
         false

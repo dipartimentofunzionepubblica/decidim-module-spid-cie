@@ -38,6 +38,13 @@ en:
       sso_request:
         failure: The login was not successful
         success: Login completed successfully
+        failure_19: Authentication failed due to repeated submission of incorrect credentials.
+        failure_20: User with no credentials compatible with the level required by the service provider.
+        failure_21: Timeout during user authentication.
+        failure_22: User denies consent to send data to the SP in case of session in force.
+        failure_23: User with suspended / revoked identity or with blocked credentials.
+        failure_24: The login was not successful
+        failure_25: Authentication process canceled by user.
     spid:
       admin:
         actions:
@@ -69,6 +76,13 @@ en:
       sso_request:
         failure: The login was not successful
         success: Login completed successfully
+        failure_19: Authentication failed due to repeated submission of incorrect credentials.
+        failure_20: User with no credentials compatible with the level required by the service provider.
+        failure_21: Timeout during user authentication.
+        failure_22: User denies consent to send data to the SP in case of session in force.
+        failure_23: User with suspended / revoked identity or with blocked credentials.
+        failure_24: The login was not successful
+        failure_25: Authentication process canceled by user.
       spid:
         info_message: If this is your first time accessing this platform, please ignore this message. Instead, to connect the old user log in first and then log in from the profile.
         disclaimer: "SPID is the access system that allows you to use the online services of the Public Administration and accredited private individuals with a unique digital identity. If you already have a digital identity, log in with your manager's credentials. If you don't have a digital identity yet, request it from one of the managers."

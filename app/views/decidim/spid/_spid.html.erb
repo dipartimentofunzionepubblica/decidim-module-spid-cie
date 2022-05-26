@@ -5,14 +5,15 @@
   method = local_assigns[:method].present? ? local_assigns[:method] : :get
   origin = local_assigns[:origin].present? ? local_assigns[:origin] : ''
 %>
-<div class="text-center">
-  <a href="javascript: void(0);" class="italia-it-button italia-it-button-size-<%= size %> button-spid">
-    <span class="italia-it-button-icon">
-      <%= image_tag 'decidim/spid/spid-ico-circle-bb.svg', onerror: "this.src='spid-ico-circle-bb.png'; this.onerror=null;", alt: "Spid Login" %>
-    </span>
-    <span class="italia-it-button-text">Entra con SPID</span>
-  </a>
+<div class="spid-selector-container">
   <div class="spid-selector">
+    <a href="javascript: void(0);" class="italia-it-button italia-it-button-size-<%= size %> button-spid">
+      <span class="italia-it-button-icon">
+        <%= image_tag 'decidim/spid/spid-ico-circle-bb.svg', onerror: "this.src='spid-ico-circle-bb.png'; this.onerror=null;", alt: "Spid Login" %>
+      </span>
+      <span class="italia-it-button-text">Entra con SPID</span>
+    </a>
+    <div class="spid-question-mark">?</div>
     <div class="spid-alert">
       <%= I18n.t('decidim.spid.spid.info_message') %>
       <hr/>
@@ -37,6 +38,7 @@
         </div>
       <% end %>
     </div>
+
   </div>
+  <%= javascript_include_tag "decidim/spid/spid" %>
 </div>
-<%= javascript_include_tag "decidim/spid/spid" %>
