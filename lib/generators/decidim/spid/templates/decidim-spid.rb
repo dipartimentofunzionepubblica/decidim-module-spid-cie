@@ -70,7 +70,7 @@ Decidim::Spid.configure do |config|
   config.contact_people_other = {
     public: true, ipa_code: 'IT12345678901', vat_number: 'IT12345678901',
     fiscal_code: 'XCGBCH47H29H072B', given_name: 'SPID Test Team', email: 'email@exaple.com',
-    company: 'Nome organizzazione S.p.a', number: '+39061111111', givenName: "Name"
+    company: 'Nome organizzazione S.p.a', number: '+39061111111'
   }
 
   # Obbligatorio solo per soggetti privati

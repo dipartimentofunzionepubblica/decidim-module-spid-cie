@@ -22,7 +22,6 @@ module Decidim
           ce.add_element("spid:FiscalCode").text = v[:fiscal_code] if v[:fiscal_code]
           v[:public] ? ce.add_element("spid:Public") : ce.add_element("spid:Private")
           cp.add_element("md:Company").text = v[:company] if v[:company]
-          cp.add_element("md:GivenName").text = v[:givenName] if v[:givenName]
           cp.add_element("md:EmailAddress").text = v[:email] if v[:email]
           cp.add_element("md:TelephoneNumber").text = v[:number] if v[:number]
         end
@@ -74,7 +73,6 @@ module Decidim
                   s.add_element("fpa:Provincia").text = c[:provincia] if c[:provincia]
                   s.add_element("fpa:Nazione").text = c[:nazione] if c[:nazione]
           cp.add_element("md:Company").text = c[:company] if c[:company]
-          cp.add_element("md:GivenName").text = c[:givenName] if c[:givenName]
           cp.add_element("md:EmailAddress").text = c[:email] if c[:email]
           cp.add_element("md:TelephoneNumber").text = c[:number] if c[:number]
         end
