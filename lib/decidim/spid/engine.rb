@@ -39,8 +39,8 @@ module Decidim
         end
       end
 
-      initializer "decidim_spid.assets" do |app|
-        app.config.assets.precompile += %w(decidim/spid/*)
+      initializer "decidim_spid.webpacker.assets_path" do
+        Decidim.register_assets_path File.expand_path("app/packs", root)
       end
 
       initializer "decidim_spid.setup", before: "devise.omniauth" do

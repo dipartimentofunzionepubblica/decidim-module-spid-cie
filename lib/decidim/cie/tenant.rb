@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'decidim/spid/token_verifier'
+
 module Decidim
   module Cie
     class Tenant
@@ -209,6 +211,7 @@ module Decidim
         # the failures properly. Without this, the failure requests would end
         # up in an ActionController::InvalidAuthenticityToken exception.
         devise_failure_app = OmniAuth.config.on_failure
+        OmniAuth.config.request_validation_phase = Decidim::Spid::TokenVerifier.new
         OmniAuth.config.on_failure = proc do |env|
           if env["PATH_INFO"] && env["PATH_INFO"].match?(%r{^/users/auth/#{config.name}($|/.+)})
             env["devise.mapping"] = ::Devise.mappings[:user]

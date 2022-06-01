@@ -13,22 +13,16 @@ module Decidim
           def base_query
             c = collection
             spid_filter = to_boolean(ransack_params.delete(:spid_presence))
-            if !spid_filter.nil?
-              if spid_filter
-                c = c.left_joins(:identities).where(decidim_identities: { id: spid_ids })
-              else
-                c = c.left_joins(:identities).where(decidim_identities: { id: nil }).or(c.left_joins(:identities).where.not(decidim_identities: { id: spid_ids }))
-              end
-            end
             cie_filter = to_boolean(ransack_params.delete(:cie_presence))
-            if !cie_filter.nil?
-              if cie_filter
-                c = c.left_joins(:identities).where(decidim_identities: { id: cie_ids })
-              else
-                c = c.left_joins(:identities).where(decidim_identities: { id: nil }).or(c.left_joins(:identities).where.not(decidim_identities: { id: cie_ids }))
-              end
+            unless spid_filter.nil?
+              c = spid_filter ? c.where(id: spid_ids) : c.where.not(id: spid_ids)
             end
-            c
+
+            unless cie_filter.nil?
+              c = cie_filter ? c.where(id: cie_ids) : c.where.not(id: cie_ids)
+            end
+
+            c.distinct
           end
 
           def search_field_predicate
@@ -45,11 +39,11 @@ module Decidim
           end
 
           def spid_ids
-            Decidim::Identity.where(provider: Decidim::Spid.tenants.map(&:name)).pluck(:id)
+            Decidim::Identity.where(provider: Decidim::Spid.tenants.map(&:name)).pluck(:decidim_user_id)
           end
 
           def cie_ids
-            Decidim::Identity.where(provider: Decidim::Cie.tenants.map(&:name)).pluck(:id)
+            Decidim::Identity.where(provider: Decidim::Cie.tenants.map(&:name)).pluck(:decidim_user_id)
           end
         end
       end

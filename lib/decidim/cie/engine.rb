@@ -39,12 +39,12 @@ module Decidim
         end
       end
 
-      initializer "decidim_cie.assets" do |app|
-        app.config.assets.precompile += %w(decidim/cie/*)
-      end
-
       initializer "decidim_cie.setup", before: "devise.omniauth" do
         Decidim::Cie.setup!
+      end
+
+      initializer "decidim_cie.webpacker.assets_path" do
+        Decidim.register_assets_path File.expand_path("app/packs", root)
       end
 
     end

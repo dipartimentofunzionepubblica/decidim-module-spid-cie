@@ -31,9 +31,10 @@ module Decidim
         end
       end
 
-      config.to_prepare do
-        Decidim::Admin::OfficializationsController.send(:include, Decidim::Admin::Officializations::FilterableOverrides)
-        Decidim::Admin::OfficializationsController.send(:helper, Decidim::Spid::Admin::ApplicationHelper)
+      initializer "decidim_spid.view_helpers" do
+        ActiveSupport.on_load(:action_controller_base) do
+          helper Decidim::Spid::Admin::ApplicationHelper
+        end
       end
 
       def load_seed
