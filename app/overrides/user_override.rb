@@ -1,5 +1,3 @@
-require_dependency Decidim::Core::Engine.root.join('app', 'models', 'decidim', 'user').to_s
-
 module Decidim
   class User
 
@@ -26,7 +24,5 @@ module Decidim
       return nil if user.is_a?(Decidim::User) && user.must_log_with_spid?
       user
     end
-
-
   end
 end

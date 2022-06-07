@@ -1,5 +1,3 @@
-require_dependency Decidim::Core::Engine.root.join('app', 'models', 'decidim', 'identity').to_s
-
 module Decidim
   class Identity
 
