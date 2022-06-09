@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'deface'
 require "omniauth/strategies/spid_saml"
 
 require_relative "spid/version"

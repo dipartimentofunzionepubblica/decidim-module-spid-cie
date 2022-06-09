@@ -50,6 +50,7 @@ module Decidim
       overrides = "#{Decidim::Spid::Engine.root}/app/overrides"
       # Rails.autoloaders.main.ignore(overrides)
       config.to_prepare do
+        Rails.autoloaders.main.ignore(overrides)
         Dir.glob("#{overrides}/**/*_override.rb").each do |override|
           load override
         end

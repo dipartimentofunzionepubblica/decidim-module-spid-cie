@@ -21,4 +21,5 @@ Gem::Specification.new do |s|
   s.add_dependency "decidim-core", "#{Decidim::Spid.decidim_version}"
   s.add_dependency "omniauth", ">= 1.9"
   s.add_dependency 'ruby-saml', '~> 1.14.0'
+  s.add_dependency "deface", '1.9.0'
 end
