@@ -1,5 +1,5 @@
 # Decidim SPID & CIE
-Autenticazione SPID & CIE per Decidim v0.24.3. Questa gemma si appoggia: [ruby-saml](https://github.com/onelogin/ruby-saml), [decidim](https://github.com/decidim/decidim/tree/v0.24.3) e [omniauth](https://github.com/omniauth/omniauth).
+Autenticazione SPID & CIE per Decidim v0.25.2. Questa gemma si appoggia: [ruby-saml](https://github.com/onelogin/ruby-saml), [decidim](https://github.com/decidim/decidim/tree/v0.24.3) e [omniauth](https://github.com/omniauth/omniauth).
 
 Ispirata a [decidim-msad](https://github.com/mainio/decidim-module-msad). Gemma sviluppata da [Kapusons](https://www.kapusons.it)
 
