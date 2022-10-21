@@ -12,7 +12,7 @@ module Decidim
           org.add_element("md:OrganizationURL", 'xml:lang' => k).text = h[:url]
         end
 
-        v = c_settings.contact_people_other
+        v = c_settings.respond_to?(:contact_people_other) ? c_settings.contact_people_other : []
         if v.present?
           cp = root.add_element("md:ContactPerson", 'contactType' => 'other')
           ce = cp.add_element("md:Extensions")
@@ -53,7 +53,7 @@ module Decidim
         # <md:TelephoneNumber>+39 84756344785</md:TelephoneNumber>
         # </md:ContactPerson>
 
-        c = c_settings.contact_people_billing
+        c = c_settings.respond_to?(:contact_people_billing) ? c_settings.contact_people_billing : []
         if c.present?
           cp = root.add_element("md:ContactPerson", 'contactType' => 'billing')
             ce = cp.add_element("md:Extensions")
@@ -83,10 +83,12 @@ module Decidim
         @c_settings = settings
         if settings.valid?
           saml_settings = OneLogin::RubySaml::Settings.new(settings.settings)
-          saml_settings.attribute_consuming_service.configure do
-            @index = 0
-            @name = "Set 0"
-            @attributes = settings.fields
+          unless saml_settings.attribute_consuming_service.is_a?(Array)
+            saml_settings.attribute_consuming_service.configure do
+              @index = 0
+              @name = "Set 0"
+              @attributes = settings.fields
+            end
           end
           self.generate(saml_settings)
         else

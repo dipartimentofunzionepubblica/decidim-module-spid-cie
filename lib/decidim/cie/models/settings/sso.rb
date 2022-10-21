@@ -13,6 +13,7 @@ module Decidim
           sso_attributes[:force_authn] = force_authn
           sso_attributes[:protocol_binding] = self.class.superclass.saml_bindings[:post]
           sso_attributes[:relay_state] = relay_state
+          sso_attributes[:current_consumer_index] = settings[:current_consumer_index]
           @settings = sso_attributes
         end
 

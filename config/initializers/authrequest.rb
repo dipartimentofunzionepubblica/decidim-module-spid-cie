@@ -30,13 +30,18 @@ module OneLogin
         root.attributes['IsPassive'] = settings.passive unless settings.passive.nil?
         root.attributes['ProtocolBinding'] = settings.protocol_binding unless settings.protocol_binding.nil?
         # Aggiunto default value attributes_index
-        root.attributes['AttributeConsumingServiceIndex'] = settings.attributes_index || 0
+        root.attributes['AttributeConsumingServiceIndex'] = settings.current_consumer_index || settings.attributes_index || 0
         root.attributes['ForceAuthn'] = settings.force_authn unless settings.force_authn.nil?
 
         # Conditionally defined elements based on settings
         if settings.assertion_consumer_service_url != nil
           root.attributes['AssertionConsumerServiceURL'] = settings.assertion_consumer_service_url
         end
+
+        if settings.consumer_services.present?
+          root.attributes['AssertionConsumerServiceURL'] = settings.consumer_services[settings.current_consumer_index]['Location']
+        end
+
         # NameQualifier e Format da requisiti SPID
         if settings.issuer != nil
           issuer = root.add_element 'saml:Issuer', {

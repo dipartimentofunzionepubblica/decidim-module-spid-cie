@@ -35,9 +35,15 @@ module Decidim
             issuer: @issuer,
             assertion_consumer_service_url: @assertion_consumer_service_url,
             single_logout_service_url: @single_logout_service_url,
+            consumer_services: @consumer_services,
+            logout_services: @logout_services,
             private_key: @private_key || (private_key_path && File.exists?(private_key_path) ? File.read("#{private_key_path}") : nil),
             certificate: @certificate || (certificate_path && File.exists?(certificate_path) ? File.read("#{certificate_path}") : nil),
-            security: security_attributes
+            security: security_attributes,
+            attribute_consuming_service: @attribute_services.present? ? @attribute_services : nil,
+            default_service_index: @default_service_index,
+            current_consumer_index: @current_consumer_index,
+            current_logout_index: @current_logout_index,
           }
         end
 

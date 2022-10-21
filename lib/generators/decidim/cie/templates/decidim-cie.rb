@@ -73,4 +73,57 @@ Decidim::Cie.configure do |config|
     { name: "fiscalNumber", friendly_name: 'Codice Fiscale', is_required: true },
     { name: "dateOfBirth", friendly_name: 'Data di nascita', is_required: true },
   ]
+
+  #######################################
+  # In caso di di metadata esistente e con servizi multupli utilizzare le seguenti configurazioni
+
+  # ResponseLocation opzionale
+  # Per aggiungere più AssertionConsumerService
+  # config.consumer_services = [
+  #   { 'Location' => 'https://example.org/spid/samlsso', 'ResponseLocation' => 'https://example.org', 'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' },
+  #   { 'Location' => 'https://example2.org/spid/samlsso', 'ResponseLocation' => 'https://example2.org', 'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' },
+  #   { 'Location' => 'https://example3.org/spid/login', 'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' },
+  # ]
+  # Per aggiungere più SingleLogoutService
+  # config.logout_services = [
+  #   { 'Location' => 'https://example.org/spid/samlslo', 'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' },
+  #   { 'Location' => 'https://example2.org/spid/samlslo', 'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' },
+  #   { 'Location' => 'https://example3.org/spid/logout', 'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' }
+  # ]
+  #
+  # Per customizzare il path del metadata
+  # config.metadata_path = "https://example.org/metadata/custom/path"
+
+  # Indicare l'indice dell'array del servizio da utilizzare per questo tenant
+  # Default value: 0. Indice per il AssertionConsumerService di default
+  # config.default_service_index = 0
+  # Default value: 0. Indicare l'indice (dell'array config.consumer_services) per il AssertionConsumerService da utilizzare per questo tenant
+  # config.current_consumer_index = 1
+  # Default value: 0. Indicare l'indice (dell'array config.logout_services) per il SingleLogoutService da utilizzare per questo tenant
+  # config.current_logout_index = 0
+
+  # In caso di più AttributeConsumingService
+  # config.attribute_services = [
+  #   [
+  #     { name: "name", friendly_name: 'Nome', is_required: true },
+  #     { name: 'familyName', friendly_name: 'Cognome', is_required: true },
+  #   ],
+  #   [
+  #     { name: "name", friendly_name: 'Nome', is_required: true },
+  #     { name: 'familyName', friendly_name: 'Cognome', is_required: true },
+  #     { name: "fiscalNumber", friendly_name: 'Codice Fiscale', is_required: true },
+  #     { name: "spidCode", friendly_name: 'Codice SPID', is_required: true },
+  #     { name: "email", friendly_name: 'Email', is_required: true },
+  #     { name: "gender", friendly_name: 'Genere', is_required: true },
+  #     { name: "dateOfBirth", friendly_name: 'Data di nascita', is_required: true },
+  #     { name: "placeOfBirth", friendly_name: 'Luogo di nascita', is_required: true },
+  #     { name: "registeredOffice", friendly_name: 'registeredOffice', is_required: true },
+  #     { name: "ivaCode", friendly_name: 'Partita IVA', is_required: true },
+  #     { name: "idCard", friendly_name: 'ID Carta', is_required: true },
+  #     { name: "mobilePhone", friendly_name: 'Numero di telefono', is_required: true },
+  #     { name: "address", friendly_name: 'Indirizzo', is_required: true },
+  #     { name: "digitalAddress", friendly_name: 'Indirizzo digitale', is_required: true }
+  #   ]
+  # ]
+
 end

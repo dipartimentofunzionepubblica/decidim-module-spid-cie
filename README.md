@@ -1,5 +1,5 @@
 # Decidim SPID & CIE
-Autenticazione SPID & CIE per Decidim v0.25.2. Questa gemma si appoggia: [ruby-saml](https://github.com/onelogin/ruby-saml), [decidim](https://github.com/decidim/decidim/tree/v0.24.3) e [omniauth](https://github.com/omniauth/omniauth).
+Autenticazione SPID & CIE per Decidim v0.25.2. Questa gemma si appoggia: [ruby-saml](https://github.com/onelogin/ruby-saml), [decidim](https://github.com/decidim/decidim/tree/v0.25.2) e [omniauth](https://github.com/omniauth/omniauth).
 
 Ispirata a [decidim-msad](https://github.com/mainio/decidim-module-msad). Gemma sviluppata da [Kapusons](https://www.kapusons.it)
 
@@ -118,6 +118,19 @@ Altrimenti è possibile customizzare la view creando il file app/views/decidim/s
 * L'utente invitato ad un processo privato viene forzato ad loggarsi con SPID o CIE.
 * Viene tenuta traccia delle operazioni di login, logout e registrazioni tramite SPID o CIE e possono essere visualizzate Admin Activity log.
 * In amministrazione, gli utenti che hanno effettuato registrazione o login (per utenti esistenti) sono identificati con un badge relativamente per SPID o CIE. Inoltre è possibile filtrare gli utenti che hanno associato l'utenza SPID o CIE.
+
+## Configurazione in caso di servizi multipli
+In caso si ha la necissità di specificare più `AssertionConsumerService`, `SingleLogoutService` e `AttributeConsumingService` bisogna completare le seguenti configurazioni ed ignorare `config.fields`:
+
+|Nome|Valore di default|Descrizione|Obbligatorio|
+|:---|:---|:---|:---|
+|config.consumer_services|`[]`|Dettaglio AssertionConsumerService: Esempio: `config.consumer_services = [{ 'Location' => 'https://example.org/spid/samlsso', 'ResponseLocation' => 'https://example.org', 'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' }, ...]` |✓|
+|config.logout_services|`[]`|Dettaglio SingleLogoutService: Esempio: `config.logout_services = [ { 'Location' => 'https://example.org/spid/samlslo', 'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' }, ... ]`|✓|
+|config.metadata_path|`nil`|Per personalizzare l'url del metadata. Esempio: `config.metadata_path = "https://example.org/metadata/custom/path"`|✓|
+|config.default_service_index|`0`|Indicare l'indice dell'array (`config.consumer_services`) per specificare il servizio di default. |✓|
+|config.current_consumer_index|`0`|Indicare l'indice (dell'array `config.consumer_services`) per il AssertionConsumerService da utilizzare per questo tenant|✓|
+|config.current_logout_index|`0`|Indicare l'indice (dell'array `config.logout_services`) per il SingleLogoutService da utilizzare per questo tenant|✓|
+|config.attribute_services|`[]`|Indicare AttributeConsumingService per ogni servizio.  Esempio: `config.attribute_services = [ [ { name: "name", friendly_name: 'Nome', is_required: true }, { name: 'familyName', friendly_name: 'Cognome', is_required: true }, ...], ...]` Per ulteriori dettagli vedere `config.fields`.|✓|
 
 ## Contributing
 https://github.com/kapusons/decidim-module-spid/graphs/contributors

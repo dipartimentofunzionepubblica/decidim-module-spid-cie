@@ -120,6 +120,34 @@ module Decidim
         :spidCode
       end
 
+      config_accessor :consumer_services do
+        []
+      end
+
+      config_accessor :logout_services do
+        []
+      end
+
+      config_accessor :metadata_path do
+        nil
+      end
+
+      config_accessor :attribute_services do
+        []
+      end
+
+      config_accessor :default_service_index do
+        0
+      end
+
+      config_accessor :current_consumer_index do
+        0
+      end
+
+      config_accessor :current_logout_index do
+        0
+      end
+
       def initialize
         yield self
       end
@@ -172,9 +200,18 @@ module Decidim
           certificate: certificate,
           private_key: private_key,
           new_certificate: new_certificate,
-          assertion_consumer_service_url: "#{sp_entity_id}users/auth/#{config.name}/callback",
-          single_logout_service_url: "#{sp_entity_id}users/auth/#{config.name}/slo",
-          config: config
+          assertion_consumer_service_url: consumer_services.present? ? nil : "#{sp_entity_id}/users/auth/#{config.name}/callback",
+          single_logout_service_url: logout_services.present? ? nil : "#{sp_entity_id}/users/auth/#{config.name}/slo",
+          consumer_services: consumer_services,
+          logout_services: logout_services,
+          attribute_services: attribute_services,
+          current_consumer_index: current_consumer_index,
+          current_logout_index: current_logout_index,
+          config: config,
+          skip_recipient_check: consumer_services.present?,
+          callback_path: ((consumer_services.present? ? URI(consumer_services[current_consumer_index]['Location']).path : nil) rescue nil),
+          logout_path: ((logout_services.present? ? URI(config.logout_services[config.current_consumer_index]['Location']).path : nil) rescue nil),
+          metadata_path: metadata_path,
         }.merge(extra)
       end
 
@@ -192,7 +229,16 @@ module Decidim
         devise_failure_app = OmniAuth.config.on_failure
         OmniAuth.config.request_validation_phase = Decidim::Spid::TokenVerifier.new
         OmniAuth.config.on_failure = proc do |env|
-          if env["PATH_INFO"] && env["PATH_INFO"].match?(%r{^/users/auth/#{config.name}($|/.+)})
+          exnovo_metadata = env["PATH_INFO"] && env["PATH_INFO"].match?(%r{^/users/auth/#{config.name}($|/.+)})
+          existing_metadata = begin
+                                env["PATH_INFO"] &&
+                                  [consumer_services[current_consumer_index]["Location"],
+                                   logout_services[current_logout_index]["Location"],
+                                   metadata_path].map { |a| URI(a).path }.include?(env["PATH_INFO"])
+                              rescue
+                                false
+                              end
+          if exnovo_metadata || existing_metadata
             env["devise.mapping"] = ::Devise.mappings[:user]
             Decidim::Spid::OmniauthCallbacksController.action(
               :failure
@@ -208,6 +254,8 @@ module Decidim
         # This assignment makes the config variable accessible in the block
         # below.
         config = self.config
+        sso_route = URI(config.consumer_services[config.current_consumer_index]['Location']).path rescue "/users/auth/#{config.name}/callback"
+        slo_route = URI(config.logout_services[config.current_consumer_index]['Location']).path rescue "/users/auth/#{config.name}/slo"
         Decidim::Spid::Engine.routes do
           devise_scope :user do
             # Manually map the SAML omniauth routes for Devise because the default
@@ -223,7 +271,7 @@ module Decidim
             )
 
             match(
-              "/users/auth/#{config.name}/callback",
+              sso_route,
               to: "omniauth_callbacks#spid",
               as: "user_#{config.name}_omniauth_callback",
               via: [:get, :post]
@@ -239,7 +287,7 @@ module Decidim
             # Add the SLO and SPSLO paths to be able to pass these requests to
             # OmniAuth.
             match(
-              "/users/auth/#{config.name}/slo",
+              slo_route,
               to: "sessions#slo",
               as: "user_#{config.name}_omniauth_slo",
               via: [:get, :post]

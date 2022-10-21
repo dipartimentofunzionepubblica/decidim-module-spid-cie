@@ -227,10 +227,9 @@ module Decidim
 
       def tenant
         @tenant ||= begin
-                      matches = request.path.match(%r{^/users/auth/([^/]+)/.+})
-                      raise "Invalid CIE tenant" unless matches
+                      name = session["tenant-cie-name"]
+                      raise "Invalid SPID tenant" unless name
 
-                      name = matches[1]
                       tenant = Decidim::Cie.tenants.find { |t| t.name == name }
                       raise "Unkown CIE tenant: #{name}" unless tenant
 

@@ -227,10 +227,9 @@ module Decidim
 
       def tenant
         @tenant ||= begin
-                      matches = request.path.match(%r{^/users/auth/([^/]+)/.+})
-                      raise "Invalid SPID tenant" unless matches
+                      name = session["tenant-spid-name"]
+                      raise "Invalid SPID tenant" unless name
 
-                      name = matches[1]
                       tenant = Decidim::Spid.tenants.find { |t| t.name == name }
                       raise "Unkown SPID tenant: #{name}" unless tenant
 

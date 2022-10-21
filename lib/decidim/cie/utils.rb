@@ -11,6 +11,7 @@ module Decidim
 
       def sso_saml(sso_params, options)
         request = Decidim::Cie::SsoRequest.new(sso_params, options)
+        session[:"tenant-cie-name"] = options["name"]
         session[:"#{session_prefix}sso_params"] = sso_params.merge(
           issue_instant: request.issue_instant,
           uuid: request.uuid)
@@ -69,11 +70,11 @@ module Decidim
       end
 
       def session_prefix
-        self.current_name + '_cie_'
+        options["name"] + '_cie_'
       end
 
       def self.session_prefix
-        current_name + '_cie_'
+        options["name"] + '_cie_'
       end
 
     end

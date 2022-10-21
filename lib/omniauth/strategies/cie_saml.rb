@@ -15,7 +15,7 @@ module OmniAuth
       include Decidim::Cie::Utils
       def initialize(app, *args, &block)
         super
-        Decidim::Cie::Utils.current_name = options[:name]
+        # Decidim::Cie::Utils.current_name = options[:name]
         options[:sp_name_qualifier] = options[:sp_entity_id] if options[:sp_name_qualifier].nil?
         options[:issuer] = options[:sp_entity_id]
 
@@ -91,13 +91,13 @@ module OmniAuth
       end
 
       def other_phase
-        if request_path_pattern.match(current_path)
+        if request_path_pattern.match(current_path) || custom_path_pattern_matches?(current_path)
           @env['omniauth.strategy'] ||= self
           setup_phase
 
-          if on_subpath?(:metadata)
+          if on_subpath?(:metadata) || on_custom_metadata
             other_phase_for_metadata
-          elsif on_subpath?(:slo)
+          elsif on_subpath?(:slo) || on_custom_slo?(:slo)
             other_phase_for_slo
           elsif on_subpath?(:spslo)
             other_phase_for_spslo
@@ -107,6 +107,24 @@ module OmniAuth
         else
           call_app!
         end
+      end
+
+      def custom_path_pattern_matches?(current_path)
+        begin
+          URI(options["consumer_services"][options["current_consumer_index"]]['Location']).path == current_path ||
+            URI(options["logout_services"][options["current_logout_index"]]['Location']).path == current_path ||
+            URI(options["metadata_path"]).path == current_path
+        rescue
+          false
+        end
+      end
+
+      def on_custom_slo?(subpath)
+        logout_path == current_path
+      end
+
+      def on_custom_metadata
+        metadata_path == current_path
       end
 
       uid do
@@ -198,8 +216,33 @@ module OmniAuth
       end
 
       def with_settings
-        options[:assertion_consumer_service_url] ||= callback_url
+        options[:consumer_services] = options[:consumer_services].present? ? options[:consumer_services] : callback_url
+        options[:logout_services] = options[:logout_services].present? ? options[:logout_services] : logout_url
         yield OneLogin::RubySaml::Settings.new(options)
+      end
+
+      def logout_url
+        full_host + logout_path + query_string
+      end
+
+      def logout_path
+        logout_path ||= begin
+                          path = options[:logout_path] if options[:logout_path].is_a?(String)
+                          path ||= current_path if options[:logout_path].respond_to?(:call) && options[:logout_path].call(env)
+                          path ||= custom_path(:logout_path)
+                          path ||= "#{script_name}#{path_prefix}/#{name}/slo"
+                          path
+                        end
+      end
+
+      def metadata_path
+        metadata_path ||= begin
+                            path = URI(options[:metadata_path]).path if options[:metadata_path].is_a?(String)
+                            path ||= current_path if options[:metadata_path].respond_to?(:call) && options[:metadata_path].call(env)
+                            # path ||= custom_path(:metadata_path)
+                            path ||= "#{script_name}#{path_prefix}/#{name}/metadata"
+                            path
+                          end
       end
 
       def options_for_response_object
