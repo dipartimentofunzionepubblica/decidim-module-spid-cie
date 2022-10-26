@@ -1,3 +1,8 @@
+# Copyright (C) 2022 Formez PA
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 # frozen_string_literal: true
 
 module Decidim
@@ -19,13 +24,7 @@ module Decidim
         layout "layouts/decidim/user_profile", only: [:new]
 
         def new
-          # Do not enforce the permission here because it would cause
-          # re-authorizations not to work as the authorization already exists.
-          # In case the user wants to re-authorize themselves, they can just
-          # hit this endpoint again.
-          # redirect_to decidim.user_spid_omniauth_authorize_path
           render :new
-          #todo: if logged
         end
       end
     end

@@ -1,25 +1,17 @@
+# Copyright (C) 2022 Formez PA
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 require "active_support/configurable"
 require "action_controller"
 
 module Decidim
   module Spid
-    # Provides a callable method that verifies Cross-Site Request Forgery
-    # protection token. This class includes
-    # `ActionController::RequestForgeryProtection` directly and utilizes
-    # `verified_request?` method to match the way Rails performs token
-    # verification in Rails controllers.
-    #
-    # If you like to learn more about how Rails generate and verify
-    # authenticity token, you can find the source code at
-    # https://github.com/rails/rails/blob/v5.2.2/actionpack/lib/action_controller/metal/request_forgery_protection.rb#L217-L240.
     class TokenVerifier
       include ActiveSupport::Configurable
       include ActionController::RequestForgeryProtection
 
-      # `ActionController::RequestForgeryProtection` contains a few
-      # configurable options. As we want to make sure that our configuration is
-      # the same as what being set in `ActionController::Base`, we should make
-      # all out configuration methods to delegate to `ActionController::Base`.
       config.each_key do |configuration_name|
         undef_method configuration_name
         define_method configuration_name do

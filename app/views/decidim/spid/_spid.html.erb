@@ -1,4 +1,11 @@
 <%
+  # Copyright (C) 2022 Formez PA
+  # This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+  # This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+  # You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+%>
+
+<%
   available_values = [:s, :m, :l, :xl]
   size = :m if local_assigns[:size].nil? || !available_values.include?(local_assigns[:size])
   url = local_assigns[:url].present? ? local_assigns[:url] : decidim.spid_login_path(sso: { idp: 'idp_key' })
@@ -36,6 +43,10 @@
           <% end %>
         </div>
       <% end %>
+      <div><a href="https://www.spid.gov.it/" target="_blank"><%= I18n.t('decidim.spid.spid.link') %></a></div>
+      <div><a href="https://www.spid.gov.it/richiedi-spid" target="_blank"><%= I18n.t('decidim.spid.spid.request') %></a></div>
+      <div><a href="https://www.spid.gov.it/serve-aiuto" target="_blank"><%= I18n.t('decidim.spid.spid.help') %></a></div>
+
     </div>
 
   </div>

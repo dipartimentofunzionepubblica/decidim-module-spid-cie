@@ -1,3 +1,8 @@
+# Copyright (C) 2022 Formez PA
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 require 'onelogin/ruby-saml'
 
 # Necessario override della classe originaria della libreria,
@@ -30,7 +35,7 @@ module OneLogin
         root.attributes['IsPassive'] = settings.passive unless settings.passive.nil?
         root.attributes['ProtocolBinding'] = settings.protocol_binding unless settings.protocol_binding.nil?
         # Aggiunto default value attributes_index
-        root.attributes['AttributeConsumingServiceIndex'] = settings.current_consumer_index || settings.attributes_index || 0
+        root.attributes['AttributeConsumingServiceIndex'] = settings.current_attribute_index || settings.attributes_index || 0
         root.attributes['ForceAuthn'] = settings.force_authn unless settings.force_authn.nil?
 
         # Conditionally defined elements based on settings

@@ -1,3 +1,8 @@
+# Copyright (C) 2022 Formez PA
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 module Decidim
   module Cie
     module Settings
@@ -14,6 +19,7 @@ module Decidim
           sso_attributes[:protocol_binding] = self.class.superclass.saml_bindings[:post]
           sso_attributes[:relay_state] = relay_state
           sso_attributes[:current_consumer_index] = settings[:current_consumer_index]
+          sso_attributes[:current_attribute_index] = settings[:current_attribute_index]
           @settings = sso_attributes
         end
 

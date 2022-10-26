@@ -1,3 +1,8 @@
+# Copyright (C) 2022 Formez PA
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 # frozen_string_literal: true
 
 module Decidim
@@ -29,36 +34,27 @@ module Decidim
             provider: oauth_data[:provider],
             uid: user_identifier,
             name: oauth_data[:info][:name],
-            # The nickname is automatically "parametrized" by Decidim core from
-            # the name string, i.e. it will be in correct format.
-            nickname: oauth_data[:info][:nickname] || oauth_data[:info][:name],
+            # nickname: oauth_data[:info][:nickname] || oauth_data[:info][:name],
             oauth_signature: user_signature,
             avatar_url: oauth_data[:info][:image],
             raw_data: oauth_hash
           }
         end
 
-        # Validate gets run very early in the authentication flow as it's the
-        # first method to call before anything else is done. The purpose of this
-        # method is to check that the authentication data returned by the AD
-        # federation service is valid and contains all the information that we
-        # would expect. Therefore, it "validates" that the authentication can
-        # be performed.
         def validate!
           raise ValidationError, "No SAML data provided" unless saml_attributes
 
-          actual_attributes = saml_attributes.attributes
-          actual_attributes.delete("fingerprint")
+          actual_attributes = saml_attributes
+          # actual_attributes = saml_attributes.attributes
+          # actual_attributes.delete("fingerprint")
           raise ValidationError, "No SAML data provided" if actual_attributes.blank?
 
           data_blank = actual_attributes.all? { |_k, val| val.blank? }
           raise ValidationError, "Invalid SAML data" if data_blank
           raise ValidationError, "Invalid person dentifier" if person_identifier_digest.blank?
 
-          # Check if there is already an existing identity which is bound to an
-          # existing user record. If the identity is not found or the user
-          # record bound to that identity no longer exists, the signed in user
-          # is a new user.
+          # Controlla se esiste un identity per un utente di esistente. Se l'identity
+          # non è trovata, l'utente è loggato come nuovo utente.
           id = ::Decidim::Identity.find_by(
             organization: organization,
             provider: oauth_data[:provider],
@@ -69,27 +65,6 @@ module Decidim
           true
         end
 
-        # User is only identified in case they were already logged in during the
-        # authentication flow. This can happen in case the service allows public
-        # registrations and authorization through Spid is enabled in the user's
-        # profile. This adds a new identity to an existing user unless the
-        # identity is already bound to another user profile which would happen
-        # e.g. in the following situation:
-        #
-        # - The user registered to the service through OmniAuth for the first
-        #   time using this OmniAuth identity.
-        # - Next time they came to the service, they created a new user account
-        #   in Decidim using the registration form with another email address.
-        # - Now, they sign in to the service using the manually created account.
-        # - They go to the authorization view to authorize themselves through
-        #   Spid (which adds the authorization metadata information that might
-        #   be required in order to perform actions).
-        # - Now the person has two accounts, one of which is already bound to a
-        #   user's OmniAuth identity.
-        # - There is a conflict because we cannot bind the same identity to two
-        #   different user profiles (which could lead to thefts).
-        # - This method will notice it and the OmniAuth login information will
-        #   not be stored to the user's authorization metadata.
         def identify_user!(user)
           identity = user.identities.find_by(
             organization: organization,
@@ -119,13 +94,6 @@ module Decidim
           i
         end
 
-        # The authorize_user! method will be performed when the sign in attempt
-        # has been verified and the user has been identified or alternatively a
-        # new identity has been created to them. The possibly configured SAML
-        # attributes are stored against the authorization making it possible to
-        # add action authorizer conditions based on the information passed from
-        # AD. E.g. some processes might be only limited to specific users within
-        # the organization belonging to a specific group.
         def authorize_user!(user)
           authorization = ::Decidim::Authorization.find_by(
             name: "#{tenant.name}_identity",
@@ -146,18 +114,11 @@ module Decidim
           }
           authorization.save!
 
-          # This will update the "granted_at" timestamp of the authorization
-          # which will postpone expiration on re-authorizations in case the
-          # authorization is set to expire (by default it will not expire).
           authorization.grant!
 
           authorization
         end
 
-        # Keeps the user data in sync with the federation server or invitation email after
-        # everything else is done and the user is just aboud to be redirected
-        # further to the next page after the successful login. This is called on
-        # every successful login callback request.
         def update_user!(user)
           user_changed = false
           if verified_email.present? && (user.email != verified_email)
@@ -186,8 +147,6 @@ module Decidim
           @user_identifier ||= oauth_data[:uid]
         end
 
-        # Create a unique signature for the user that will be used for the
-        # granted authorization.
         def user_signature
           @user_signature ||= ::Decidim::OmniauthRegistrationForm.create_signature(
             oauth_data[:provider],
@@ -199,15 +158,10 @@ module Decidim
           @metadata_collector ||= tenant.metadata_collector_for(saml_attributes)
         end
 
-        # Data that is stored against the authorization "permanently" (i.e. as
-        # long as the authorization is valid).
         def authorization_metadata
           metadata_collector.metadata
         end
 
-        # Digested format of the person's identifier to be used in the
-        # auto-generated emails. This is used so that the actual identifier is not
-        # revealed directly to the end user.
         def person_identifier_digest
           return if user_identifier.blank?
 

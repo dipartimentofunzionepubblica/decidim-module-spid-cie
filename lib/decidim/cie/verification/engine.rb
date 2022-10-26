@@ -1,9 +1,13 @@
+# Copyright (C) 2022 Formez PA
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 # frozen_string_literal: true
 
 module Decidim
   module Cie
     module Verification
-      # This is an engine that performs user authorization.
       class Engine < ::Rails::Engine
         isolate_namespace Decidim::Cie::Verification
 
@@ -27,7 +31,7 @@ module Decidim
 
         def load_seed
           Decidim::Cie.tenants.each do |tenant|
-            # Enable the authorizations for each tenant
+            # Abilita le autorizzazioni per ogni tenant
             org = Decidim::Organization.first
             org.available_authorizations << "#{tenant.name}_identity".to_sym
             org.save!

@@ -1,3 +1,8 @@
+# Copyright (C) 2022 Formez PA
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 # frozen_string_literal: true
 
 require 'deface'
@@ -11,11 +16,7 @@ require_relative "spid/authentication"
 require_relative "spid/verification"
 require_relative "spid/component"
 
-require_relative "cie"
-
 module Decidim
-  # This namespace holds the logic of the `Spid` component. This component
-  # allows users to create spid in a participatory space.
   module Spid
     autoload :Tenant, "decidim/spid/tenant"
 
@@ -34,7 +35,7 @@ module Decidim
           if tenant.name == existing.name
             raise(
               TenantSameName,
-              "Please define an individual name for the Spid tenant. The name \"#{tenant.name}\" is already in use."
+              "Definisci il nome del Tenant. Il nome \"#{tenant.name}\" è già in uso."
             )
           end
 
@@ -48,7 +49,7 @@ module Decidim
       end
 
       def setup!
-        raise "Spid module is already initialized!" if initialized?
+        raise "Il modulo SPID è già stato inizializzato!" if initialized?
 
         @initialized = true
         tenants.each(&:setup!)

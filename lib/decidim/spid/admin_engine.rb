@@ -1,3 +1,8 @@
+# Copyright (C) 2022 Formez PA
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 # frozen_string_literal: true
 
 require "rails"
@@ -7,7 +12,6 @@ require "decidim/core"
 
 module Decidim
   module Spid
-    # This is the engine that runs on the public interface of `Spid`.
     class AdminEngine < ::Rails::Engine
       isolate_namespace Decidim::Spid::Admin
 
@@ -24,8 +28,6 @@ module Decidim
       end
 
       initializer "decidim_spid_admin.mount_routes", before: "decidim_admin.mount_routes" do
-        # Mount the engine routes to Decidim::Core::Engine because otherwise
-        # they would not get mounted properly.
         Decidim::Admin::Engine.routes.append do
           mount Decidim::Spid::AdminEngine => "/"
         end

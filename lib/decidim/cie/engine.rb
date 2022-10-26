@@ -1,3 +1,8 @@
+# Copyright (C) 2022 Formez PA
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 # frozen_string_literal: true
 
 require "rails"
@@ -5,16 +10,11 @@ require "decidim/core"
 
 module Decidim
   module Cie
-    # This is the engine that runs on the public interface of cie.
     class Engine < ::Rails::Engine
       isolate_namespace Decidim::Cie
 
       routes do
         devise_scope :user do
-          # Manually map the sign out path in order to control the sign out flow
-          # through OmniAuth when the user signs out from the service. In these
-          # cases, the user needs to be also signed out from the AD federation
-          # server which is handled by the OmniAuth strategy.
           match(
             "/users/sign_out",
             to: "sessions#destroy",
@@ -22,8 +22,6 @@ module Decidim
             via: [:delete, :post]
           )
 
-          # This is the callback route after a returning from a successful sign
-          # out request through OmniAuth.
           match(
             "/users/slo_callback",
             to: "sessions#slo_callback",

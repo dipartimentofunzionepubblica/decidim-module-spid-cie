@@ -1,3 +1,8 @@
+# Copyright (C) 2022 Formez PA
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 # frozen_string_literal: true
 
 require 'decidim/spid/token_verifier'
@@ -12,14 +17,15 @@ module Decidim
         "cie"
       end
 
+      # Definisce l'entity ID del service provider
       config_accessor :sp_entity_id, instance_reader: false do
-        #todo: da gestire
+        ''
       end
 
-      # Certificato in string
+      # Certificato in stringa
       config_accessor :certificate, instance_reader: false
 
-      # Chiave privata in string
+      # Chiave privata in stringa
       config_accessor :private_key, instance_reader: false
 
       # Percorso relativo alla root dell'app del certificato
@@ -37,9 +43,6 @@ module Decidim
         nil
       end
 
-      # Defines how the session gets cleared when the OmniAuth strategy logs the
-      # user out. This has been customized to preserve the flash messages and the
-      # stored redirect location in the session after the session is destroyed.
       config_accessor :idp_slo_session_destroy do
         proc do |_env, session|
           flash = session["flash"]
@@ -51,75 +54,56 @@ module Decidim
         end
       end
 
-      # These are extra attributes that can be stored for the authorization
-      # metadata.
+      # Le chiavi che verranno salvata nell'autorizzazione
       config_accessor :metadata_attributes do
         {}
       end
 
-      # Fields to exclude from export due GDPR policy. Array of key from metadata_attributes
+      # I campi da escludere dall'export a causa della polocy GDPR.
+      # Deve contenere un'array di chiavi presenti in metadata_attributes
       config_accessor :export_exclude_attributes do
         []
       end
 
-      # Extra metadata to be included in the service provider metadata. Define as
-      # follows:
-      #
-      # Decidim::Cie.configure do |config|
-      #   # ...
-      #   config.sp_metadata = [
-      #     {
-      #       name: "Organization",
-      #       children: [
-      #         {
-      #           name: "OrganizationName",
-      #           attributes: { "xml:lang" => "en-US" },
-      #           content: "Acme"
-      #         }
-      #       ]
-      #     }
-      #   ]
-      # end
+      # Documentazione https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider
+      # Configurazioni relative al service provider. it obbligatorio
       config_accessor :organization do
         {}
       end
 
+      # Documentazione https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider
+      # Verificare obbligatorietà degli attributi in combinazione tra loro
       config_accessor :contact_people_administrative do
         {}
       end
 
+      # Documentazione https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider
+      # Verificare obbligatorietà degli attributi in combinazione tra loro
       config_accessor :contact_people_technical do
         {}
       end
 
+      # Dati dell'utente richiesti all'identity provider
       config_accessor :fields do
-        {}
+        []
       end
 
-      # Extra configuration for the omniauth strategy
-      config_accessor :extra do
-        {}
-      end
-
-      # Allows customizing the authorization workflow e.g. for adding custom
-      # workflow options or configuring an action authorizer for the
-      # particular needs.
+      # Permette di customizzare il workflow di autorizzazione.
       config_accessor :workflow_configurator do
         lambda do |workflow|
-          # By default, expiration is set to 0 minutes which means it will
-          # never expire.
+          # Di default, la scadenza è impostata a 0 minuti e quindi non scadrà
           workflow.expires_in = 0.minutes
         end
       end
 
-      # Allows customizing parts of the authentication flow such as validating
-      # the authorization data before allowing the user to be authenticated.
+      # Permette di customizzare parte del flusso di autenticazione (come 
+      # le validazioni) prima che l'utente venga autenticato.
       config_accessor :authenticator_class do
         Decidim::Cie::Authentication::Authenticator
       end
 
-      # Allows customizing how the authorization metadata gets collected from
-      # the SAML attributes passed from the authorization endpoint.
+      # Permette di customizzare parte del i metadata collezionati dagli
+      # attributi SAML.
       config_accessor :metadata_collector_class do
         Decidim::Cie::Verification::MetadataCollector
       end
@@ -129,44 +113,71 @@ module Decidim
         2
       end
 
+      # Link per reindirizzare dopo il login
       config_accessor :relay_state do
         '/'
       end
 
+      # Livello di crittografia SHA per la generazione delle signature
       config_accessor :sha do
         256
       end
 
+      # Attributo per matchare utente
       config_accessor :uid_attribute do
         :fiscalNumber
       end
 
+      # In caso di di metadata esistente e con servizi multupli utilizzare le seguenti configurazioni
+      # ResponseLocation opzionale
+      # Per aggiungere più AssertionConsumerService
       config_accessor :consumer_services do
         []
       end
 
+      # Per aggiungere più SingleLogoutService
       config_accessor :logout_services do
         []
       end
 
+      # Per customizzare il path del metadata rispetto al default generato
       config_accessor :metadata_path do
         nil
       end
 
+      # In caso di più AttributeConsumingService
       config_accessor :attribute_services do
         []
       end
 
+      # Per specificare il nome di ogni AttributeConsumingService. Ordinamento fondamentale
+      config_accessor :attribute_service_names do
+        []
+      end
+
+      # Default value: 0. Indice array per il AssertionConsumerService di default
       config_accessor :default_service_index do
         0
       end
 
+      # Default value: 0. Indicare l'indice (dell'array config.consumer_services) per il AssertionConsumerService da utilizzare per questo tenant
       config_accessor :current_consumer_index do
         0
       end
 
+      # Default value: 0. Indicare l'indice (dell'array config.attribute_services) per il AttributeConsumingServiceIndex da utilizzare per questo tenant
+      config_accessor :current_attribute_index do
+        0
+      end
+
+      # Default value: 0. Indicare l'indice (dell'array config.logout_services) per il SingleLogoutService da utilizzare per questo tenant
       config_accessor :current_logout_index do
         0
+      end
+
+      # Extra configurazioni
+      config_accessor :extra do
+        {}
       end
 
       def initialize
@@ -226,7 +237,9 @@ module Decidim
           consumer_services: consumer_services,
           logout_services: logout_services,
           attribute_services: attribute_services,
+          attribute_service_names: attribute_service_names,
           current_consumer_index: current_consumer_index,
+          current_attribute_index: current_attribute_index,
           current_logout_index: current_logout_index,
           config: config,
           skip_recipient_check: consumer_services.present?,
@@ -239,14 +252,13 @@ module Decidim
       def setup!
         setup_routes!
 
-        # Configure the SAML OmniAuth strategy for Devise
+        # Configurazione della strategia CieSAML OmniAuth per devise
         ::Devise.setup do |config|
           config.omniauth(name.to_sym, omniauth_settings)
         end
 
-        # Customized version of Devise's OmniAuth failure app in order to handle
-        # the failures properly. Without this, the failure requests would end
-        # up in an ActionController::InvalidAuthenticityToken exception.
+        # Customizzazione in caso di fallimenti altrimenti verrebbe sollevata
+        # l'eccezione ActionController::InvalidAuthenticityToken.
         devise_failure_app = OmniAuth.config.on_failure
         OmniAuth.config.request_validation_phase = Decidim::Spid::TokenVerifier.new
         OmniAuth.config.on_failure = proc do |env|
@@ -265,25 +277,18 @@ module Decidim
               :failure
             ).call(env)
           else
-            # Call the default for others.
             devise_failure_app.call(env)
           end
         end
       end
 
       def setup_routes!
-        # This assignment makes the config variable accessible in the block
-        # below.
         config = self.config
         sso_route = URI(config.consumer_services[config.current_consumer_index]['Location']).path rescue "/users/auth/#{config.name}/callback"
         slo_route = URI(config.logout_services[config.current_consumer_index]['Location']).path rescue "/users/auth/#{config.name}/slo"
         Decidim::Cie::Engine.routes do
           devise_scope :user do
-            # Manually map the SAML omniauth routes for Devise because the default
-            # routes are mounted by core Decidim. This is because we want to map
-            # these routes to the local callbacks controller instead of the
-            # Decidim core.
-            # See: https://git.io/fjDz1
+            # Mappatura delle route
             match(
               "/users/auth/#{config.name}",
               to: "omniauth_callbacks#passthru",
@@ -305,8 +310,6 @@ module Decidim
               via: [:post, :put, :patch]
             )
 
-            # Add the SLO and SPSLO paths to be able to pass these requests to
-            # OmniAuth.
             match(
               slo_route,
               to: "sessions#slo",
@@ -324,19 +327,15 @@ module Decidim
         end
       end
 
-      # Used to determine the default service provider entity ID in case not
-      # specifically set by the `sp_entity_id` configuration option.
+      # Usato per determinare il default service provider entity ID in caso non specificato in sp_entity_id.
       def application_host
         url_options = application_url_options
 
-        # Note that at least Azure AD requires all callback URLs to be HTTPS, so
-        # we'll default to that.
         host = url_options[:host]
         port = url_options[:port]
         protocol = url_options[:protocol]
         protocol = [80, 3000].include?(port.to_i) ? "http" : "https" if protocol.blank?
         if host.blank?
-          # Default to local development environment.
           host = "localhost"
           port ||= 3000
         end

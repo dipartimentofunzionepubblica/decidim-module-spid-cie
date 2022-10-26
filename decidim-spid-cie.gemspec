@@ -9,11 +9,11 @@ Gem::Specification.new do |s|
   s.authors = ["Lorenzo Angelone"]
   s.email = ["l.angelone@kapusons.it"]
   s.licenses = ["MIT"]
-  s.homepage = "https://github.com/decidim/decidim-module-spid"
+  s.homepage = "https://github.com/decidim/decidim-module-spid-cie"
   s.required_ruby_version = ">= 2.7"
 
-  s.name = "decidim-spid"
-  s.summary = "A decidim spid module"
+  s.name = "decidim-spid-cie"
+  s.summary = "A decidim SPID & CIE module"
   s.description = "SPID & CIE Integration for Decidim."
 
   s.files = Dir["{app,config,lib}/**/*", "Rakefile", "README.md"]

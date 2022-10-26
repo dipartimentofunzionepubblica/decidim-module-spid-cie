@@ -1,3 +1,8 @@
+// Copyright (C) 2022 Formez PA
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+// You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 @import 'button';
 
 .spid-selector-container {
@@ -71,7 +76,7 @@
       //visibility: hidden;
       //transition: all 0.25s ease-in-out;
       clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-      background-color: #06c;
+      background-color: #white;
       display: grid;
       position: absolute;
       top: 100%;
@@ -81,12 +86,18 @@
       align-items: start;
       gap: 3px;
       padding: 0px;
-      border: 3px solid #06c;
+      //border: 3px solid #06c;
       border-radius: 3px;
       z-index: 10;
+      background-color: white;
 
       &.opened {
         clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      }
+
+      > div:not([data-idp]) {
+        padding: 0 10px;
+        font-size: 14px;
       }
 
       [data-idp] {
@@ -96,7 +107,8 @@
         align-items: center;
         background-color: white;
         cursor: pointer;
-        height: 70px;
+        height: 45px;
+        border-bottom: 1px solid #06c;
 
         img {
           max-width: 125px;

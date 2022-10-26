@@ -12,7 +12,7 @@ require_relative "#{base_path}lib/decidim/spid/version"
 DECIDIM_VERSION = Decidim::Spid.decidim_version
 
 gem "decidim", DECIDIM_VERSION
-gem "decidim-spid", path: "."
+gem "decidim-spid-cie", path: "."
 
 gem "puma", ">= 4.3"
 gem "bootsnap", "~> 1.4"

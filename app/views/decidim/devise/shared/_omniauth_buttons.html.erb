@@ -1,20 +1,32 @@
+<%
+  # Copyright (C) 2022 Formez PA
+  # This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+  # This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+  # You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+%>
+
 <% if Devise.mappings[:user].omniauthable? && current_organization.enabled_omniauth_providers.any? %>
   <div class="row">
     <div class="columns large-4 mediumlarge-6 medium-8 medium-centered">
       <%- current_organization.enabled_omniauth_providers.keys.each do |provider| %>
-        <%- if provider == :spid %>
-          <%= render partial: 'decidim/spid/spid', locals: {
-            size: current_organization.enabled_omniauth_providers.dig(:spid, :size).to_sym,
-            url: decidim_spid.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:spid, :tenant_name)}_omniauth_authorize_url"),
-            method: :post
-
-          } %>
-        <% elsif provider == :cie %>
+        <%- if provider == :cie %>
+          <%- if current_organization.enabled_omniauth_providers.keys.include?(:spid) %>
+            <span class="register__separator">
+              <span class="register__separator__text"><%= t(".or") %></span>
+            </span>
+          <%- end %>
           <%= render partial: 'decidim/cie/cie', locals: {
-            size: current_organization.enabled_omniauth_providers.dig(:cie, :size).to_sym,
+            size: current_organization.enabled_omniauth_providers.dig(:cie, :button_size).to_sym,
             url: decidim_cie.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:cie, :tenant_name)}_omniauth_authorize_url"),
             method: :post
           } %>
+        <% elsif provider == :spid %>
+          <%= render partial: 'decidim/spid/spid', locals: {
+            size: current_organization.enabled_omniauth_providers.dig(:spid, :button_size).to_sym,
+            url: decidim_spid.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:spid, :tenant_name)}_omniauth_authorize_url"),
+            method: :post
+
+          }%>
         <% else %>
           <div class="social-register">
             <%= link_to decidim.send("user_#{provider}_omniauth_authorize_path"), class: "button button--social button--#{normalize_provider_name(provider)}", method: :post do %>

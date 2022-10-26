@@ -1,3 +1,8 @@
+# Copyright (C) 2022 Formez PA
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 require 'omniauth'
 require 'ruby-saml'
 require 'decidim/spid/utils'
@@ -78,7 +83,6 @@ module OmniAuth
         fail!(:invalid_ticket, $!)
       end
 
-      # Obtain an idp certificate fingerprint from the response.
       def response_fingerprint
         response = request.params["SAMLResponse"]
         response = (response =~ /^</) ? response : Base64.decode64(response)
@@ -148,7 +152,8 @@ module OmniAuth
         Hash[found_attributes]
       end
 
-      extra { { :raw_info => @attributes, :session_index => @session_index, :response_object =>  @response_object } }
+      # extra { { :raw_info => @attributes.attributes, :session_index => @session_index, :response_object =>  @response_object } }
+      extra { { :raw_info => @attributes.attributes } }
 
       def find_attribute_by(keys)
         keys.each do |key|
@@ -158,8 +163,6 @@ module OmniAuth
         nil
       end
 
-      # This method can be used externally to fetch information about the
-      # response, e.g. in case of failures.
       def response_object
         return nil unless request.params["SAMLResponse"]
 
@@ -168,7 +171,7 @@ module OmniAuth
             request.params["SAMLResponse"],
             options_for_response_object.merge(settings: settings)
           )
-          response.attributes["fingerprint"] = settings.idp_cert_fingerprint
+          # response.attributes["fingerprint"] = settings.idp_cert_fingerprint
           response
         end
       end
@@ -197,7 +200,6 @@ module OmniAuth
 
       end
 
-      #todo: ridefinire
       def slo_relay_state
         if request.params.has_key?("RelayState") && request.params["RelayState"] != ""
           request.params["RelayState"]
@@ -246,10 +248,8 @@ module OmniAuth
       end
 
       def options_for_response_object
-        # filter options to select only extra parameters
         opts = options.select {|k,_| RUBYSAML_RESPONSE_OPTIONS.include?(k.to_sym)}
 
-        # symbolize keys without activeSupport/symbolize_keys (ruby-saml use symbols)
         opts.inject({}) do |new_hash, (key, value)|
           new_hash[key.to_sym] = value
           new_hash

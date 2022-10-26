@@ -1,3 +1,8 @@
+# Copyright (C) 2022 Formez PA
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 require 'decidim/spid/secret_modifier'
 
 module Decidim
@@ -6,7 +11,7 @@ module Decidim
       class InstallGenerator < Rails::Generators::Base
         source_root File.expand_path('templates', __dir__)
 
-        desc "Creates a Decidim CIE Tenant" #", copy Identity Provider config file and add routes"
+        desc "Crea un Decidim CIE Tenant"
 
         argument :tenant_name, type: :string
         argument :entity_id, type: :string

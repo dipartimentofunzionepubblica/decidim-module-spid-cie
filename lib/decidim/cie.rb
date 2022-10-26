@@ -1,3 +1,8 @@
+# Copyright (C) 2022 Formez PA
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 # frozen_string_literal: true
 
 require "omniauth/strategies/cie_saml"
@@ -10,8 +15,6 @@ require_relative "cie/verification"
 require_relative "cie/component"
 
 module Decidim
-  # This namespace holds the logic of the `Cie` component. This component
-  # allows users to create cie in a participatory space.
   module Cie
     autoload :Tenant, "decidim/cie/tenant"
 
@@ -30,7 +33,7 @@ module Decidim
           if tenant.name == existing.name
             raise(
               TenantSameName,
-              "Please define an individual name for the Cie tenant. The name \"#{tenant.name}\" is already in use."
+              "Definisci il nome del Tenant. Il nome \"#{tenant.name}\" è già in uso."
             )
           end
 
@@ -44,7 +47,7 @@ module Decidim
       end
 
       def setup!
-        raise "Cie module is already initialized!" if initialized?
+        raise "Il modulo CIE è già stato inizializzato!" if initialized?
 
         @initialized = true
         tenants.each(&:setup!)

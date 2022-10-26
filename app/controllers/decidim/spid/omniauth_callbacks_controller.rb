@@ -1,9 +1,13 @@
+# Copyright (C) 2022 Formez PA
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 # frozen_string_literal: true
 
 module Decidim
   module Spid
     class OmniauthCallbacksController < ::Decidim::Devise::OmniauthRegistrationsController
-      # Make the view helpers available needed in the views
       helper Decidim::Spid::Engine.routes.url_helpers
       helper_method :omniauth_registrations_path
 
@@ -19,24 +23,17 @@ module Decidim
         if user_signed_in?
           authenticator.identify_user!(current_user)
 
-          # Add the authorization for the user
+          # Aggiunge l'autorizzazione per l'utente
           return fail_authorize unless authorize_user(current_user)
 
-          # Make sure the user details are up to date
+          # Aggiorna le informazioni dell'utente
           authenticator.update_user!(current_user)
 
-          # Show the success message and redirect back to the authorizations
-          flash[:notice] = t(
-            "authorizations.create.success",
-            scope: "decidim.spid.verification"
-          )
-          return redirect_to(
-            stored_location_for(resource || :user) ||
-              decidim.root_path
-          )
+          flash[:notice] = t("authorizations.create.success", scope: "decidim.spid.verification")
+          return redirect_to(stored_location_for(resource || :user) || decidim.root_path)
         end
 
-        # Normal authentication request, proceed with Decidim's internal logic.
+        # Normale richiesta di autorizzazione, procede con la logica di Decidim
         send(:create)
 
       rescue Decidim::Spid::Authentication::ValidationError => e
@@ -47,7 +44,8 @@ module Decidim
 
       def create
         form_params = user_params_from_oauth_hash || params.require(:user).permit!
-        origin = Base64.strict_decode64(session[:"#{Decidim::Spid::Utils.session_prefix}sso_params"]["relay_state"]) rescue ''
+        form_params.merge!(params.require(:user).permit!) if params.dig(:user).present?
+        origin = Base64.strict_decode64(session[:"#{session_prefix}sso_params"]["relay_state"]) rescue ''
 
         invitation_token = invitation_token(origin)
         verified_e = verified_email
@@ -56,11 +54,11 @@ module Decidim
         invited_user = nil
         if invitation_token.present?
           invited_user = resource_class.find_by_invitation_token(invitation_token, true)
-          @form = form(OmniauthRegistrationForm).from_params(invited_user.attributes.merge(form_params))
+          @form = form(OmniauthSpidRegistrationForm).from_params(invited_user.attributes.merge(form_params))
           @form.email ||= invited_user.email
           verified_e = invited_user.email
         else
-          @form = form(OmniauthRegistrationForm).from_params(form_params)
+          @form = form(OmniauthSpidRegistrationForm).from_params(form_params)
           @form.email ||= verified_e
           verified_e ||= form_params.dig(:email)
         end
@@ -69,7 +67,7 @@ module Decidim
         # in quanto a fine processo all'utente viene aggiornata l'email e il tutto protrebbe essere invalido
         if invited_user.present? && form_params.dig(:raw_data, :info, :email).present? && invited_user.email != form_params.dig(:raw_data, :info, :email) &&
           current_organization.users.where(email: form_params.dig(:raw_data, :info, :email)).where.not(id: invited_user.id).present?
-          set_flash_message :alert, :failure, kind: @form.provider.capitalize, reason: t("decidim.devise.omniauth_registrations.create.email_already_exists")
+          set_flash_message :alert, :failure, kind: "SPID", reason: t("decidim.devise.omniauth_registrations.create.email_already_exists")
           return redirect_to after_omniauth_failure_path_for(resource_name)
         end
 
@@ -81,9 +79,9 @@ module Decidim
 
         CreateOmniauthRegistration.call(@form, verified_e) do
           on(:ok) do |user|
-            # Se l'identità SPID è già utilizzata da un'altro account
+            # Se l'identità SPID è già utilizzata da un altro account
             if invited_user.present? && invited_user.email != user.email
-              set_flash_message :alert, :failure, kind: @form.provider.capitalize, reason: t("decidim.devise.omniauth_registrations.create.email_already_exists")
+              set_flash_message :alert, :failure, kind: "SPID", reason: t("decidim.devise.omniauth_registrations.create.email_already_exists")
               return redirect_to after_omniauth_failure_path_for(resource_name)
             end
 
@@ -104,11 +102,11 @@ module Decidim
               if existing_identity
                 Decidim::ActionLogger.log(:login, user, existing_identity, {})
               else
-                i = user.identities.find_by(uid: session["#{Decidim::Spid::Utils.session_prefix}uid"]) rescue nil
+                i = user.identities.find_by(uid: session["#{session_prefix}uid"]) rescue nil
                 Decidim::ActionLogger.log(:registration, user, i, {})
               end
               sign_in_and_redirect user, verified_email: verified_e, event: :authentication
-              set_flash_message :notice, :success, kind: @form.provider.capitalize
+              set_flash_message :notice, :success, kind: "SPID"
             else
               expire_data_after_sign_in!
               user.resend_confirmation_instructions unless user.confirmed?
@@ -118,14 +116,12 @@ module Decidim
           end
 
           on(:invalid) do
-            set_flash_message :notice, :success, kind: @form.provider.capitalize
+            set_flash_message :notice, :success, kind: "SPID"
             render :new
           end
 
           on(:error) do |user|
-            if user.errors[:email]
-              set_flash_message :alert, :failure, kind: @form.provider.capitalize, reason: t("decidim.devise.omniauth_registrations.create.email_already_exists")
-            end
+            set_flash_message :alert, :failure, kind: "SPID", reason: user.errors.full_messages.try(:first)
 
             render :new
           end
@@ -137,22 +133,7 @@ module Decidim
         saml_response = strategy.response_object if strategy
         return super unless saml_response
 
-        validations = [
-          # The success status validation fails in case the response status
-          # code is something else than "Success". This is most likely because
-          # of one the reasons explained above. In general there are few
-          # possible explanations for this:
-          # 1. The user cancelled the request and returned to the service.
-          # 2. The underlying identity service the IdP redirects to rejected
-          #    the request for one reason or another. E.g. the user cancelled
-          #    the request at the identity service.
-          # 3. There is some technical problem with the identity provider
-          #    service or the XML request sent to there is malformed.
-          :success_status,
-          # Checks if the local session should be expired, i.e. if the user
-          # took too long time to go through the authorization endpoint.
-          :session_expiration,
-        ]
+        validations = [ :success_status, :session_expiration ]
         validations.each do |key|
           next if saml_response.send("validate_#{key}")
 
@@ -163,24 +144,16 @@ module Decidim
         super
       end
 
-      # This is overridden method from the Devise controller helpers
-      # This is called when the user is successfully authenticated which means
-      # that we also need to add the authorization for the user automatically
-      # because a succesful Active Directory authentication means the user has
-      # been successfully authorized as well.
       def sign_in_and_redirect(resource_or_scope, *args)
-        # Add authorization for the user
         if resource_or_scope.is_a?(::Decidim::User)
           return fail_authorize unless authorize_user(resource_or_scope)
 
-          # Make sure the user details are up to date
           authenticator.update_user!(resource_or_scope)
         end
 
         super
       end
 
-      # Disable authorization redirect for the first login
       def first_login_and_not_authorized?(_user)
         false
       end
@@ -205,15 +178,10 @@ module Decidim
         redirect_to stored_location_for(resource || :user) || decidim.root_path
       end
 
-      # Needs to be specifically defined because the core engine routes are not
-      # all properly loaded for the view and this helper method is needed for
-      # defining the omniauth registration form's submit path.
       def omniauth_registrations_path(resource)
         decidim_spid.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:spid, :tenant_name)}_omniauth_create_url")
       end
 
-      # Private: Create form params from omniauth hash
-      # Since we are using trusted omniauth data we are generating a valid signature.
       def user_params_from_oauth_hash
         authenticator.user_params_from_oauth_hash
       end
@@ -237,6 +205,10 @@ module Decidim
                     end
       end
 
+      def session_prefix
+        tenant.name + '_spid_'
+      end
+
       def invitation_token(url)
         begin
           CGI.parse(URI.parse(url).query).dig('invitation_token').first
@@ -247,6 +219,13 @@ module Decidim
 
       def verified_email
         authenticator.verified_email
+      end
+
+      def oauth_hash
+        raw_hash = request.env["omniauth.auth"] || JSON.parse(params.dig(:user, :raw_data))
+        return {} unless raw_hash
+
+        raw_hash.deep_symbolize_keys
       end
     end
   end

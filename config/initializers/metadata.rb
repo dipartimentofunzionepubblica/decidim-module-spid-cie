@@ -1,3 +1,8 @@
+# Copyright (C) 2022 Formez PA
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
+
 require "uri"
 
 require "onelogin/ruby-saml/logging"
@@ -67,8 +72,7 @@ module OneLogin
               "Binding" => cs['Binding'],
               "Location" => cs['Location'],
               "index" => index
-            }.merge( cs['ResponseLocation'] ? { "ResponseLocation" => cs['ResponseLocation'] } : {} ).
-              merge( settings.default_service_index == index ? { "isDefault" => settings.default_service_index == index} : {} )
+            }.merge( settings.default_service_index == index ? { "isDefault" => settings.default_service_index == index} : {} )
 
           end
         end
@@ -82,7 +86,7 @@ module OneLogin
             srv_name = sp_acs.add_element "md:ServiceName", {
               "xml:lang" => "it"
             }
-            srv_name.text = "Set #{index}"
+            srv_name.text = settings.attribute_service_names[index] || "Set #{index}"
             fields.each do |attribute|
               sp_req_attr = sp_acs.add_element "md:RequestedAttribute", {
                 "NameFormat" => attribute[:name_format],

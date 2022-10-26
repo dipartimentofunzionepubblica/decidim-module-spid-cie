@@ -87,6 +87,8 @@ en:
         info_message: If this is your first time accessing this platform, please ignore this message. Instead, to connect the old user log in first and then log in from the profile.
         disclaimer: "SPID is the access system that allows you to use the online services of the Public Administration and accredited private individuals with a unique digital identity. If you already have a digital identity, log in with your manager's credentials. If you don't have a digital identity yet, request it from one of the managers."
         link: More information on SPID
+        request: Don't have SPID?
+        help: Need help?
       verification:
         authorizations:
           create:
@@ -99,9 +101,9 @@ en:
             tenant_name: "Enter the \"name\" used to identify tenant configurations."
             certificate: "The certificate expires on %{date}"
             new_certificate: "The new certificate expires on %{date}"
-            size: "Size must to be in [ s, m, l, xl]. Default: m"
+            button_size: "Button size must to be in [ s, m, l, xl]. Default: m"
           cie:
             tenant_name: "Enter the \"name\" used to identify tenant configurations."
             certificate: "The certificate expires on %{date}"
             new_certificate: "The new certificate expires on %{date}"
-            size: "Size must to be in [ s, m, l, xl]. Default: m"
+            button_size: "Button size must to be in [ s, m, l, xl]. Default: m"
