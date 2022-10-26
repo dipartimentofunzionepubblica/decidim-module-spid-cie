@@ -142,7 +142,8 @@ module Decidim
           return redirect_to after_omniauth_failure_path_for(resource_name)
         end
 
-        super
+        set_flash_message! :alert, :failure, kind: "CIE", reason: failure_message
+        redirect_to after_omniauth_failure_path_for(resource_name)
       end
 
       def sign_in_and_redirect(resource_or_scope, *args)
