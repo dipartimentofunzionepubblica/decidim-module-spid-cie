@@ -117,14 +117,15 @@ module OmniAuth
         begin
           URI(options["consumer_services"][options["current_consumer_index"]]['Location']).path == current_path ||
             URI(options["logout_services"][options["current_logout_index"]]['Location']).path == current_path ||
-            URI(options["metadata_path"]).path == current_path
+            URI(options["metadata_path"]).path == current_path ||
+            URI(options["logout_services"][options["current_logout_index"]]['ResponseLocation']).path == current_path
         rescue
           false
         end
       end
 
       def on_custom_slo?(subpath)
-        logout_path == current_path
+        logout_path == current_path || (response_path == current_path && request.params["SAMLResponse"].present?)
       end
 
       def on_custom_metadata
@@ -237,6 +238,10 @@ module OmniAuth
                              end
       end
 
+      def response_path
+        response_path ||= URI(options["logout_services"][options["current_logout_index"]]['ResponseLocation']).path rescue nil
+      end
+
       def metadata_path
         metadata_path ||= begin
                           path = URI(options[:metadata_path]).path if options[:metadata_path].is_a?(String)
@@ -263,7 +268,7 @@ module OmniAuth
       end
 
       def other_phase_for_slo
-        path = Base64.strict_decode64(session[:"#{session_prefix}sso_params"]["relay_state"])
+        path = Base64.strict_decode64(session[:"#{session_prefix}sso_params"]["relay_state"]) rescue options["relay_state"]
         valid, msg = slo_request(request.params["SAMLResponse"], options)
 
         if valid

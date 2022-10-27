@@ -267,7 +267,9 @@ module Decidim
                                 env["PATH_INFO"] &&
                                   [consumer_services[current_consumer_index]["Location"],
                                    logout_services[current_logout_index]["Location"],
-                                   metadata_path].map { |a| URI(a).path }.include?(env["PATH_INFO"])
+                                   (logout_services[current_logout_index]["ResponseLocation"] rescue nil),
+                                   (logout_services[current_logout_index]["ResponseLocation"] + "/" rescue nil),
+                                   metadata_path].compact.map { |a| URI(a).path }.include?(env["PATH_INFO"])
                               rescue
                                 false
                               end
