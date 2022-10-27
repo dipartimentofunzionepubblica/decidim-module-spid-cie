@@ -5,6 +5,7 @@
 
 # frozen_string_literal: true
 
+# Gestisce il logout CIE, SPID o standard
 module Decidim
   module Cie
     class SessionsController < ::Decidim::Devise::SessionsController

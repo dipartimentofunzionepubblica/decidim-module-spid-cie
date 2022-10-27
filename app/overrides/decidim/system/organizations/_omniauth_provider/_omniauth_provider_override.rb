@@ -3,6 +3,7 @@
 # This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 # You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
 
+# Aggiunge nel pannello di amministrazione /system la scadenza dei certificati a titolo informativo del sistemista
 Deface::Override.new(virtual_path: "decidim/system/organizations/_omniauth_provider",
                      name: "add-certificate-expiration",
                      insert_bottom: "div.card-section") do

@@ -3,6 +3,8 @@
 # This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 # You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
 
+# Viene forzato in fase di registrazione l'utente a conservare l'email proveniente da SPID
+# Aggiunto campo per la gestione omniauth in caso di errori di validazioni
 Deface::Override.new(virtual_path: "decidim/devise/omniauth_registrations/new",
                      name: "disable-email-field",
                      replace: "erb:contains('f.email_field :email')") do

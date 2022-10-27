@@ -8,6 +8,8 @@ require 'ruby-saml'
 require 'decidim/spid/utils'
 require 'decidim/spid/models'
 
+# Strategia SPID SAML personalizzata secondo le configurazioni nell'initializer
+
 module OmniAuth
   module Strategies
     class SpidSaml

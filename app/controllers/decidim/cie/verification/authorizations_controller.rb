@@ -3,7 +3,8 @@
 # This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 # You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
 
-
+# Aggiunge la possibilità di collegare l'account CIE dalle impostazioni
+# dell'utente se le autorizzazioni sono abilitate da /system
 module Decidim
   module Cie
     module Verification
@@ -14,7 +15,7 @@ module Decidim
 
         # todo: remove unnecessary
         include Decidim::UserProfile
-        include Decidim::Verifications::Renewable
+        # include Decidim::Verifications::Renewable
         helper Decidim::DecidimFormHelper
         helper Decidim::CtaButtonHelper
         helper Decidim::AuthorizationFormHelper

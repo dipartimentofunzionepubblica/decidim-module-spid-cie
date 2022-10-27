@@ -5,6 +5,8 @@
 
 # frozen_string_literal: true
 
+# Helper backoffice con loghi CIE e SPID per aggiungere un badge agli utenti che hanno utilizzato
+# queste autorizzazioni
 module Decidim
   module Spid
     module Admin

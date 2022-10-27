@@ -8,7 +8,7 @@ require "uri"
 require "onelogin/ruby-saml/logging"
 require "onelogin/ruby-saml/utils"
 
-# Necessario override per supportare multipli AttributeConsumingService
+# Necessario override per supportare multipli AttributeConsumingService, SingleLogoutService
 
 module OneLogin
   module RubySaml

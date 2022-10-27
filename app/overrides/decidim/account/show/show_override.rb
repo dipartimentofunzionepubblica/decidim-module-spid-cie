@@ -3,6 +3,7 @@
 # This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 # You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
 
+# Una volta loggato con SPID viene disabilitata la possibiltò di cambiare password
 Deface::Override.new(virtual_path: "decidim/account/show",
                      name: "remove-change-password-with-spid",
                      replace: "erb[silent]:contains('if current_organization.sign_in_enabled?')",

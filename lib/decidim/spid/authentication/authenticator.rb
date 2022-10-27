@@ -5,6 +5,7 @@
 
 # frozen_string_literal: true
 
+# Classe che verifica il contenuto dei dati dell'utente
 module Decidim
   module Spid
     module Authentication

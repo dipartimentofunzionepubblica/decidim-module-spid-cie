@@ -5,6 +5,7 @@
 
 # frozen_string_literal: true
 
+# Mappatura dati da SPID a decidim tramite configigurazione initializer
 module Decidim
   module Cie
     module Verification

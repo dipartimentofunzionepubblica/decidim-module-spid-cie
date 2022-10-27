@@ -5,6 +5,8 @@
 
 # frozen_string_literal: true
 
+# User serializaer con personalizzazioni dell'export quali l'utilizzo di
+# della configurazione export_exclude_attributes
 module Decidim
   module Spid
     class UserSerializer < Decidim::Exporters::Serializer

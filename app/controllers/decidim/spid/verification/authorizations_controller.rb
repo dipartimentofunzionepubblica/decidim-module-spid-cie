@@ -5,6 +5,8 @@
 
 # frozen_string_literal: true
 
+# Aggiunge la possibilità di collegare l'account CIE dalle impostazioni
+# dell'utente se le autorizzazioni sono abilitate da /system
 module Decidim
   module Spid
     module Verification
@@ -15,7 +17,7 @@ module Decidim
 
         # todo: remove unnecessary
         include Decidim::UserProfile
-        include Decidim::Verifications::Renewable
+        # include Decidim::Verifications::Renewable
         helper Decidim::DecidimFormHelper
         helper Decidim::CtaButtonHelper
         helper Decidim::AuthorizationFormHelper

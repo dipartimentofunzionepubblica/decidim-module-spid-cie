@@ -8,6 +8,8 @@ require 'ruby-saml'
 require 'decidim/cie/utils'
 require 'decidim/cie/models'
 
+# Strategia CIE SAML personalizzata secondo le configurazioni nell'initializer
+
 module OmniAuth
   module Strategies
     class CieSaml

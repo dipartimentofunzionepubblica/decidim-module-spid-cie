@@ -16,7 +16,7 @@ it:
             'false': Non abilitato
             'true': Abilitato
         cie_presence:
-          label: SPID
+          label: CIE ID
           values:
             'false': Non abilitato
             'true': Abilitato

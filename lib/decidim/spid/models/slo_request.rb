@@ -5,6 +5,7 @@
 
 require 'onelogin/ruby-saml/validation_error'
 
+# Personalizzazioni Logout request SAML
 module Decidim
   module Spid
     class SloRequest < ::OneLogin::RubySaml::Logoutrequest

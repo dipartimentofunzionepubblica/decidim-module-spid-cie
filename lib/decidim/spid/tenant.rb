@@ -93,6 +93,7 @@ module Decidim
         lambda do |workflow|
           # Di default, la scadenza è impostata a 0 minuti e quindi non scadrà
           workflow.expires_in = 0.minutes
+          workflow.renewable = false
         end
       end
 

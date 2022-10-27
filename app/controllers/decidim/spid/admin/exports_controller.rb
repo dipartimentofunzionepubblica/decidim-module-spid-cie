@@ -5,6 +5,7 @@
 
 # frozen_string_literal: true
 
+# Gestisce l'export degli utenti da backoffice
 module Decidim
   module Spid
     module Admin

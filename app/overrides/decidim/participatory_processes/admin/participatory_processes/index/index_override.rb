@@ -3,6 +3,7 @@
 # This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 # You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
 
+# Agginge icona per export nel backoffice
 Deface::Override.new(virtual_path: "decidim/participatory_processes/admin/participatory_processes/index",
                      name: "add-custom-export",
                      insert_top: "td.table-list__actions") do

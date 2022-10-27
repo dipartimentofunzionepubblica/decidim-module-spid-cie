@@ -8,6 +8,7 @@ require "onelogin/ruby-saml/attribute_service"
 require "onelogin/ruby-saml/utils"
 require "onelogin/ruby-saml/validation_error"
 
+# Necessario override per definire nuove property nei setting di ruby-saml
 # Only supports SAML 2.0
 module OneLogin
   module RubySaml

@@ -5,6 +5,8 @@
 
 # frozen_string_literal: true
 
+# Gestisce il login omniauth SPID
+
 module Decidim
   module Spid
     class OmniauthCallbacksController < ::Decidim::Devise::OmniauthRegistrationsController
