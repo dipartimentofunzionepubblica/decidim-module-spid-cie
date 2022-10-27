@@ -14,7 +14,8 @@ module Decidim
       end
 
       def raw_data
-        super.to_json
+        data = super
+        data.is_a?(Hash) ? data.to_json : data
       end
 
     end
