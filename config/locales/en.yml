@@ -20,6 +20,12 @@ en:
           values:
             'false': Not enabled
             'true': Enabled
+        action_type:
+          label: Action type
+          values:
+            'registration': Registration
+            'login': Login
+            'logout': Logout
     admin_log:
       identity:
         logout: "%{user_name} logged out with provider %{resource_name} %{space_name}"

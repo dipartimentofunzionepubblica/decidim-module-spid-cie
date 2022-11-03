@@ -20,6 +20,12 @@ it:
           values:
             'false': Non abilitato
             'true': Abilitato
+        action_type:
+          label: Tipo di azione
+          values:
+            'registration': Registrazione
+            'login': Login
+            'logout': Logout
     admin_log:
       identity:
         logout: "%{user_name} ha effettuato il logout con il provider %{resource_name} %{space_name}"
