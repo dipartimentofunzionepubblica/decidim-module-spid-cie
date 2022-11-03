@@ -19,3 +19,11 @@ Deface::Override.new(virtual_path: "decidim/account/show",
   <% end %>
 "
 end
+
+Deface::Override.new(virtual_path: "decidim/account/show",
+                     name: "disable-email-when-is-a-spid-account",
+                     replace: "erb:contains('f.email_field :email')") do
+  "
+  <%= f.email_field :email, readonly: session['decidim-spid.tenant'].present? %>
+  "
+end

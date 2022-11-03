@@ -10,7 +10,11 @@
 <% if Devise.mappings[:user].omniauthable? && current_organization.enabled_omniauth_providers.any? %>
   <div class="row">
     <div class="columns large-4 mediumlarge-6 medium-8 medium-centered">
-      <%- current_organization.enabled_omniauth_providers.keys.each do |provider| %>
+      <%-
+        providers = current_organization.enabled_omniauth_providers.keys
+        spid_index, cie_index = providers.index(:spid), providers.index(:cie)
+        spid_index.present? && cie_index.present? && spid_index > -1 && cie_index > -1 && spid_index > cie_index && providers.reverse!
+        providers.each do |provider| %>
         <%- if provider == :cie %>
           <%- if current_organization.enabled_omniauth_providers.keys.include?(:spid) %>
             <span class="register__separator">

@@ -101,7 +101,6 @@ Decidim::Spid.configure do |config|
   #######################################
   # In caso di di metadata esistente e con servizi multupli utilizzare le seguenti configurazioni
 
-  # ResponseLocation opzionale
   # Per aggiungere più AssertionConsumerService
   # config.consumer_services = [
   #   { "Location" => "https://example.org/spid/samlsso", "Binding" => "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" },
@@ -109,6 +108,7 @@ Decidim::Spid.configure do |config|
   #   { "Location" => "https://example3.org/spid/login", "Binding" => "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" },
   # ]
   # Per aggiungere più SingleLogoutService
+  # ResponseLocation opzionale
   # config.logout_services = [
   #   { "Location" => "https://example.org/spid/samlslo", "Binding" => "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "ResponseLocation" => "https://example.org" },
   #   { "Location" => "https://example2.org/spid/samlslo", "Binding" => "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "ResponseLocation" => "https://example2.org" },

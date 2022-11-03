@@ -3,24 +3,19 @@
 # This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 # You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
 
-# Creata form custom per forzare l'utente a scegliere il nickname
+# frozen_string_literal: true
+
+# SPID notification job to send email
 module Decidim
   module Spid
-    class OmniauthSpidRegistrationForm < ::Decidim::OmniauthRegistrationForm
+    class SpidJob < ApplicationJob
+      queue_as :default
 
-      attribute :invitation_token, String
+      def perform(user)
+        return if user&.email.blank?
 
-      validates :nickname, presence: true
-
-      def normalized_nickname
-        nickname
+        SpidMailer.send_notification(user).deliver_now
       end
-
-      def raw_data
-        data = super
-        data.is_a?(Hash) ? data.to_json : data
-      end
-
     end
   end
 end

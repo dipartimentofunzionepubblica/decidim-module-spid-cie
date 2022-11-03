@@ -17,7 +17,7 @@ $ rails generate decidim:spid:install TENANT_NAME ENTITY_ID
 $ rails generate decidim:cie:install TENANT_NAME ENTITY_ID
 # Ripetere l'installer per ogni tenant di cui si ha bisogno.
 ```
-Sostituisti TENANT_NAME con una stringa univoca che identifica il tenant e ENTITY_ID con un identificativo (URI) univoco dell'entità SPID.
+Sostituire TENANT_NAME con una stringa univoca che identifica il tenant e ENTITY_ID con un identificativo (URI) univoco dell'entità SPID.
 Il TENANT_NAME deve essere univoco anche tra SPID e CIE.
 
 Verranno generati:
@@ -52,18 +52,18 @@ tramite il quale potete accedere alle seguenti configurazioni:
 
 |Nome|Valore di default|Descrizione|Obbligatorio|
 |:---|:---|:---|:---|
-|config.name|`'#{tenant_name}'`|Identifivativo univoco di ogni tenant. Compilato automaticamente dall'installer|✓|
+|config.name|`'#{tenant_name}'`|Identificativo univoco di ogni tenant. Compilato automaticamente dall'installer|✓|
 |config.sp_entity_id|`'#{entity_id}'`|Identificativo univoco (URI) dell'entità SPID|✓|
 |config.metadata_attributes|`{ name: "name", surname: "familyName", fiscal_code: 'fiscalNumber', gender: 'gender', birthday: 'dateOfBirth', birthplace: "placeOfBirth", company_name: "companyName", registered_office: "registeredOffice", iva_code: "ivaCode", id_card: 'idCard', mobile_phone: 'mobilePhone', email: 'email', address: 'address', digital_address: 'digitalAddress' }`|Attibuti che verranno salvati all'autenticazione con relativo mapping||
-|config.export_exclude_attributes|`'[ :name, :surname, :fiscal_code, :company_name, :registered_office, :email, :iva_code ]'`|Nel pannello di amministratore di sistema (/system) viene aggiunta la funzionalità di export per ogni processo. Questo attributo permette di escludere i campi nell'export per il GDPR.||
+|config.export_exclude_attributes|`'[ :name, :surname, :fiscal_code, :company_name, :registered_office, :email, :iva_code ]'`|In amministrazione (/admin) viene aggiunta la funzionalità di export per ogni processo. Questo attributo permette di escludere i campi nell'export per il GDPR.||
 |config.private_key_path|`.keys/private_key.pem`|Percorso relativo alla root dell'app della chiave privata|✓|
 |config.certificate_path|`.keys/certificate.pem`|Percorso relativo alla root dell'app del certificato. La data di scadenza verrà visualizzata nel pannello di amministratore di sistema (/system) una volta associato con il tenant_name.|✓|
 |config.new_certificate_path|`nil`|Percorso relativo alla root dell'app del nuovo certificato in caso di sostituzione. La data di scadenza verrà visualizzata nel pannello di amministratore di sistema (/system) una volta associato con il tenant_name.||
 |config.sha|`256`|Livello di crittografia SHA per la generazione delle signature||
-|config.uid_attribute|`:spidCode`|Attributo da utilizzare come identificato in omniauth||
+|config.uid_attribute|`:spidCode`|Attributo da utilizzare come identificato in omniauth come chiave univoca per identificare gli utenti||
 |config.spid_level|`2`|Il livello SPID richiesto dal tenant||
 |config.relay_state|`/`|Link per reindirizzare dopo il login||
-|config.organization|`{ it: { name: 'Nome organizzazione S.p.a', display: 'Nome org.', url: 'https://www.esempio.com' } }`|Configurazioni relative al service providere. Documentazione: https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider|✓|
+|config.organization|`{ it: { name: 'Nome organizzazione S.p.a', display: 'Nome org.', url: 'https://www.esempio.com' } }`|Configurazioni relative al service provider. Documentazione: https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider|✓|
 |config.contact_people_other|`{ public: true, ipa_code: 'IT12345678901', vat_number: 'IT12345678901', fiscal_code: 'XCGBCH47H29H072B', given_name: 'SPID Test Team', email: 'email@exaple.com', company: 'Nome organizzazione S.p.a', number: '+39061111111', givenName: "Name" }`|Configurazioni relative al service providere. Documentazione: https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider|✓|
 |config.contact_people_billing|`{}`|Configurazioni relative al service provider (privato). Documentazione: https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider||
 |config.fields|`[ { name: "name", friendly_name: 'Nome', is_required: true }, { name: 'familyName', friendly_name: 'Cognome', is_required: true }, { name: "fiscalNumber", friendly_name: 'Codice Fiscale', is_required: true }, { name: "email", friendly_name: 'Email', is_required: true }]`|Attributi richiesti all'Identity Provider. Configurazioni relative al service providere. Documentazione: https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider|✓|
@@ -104,7 +104,7 @@ Routes for Decidim::Spid::AdminEngine:
 ```
 
 ### Views
-I button "Entra con CIE" e "Entra con SPID" automaticamente verrànno visualizzati nella pagina di login se l'autenticazione viene abilitata nel pannello di amministratore di sistema (/system).
+I button "Entra con CIE" e "Entra con SPID" automaticamente verranno visualizzati nella pagina di login se l'autenticazione viene abilitata nel pannello di amministratore di sistema (/system).
 Per renderizzare il button predefinito:
 
 ```ruby
@@ -138,20 +138,20 @@ Dopo che gli IdP avranno messo in cache `CERT B`, potrai aggiornare le configura
 
 ### Ulteriori informazioni
 * Una volta associato un'utente esistente ad un utenza SPID o CIE viene inibita la classica autenticazione con email e password ed il recupera password.
-* Il login con SPID o CIE si integra con la registrazione integrativa di decidim presentanto la form di registrazione qualora i dati utenti non soddisfino le validazioni di registarzione.
+* Il login con SPID o CIE si integra con la registrazione integrativa di Decidim.
 * L'utente invitato ad un processo privato viene forzato ad loggarsi con SPID o CIE.
 * Viene tenuta traccia delle operazioni di login, logout e registrazioni tramite SPID o CIE e possono essere visualizzate Admin Activity log.
-* In amministrazione, gli utenti che hanno effettuato registrazione o login (per utenti esistenti) sono identificati con un badge relativamente per SPID o CIE. Inoltre è possibile filtrare gli utenti che hanno associato l'utenza SPID o CIE.
+* In amministrazione, gli utenti che hanno effettuato registrazione o login (per utenti esistenti) sono identificati con un badge relativo a SPID o CIE. Inoltre è possibile filtrare gli utenti che hanno associato l'utenza SPID o CIE.
 
 ## Configurazione in caso di servizi multipli
-In caso si ha la necissità di specificare più `AssertionConsumerService`, `SingleLogoutService` e `AttributeConsumingService` bisogna completare le seguenti configurazioni ed ignorare `config.fields`:
+In caso in cui si abbia la necessità di specificare più `AssertionConsumerService`, `SingleLogoutService` e `AttributeConsumingService` occorre completare le seguenti configurazioni ed ignorare i campi elencati in `config.fields`:
 
 |Nome|Valore di default|Descrizione|Obbligatorio|
 |:---|:---|:---|:---|
-|config.consumer_services|`[]`|Dettaglio AssertionConsumerService: Esempio: `config.consumer_services = [{ 'Location' => 'https://example.org/spid/samlsso', 'ResponseLocation' => 'https://example.org', 'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' }, ...]` |✓|
-|config.logout_services|`[]`|Dettaglio SingleLogoutService: Esempio: `config.logout_services = [ { 'Location' => 'https://example.org/spid/samlslo', 'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' }, ... ]`|✓|
+|config.consumer_services|`[]`|Dettaglio AssertionConsumerService: Esempio: `config.consumer_services = [{ 'Location' => 'https://example.org/spid/samlsso', 'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' }, ...]` |✓|
+|config.logout_services|`[]`|Dettaglio SingleLogoutService: Esempio: `config.logout_services = [ { 'Location' => 'https://example.org/spid/samlslo', 'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST', 'ResponseLocation' => 'https://example.org' }, ... ]`|✓|
 |config.metadata_path|`nil`|Per personalizzare l'url del metadata. Esempio: `config.metadata_path = "https://example.org/metadata/custom/path"`|✓|
-|config.default_service_index|`0`|Indicare l'indice dell'array (`config.consumer_services`) per specificare il servizio di default. |✓|
+|config.default_service_index|`0`|Indicare l'indice dell'array (`config.consumer_services`) per specificare il servizio di default.|✓|
 |config.current_consumer_index|`0`|Indicare l'indice (dell'array `config.consumer_services`) per il AssertionConsumerService da utilizzare per questo tenant|✓|
 |config.current_attribute_index|`0`|Indicare l'indice (dell'array config.attribute_services) per il AttributeConsumingServiceIndex da utilizzare per questo tenant|✓|
 |config.current_logout_index|`0`|Indicare l'indice (dell'array `config.logout_services`) per il SingleLogoutService da utilizzare per questo tenant|✓|
@@ -159,7 +159,11 @@ In caso si ha la necissità di specificare più `AssertionConsumerService`, `Sin
 |config.attribute_service_names|`[]`|Indicare il nome AttributeConsumingService per ogni servizio.  Esempio: `config.attribute_service_names = [ "Nome del servizio 1", "Nome del servizio 2"]` Attenzione: l'ordinamento è fondamentale per associare correttamente gli `config.attribute_services`.|✓|
 
 ## Contributori
-Gemma sviluppata da [Formez PA](https://www.formez.it) e da [Kapusons](https://www.kapusons.it). Per contatti scrivere a maintainer-partecipa@formez.it.
+Gem sviluppata da [Kapusons](https://www.kapusons.it) per [Formez PA](https://www.formez.it). Per contatti scrivere a maintainer-partecipa@formez.it.
+
+## Segnalazioni sulla sicurezza
+La gem utilizza tutte le raccomandazioni e le prescrizioni in materia di sicurezza previste da Decidim e dall’Agenzia per l’Italia Digitale per SPID. Per segnalazioni su possibili falle nella sicurezza del software riscontrate durante l'utilizzo preghiamo di usare il canale di comunicazione confidenziale attraverso l'indirizzo email security-partecipa@formez.it e non aprire segnalazioni pubbliche. E' indispensabile contestualizzare e dettagliare con la massima precisione le segnalazioni. Le segnalazioni anonime o non sufficientemente dettagliate non potranno essere verificate.
+
 
 ## Licenza
 Vedi [LICENSE-AGPLv3.txt](LICENSE-AGPLv3.txt).

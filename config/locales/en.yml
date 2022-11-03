@@ -89,6 +89,16 @@ en:
         link: More information on SPID
         request: Don't have SPID?
         help: Need help?
+      spid_mailer:
+        subject: account association successful
+        send_notification:
+          dear_user: "Dear user,"
+          content: "your Decidim account has been successfully associated with your SPID account. From now on your credentials have been deactivated and I may continue to log in with your SPID account."
+      cie_mailer:
+        subject: account association successful
+        send_notification:
+          dear_user: "Dear user,"
+          content: "your Decidim account has been successfully associated with your CIE account. From now on your credentials have been deactivated and I may continue to log in with your CIE account."
       verification:
         authorizations:
           create:

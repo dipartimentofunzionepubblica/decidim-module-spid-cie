@@ -85,6 +85,16 @@ it:
         link: Maggiori informazioni su SPID
         request: Non hai SPID?
         help: Serve aiuto?
+      spid_mailer:
+        subject: associazione account avvenuta con successo
+        send_notification:
+          dear_user: "Gentile utente,"
+          content: "il tuo account Decidim è stato associato correttamente al tuo account SPID. D'ora in avanti le tue credenziali sono state disattivate e potrei continuare ad accedere con il tuo account SPID."
+      cie_mailer:
+        subject: associazione account avvenuta con successo
+        send_notification:
+          dear_user: "Gentile utente,"
+          content: "il tuo account Decidim è stato associato correttamente al tuo account CIE. D'ora in avanti le tue credenziali sono state disattivate e potrei continuare ad accedere con il tuo account CIE."
       verification:
         authorizations:
           create:

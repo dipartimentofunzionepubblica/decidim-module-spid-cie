@@ -5,11 +5,19 @@
 
 # Aggiunge badge SPID o CIE agli utenti nel backoffice che hanno utilizzato
 # queste autorizzazioni
-Deface::Override.new(virtual_path: "decidim/admin/officializations/index",
-                     name: "add-badge-spid",
-                     insert_before: 'div.card-section tbody tr td erb[loud]:contains("translated_attribute(user.officialized_as)")') do
+Deface::Override.new(virtual_path: "decidim/admin/participatory_space_private_users/index",
+                     name: "add-badge-spid-header-to-private-users",
+                     insert_before: 'div.card-section thead tr th.actions') do
+  '
+  <th><%= t("decidim.admin.officializations.index.badge") %></th>
 '
-  <%= user.must_log_with_spid? ? spid_icon : "" %>
-  <%= user.must_log_with_cie? ? cie_icon : "" %>
+end
+
+Deface::Override.new(virtual_path: "decidim/admin/participatory_space_private_users/index",
+                     name: "add-badge-spid-to-private-users",
+                     insert_before: 'div.card-section tbody tr td.table-list__actions') do
+  '
+  <td><%= private_user.user.must_log_with_spid? ? spid_icon : "" %>
+  <%= private_user.user.must_log_with_cie? ? cie_icon : "" %></td>
 '
 end

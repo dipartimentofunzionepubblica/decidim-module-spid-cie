@@ -14,7 +14,11 @@
         <span class="register__separator__text"><%= t("or", scope: "decidim.devise.shared.omniauth_buttons") %></span>
       </span>
       <div class="text-center">
-        <%- current_organization.enabled_omniauth_providers.keys.each do |provider| %>
+        <%-
+          providers = current_organization.enabled_omniauth_providers.keys
+          spid_index, cie_index = providers.index(:spid), providers.index(:cie)
+          spid_index.present? && cie_index.present? && spid_index > -1 && cie_index > -1 && spid_index > cie_index && providers.reverse!
+          providers.each do |provider| %>
           <%- if provider == :cie %>
             <%- if current_organization.enabled_omniauth_providers.keys.include?(:spid) %>
               <span class="register__separator">

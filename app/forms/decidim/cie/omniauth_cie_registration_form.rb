@@ -8,6 +8,8 @@ module Decidim
   module Cie
     class OmniauthCieRegistrationForm < ::Decidim::OmniauthRegistrationForm
 
+      attribute :invitation_token, String
+
       validates :nickname, presence: true
 
       def normalized_nickname

@@ -3,24 +3,29 @@
 # This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 # You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
 
-# Creata form custom per forzare l'utente a scegliere il nickname
+# frozen_string_literal: true
+
+# Invia notifica email per informare l'utente che l'account è stato migrato
 module Decidim
   module Spid
-    class OmniauthSpidRegistrationForm < ::Decidim::OmniauthRegistrationForm
+    class SpidMailer < Decidim::ApplicationMailer
+      include Decidim::TranslationsHelper
+      include Decidim::SanitizeHelper
 
-      attribute :invitation_token, String
+      helper Decidim::TranslationsHelper
 
-      validates :nickname, presence: true
+      def send_notification(user)
+        with_user(user) do
+          @user = user
+          @organization = @user.organization
 
-      def normalized_nickname
-        nickname
+          subject = I18n.t(
+            "subject",
+            scope: "decidim.spid.spid_mailer"
+          )
+          mail(to: user.email, subject: subject)
+        end
       end
-
-      def raw_data
-        data = super
-        data.is_a?(Hash) ? data.to_json : data
-      end
-
     end
   end
 end

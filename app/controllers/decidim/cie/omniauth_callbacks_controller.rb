@@ -29,6 +29,7 @@ module Decidim
           # Aggiorna le informazioni dell'utente
           authenticator.update_user!(current_user)
 
+          Decidim::Cie::CieJob.perform_later(current_user)
           flash[:notice] = t("authorizations.create.success", scope: "decidim.cie.verification")
           return redirect_to(stored_location_for(resource || :user) || decidim.root_path)
         end
@@ -54,7 +55,9 @@ module Decidim
         invited_user = nil
         if invitation_token.present?
           invited_user = resource_class.find_by_invitation_token(invitation_token, true)
+          invited_user.nickname = nil # Forzo nickname a nil per invalidare il valore normalizzato di Decidim di default
           @form = form(OmniauthCieRegistrationForm).from_params(invited_user.attributes.merge(form_params))
+          @form.invitation_token = invitation_token
           @form.email ||= invited_user.email
           verified_e = invited_user.email
         else
@@ -77,7 +80,7 @@ module Decidim
           uid: @form.uid
         )
 
-        CreateOmniauthRegistration.call(@form, verified_e) do
+        CreateOmniauthCieRegistration.call(@form, verified_e) do
           on(:ok) do |user|
             # Se l'identità CIE è già utilizzata da un'altro account
             if invited_user.present? && invited_user.email != user.email
