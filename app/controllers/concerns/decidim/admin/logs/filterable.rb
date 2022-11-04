@@ -24,13 +24,13 @@ module Decidim
           end
 
           def filters
-            [ :spid_presence, :cie_presence, :action_type]
+            [ :spid_operation, :cie_operation, :action_type]
           end
 
           def filters_with_values
             {
-              spid_presence: %w(true false),
-              cie_presence: %w(true false),
+              spid_operation: %w(true),
+              cie_operation: %w(true),
               action_type: %w(registration login logout),
             }
           end

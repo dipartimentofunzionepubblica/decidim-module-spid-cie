@@ -50,6 +50,7 @@ module Decidim
 
         def locales
           template "spid.en.yml", "config/locales/spid-#{tenant_name}.en.yml"
+          template "spid.it.yml", "config/locales/spid-#{tenant_name}.it.yml"
           say_status :skip, "Completa le traduzione con le lingue disponibili config/locales/spid-#{tenant_name}.en.yml", :yellow
         end
 

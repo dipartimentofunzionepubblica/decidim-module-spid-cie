@@ -20,6 +20,14 @@ it:
           values:
             'false': Non abilitato
             'true': Abilitato
+        spid_operation:
+          label: SPID
+          values:
+            'true': Solo SPID
+        cie_operation:
+          label: CIE ID
+          values:
+            'true': Solo CIE ID
         action_type:
           label: Tipo di azione
           values:

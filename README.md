@@ -64,9 +64,9 @@ tramite il quale potete accedere alle seguenti configurazioni:
 |config.spid_level|`2`|Il livello SPID richiesto dal tenant||
 |config.relay_state|`/`|Link per reindirizzare dopo il login||
 |config.organization|`{ it: { name: 'Nome organizzazione S.p.a', display: 'Nome org.', url: 'https://www.esempio.com' } }`|Configurazioni relative al service provider. Documentazione: https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider|✓|
-|config.contact_people_other|`{ public: true, ipa_code: 'IT12345678901', vat_number: 'IT12345678901', fiscal_code: 'XCGBCH47H29H072B', given_name: 'SPID Test Team', email: 'email@exaple.com', company: 'Nome organizzazione S.p.a', number: '+39061111111', givenName: "Name" }`|Configurazioni relative al service providere. Documentazione: https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider|✓|
+|config.contact_people_other|`{ public: true, ipa_code: 'IT12345678901', vat_number: 'IT12345678901', fiscal_code: 'XCGBCH47H29H072B', given_name: 'SPID Test Team', email: 'email@exaple.com', company: 'Nome organizzazione S.p.a', number: '+39061111111', givenName: "Name" }`|Configurazioni relative al service provider. Documentazione: https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider|✓|
 |config.contact_people_billing|`{}`|Configurazioni relative al service provider (privato). Documentazione: https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider||
-|config.fields|`[ { name: "name", friendly_name: 'Nome', is_required: true }, { name: 'familyName', friendly_name: 'Cognome', is_required: true }, { name: "fiscalNumber", friendly_name: 'Codice Fiscale', is_required: true }, { name: "email", friendly_name: 'Email', is_required: true }]`|Attributi richiesti all'Identity Provider. Configurazioni relative al service providere. Documentazione: https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider|✓|
+|config.fields|`[ { name: "name", friendly_name: 'Nome', is_required: true }, { name: 'familyName', friendly_name: 'Cognome', is_required: true }, { name: "fiscalNumber", friendly_name: 'Codice Fiscale', is_required: true }, { name: "email", friendly_name: 'Email', is_required: true }]`|Attributi richiesti all'Identity Provider. Configurazioni relative al service provider. Documentazione: https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider|✓|
 
 ### URLs
 Il metadata se non diversamente specificato in `config.metadata_path` viene esposto `/users/auth/#{tenant_name}/metadata`.
@@ -152,9 +152,9 @@ In caso in cui si abbia la necessità di specificare più `AssertionConsumerServ
 |config.logout_services|`[]`|Dettaglio SingleLogoutService: Esempio: `config.logout_services = [ { 'Location' => 'https://example.org/spid/samlslo', 'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST', 'ResponseLocation' => 'https://example.org' }, ... ]`|✓|
 |config.metadata_path|`nil`|Per personalizzare l'url del metadata. Esempio: `config.metadata_path = "https://example.org/metadata/custom/path"`|✓|
 |config.default_service_index|`0`|Indicare l'indice dell'array (`config.consumer_services`) per specificare il servizio di default.|✓|
-|config.current_consumer_index|`0`|Indicare l'indice (dell'array `config.consumer_services`) per il AssertionConsumerService da utilizzare per questo tenant|✓|
-|config.current_attribute_index|`0`|Indicare l'indice (dell'array config.attribute_services) per il AttributeConsumingServiceIndex da utilizzare per questo tenant|✓|
-|config.current_logout_index|`0`|Indicare l'indice (dell'array `config.logout_services`) per il SingleLogoutService da utilizzare per questo tenant|✓|
+|config.current_consumer_index|`0`|Indicare l'indice dell'array (`config.consumer_services`) per il AssertionConsumerService da utilizzare per questo tenant|✓|
+|config.current_attribute_index|`0`|Indicare l'indice dell'array (`config.attribute_services`) per il AttributeConsumingServiceIndex da utilizzare per questo tenant|✓|
+|config.current_logout_index|`0`|Indicare l'indice dell'array (`config.logout_services`) per il SingleLogoutService da utilizzare per questo tenant|✓|
 |config.attribute_services|`[]`|Indicare AttributeConsumingService per ogni servizio.  Esempio: `config.attribute_services = [ [ { name: "name", friendly_name: 'Nome', is_required: true }, { name: 'familyName', friendly_name: 'Cognome', is_required: true }, ...], ...]` Per ulteriori dettagli vedere `config.fields`.|✓|
 |config.attribute_service_names|`[]`|Indicare il nome AttributeConsumingService per ogni servizio.  Esempio: `config.attribute_service_names = [ "Nome del servizio 1", "Nome del servizio 2"]` Attenzione: l'ordinamento è fondamentale per associare correttamente gli `config.attribute_services`.|✓|
 

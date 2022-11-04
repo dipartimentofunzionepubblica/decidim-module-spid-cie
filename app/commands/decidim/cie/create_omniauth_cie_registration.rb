@@ -23,6 +23,7 @@ module Decidim
         if persisted = @user.persisted?
           @user.skip_confirmation! if !@user.confirmed? && @user.email == verified_email
           @user.nickname = form.normalized_nickname if form.invitation_token.present?
+          @user.name = form.name if form.invitation_token.present?
         else
           @user.email = (verified_email || form.email)
           @user.name = form.name

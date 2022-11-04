@@ -58,6 +58,7 @@ module Decidim
         if invitation_token.present?
           invited_user = resource_class.find_by_invitation_token(invitation_token, true)
           invited_user.nickname = nil # Forzo nickname a nil per invalidare il valore normalizzato di Decidim di default
+          form_params[:name] = params.dig(:user, :name).present? ? params.dig(:user, :name) : invited_user.name
           @form = form(OmniauthSpidRegistrationForm).from_params(invited_user.attributes.merge(form_params))
           @form.invitation_token = invitation_token
           @form.email ||= invited_user.email

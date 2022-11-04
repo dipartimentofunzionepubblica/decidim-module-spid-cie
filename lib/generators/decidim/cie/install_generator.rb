@@ -50,6 +50,7 @@ module Decidim
 
         def locales
           template "cie.en.yml", "config/locales/cie-#{tenant_name}.en.yml"
+          template "cie.it.yml", "config/locales/cie-#{tenant_name}.it.yml"
           say_status :skip, "Completa le traduzione con le lingue disponibili config/locales/cie-#{tenant_name}.en.yml", :yellow
         end
 

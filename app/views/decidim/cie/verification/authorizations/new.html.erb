@@ -5,10 +5,23 @@
   # You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
 
   # Renderizzo il button CIE nelle autorizzazioni del profilo utente in caso siano abilitate da /system
+
+  tenant_name = current_organization.enabled_omniauth_providers.dig(:cie, :tenant_name)
 %>
+
+<div class="row">
+  <p>
+    <strong>
+      <%= t("decidim.authorization_handlers.#{tenant_name}_identity.title") %>
+    </strong>
+  </p>
+  <p>
+    <%= t("decidim.authorization_handlers.#{tenant_name}_identity.description") %>
+  </p>
+</div>
 
 <%= render partial: 'decidim/cie/cie', locals: {
   size: current_organization.enabled_omniauth_providers.dig(:cie, :button_size).to_sym,
-  url: decidim_cie.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:cie, :tenant_name)}_omniauth_authorize_url"),
+  url: decidim_cie.public_send("user_#{tenant_name}_omniauth_authorize_url"),
   method: :post
 } %>

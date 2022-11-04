@@ -11,7 +11,7 @@ module Decidim
       private
 
       def present_resource_name
-        resource && resource.provider
+        resource && resource.provider && (Decidim::Spid.tenants.map(&:name).include?(resource.provider) ? 'SPID' : 'CIE ID')
       end
 
     end
