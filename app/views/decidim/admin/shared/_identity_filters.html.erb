@@ -9,12 +9,52 @@
       </li>
     </ul>
   </div>
+  <div class="fcell search">
+    <div class="filters row grid-x">
+      <div class="column small-6 medium-2">
+        <%= text_field :q, :from, class: "change-date", "data-datepicker": "",
+                       "data-date-format": "yyyy-mm-dd", value: params.dig(:q, :from),
+                       "data-content": "#{applied_filter_tag(:from, :from, filterable_i18n_scope_from_ctx(nil))}",
+                       placeholder: I18n.t("#{filterable_i18n_scope_from_ctx(nil)}.from.label") %>
+      </div>
+      <div class="column small-6 medium-2">
+        <%= text_field :q, :to, class: "change-date", "data-datepicker": "",
+                       "data-date-format": "yyyy-mm-dd", value: params.dig(:q, :to),
+                       "data-content": "#{applied_filter_tag(:to, :to, filterable_i18n_scope_from_ctx(nil))}",
+                        placeholder: I18n.t("#{filterable_i18n_scope_from_ctx(nil)}.to.label") %>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="card-section fcell grid-x">
   <div class="cell medium-10 filter-status">
     <%= applied_filters_tags(i18n_ctx) %>
+    <% if params.dig(:q, :from) %>
+      <%= applied_filter_tag(:from, :from, filterable_i18n_scope_from_ctx(nil)) %>
+    <% end %>
+    <% if params.dig(:q, :to) %>
+      <%= applied_filter_tag(:to, :to, filterable_i18n_scope_from_ctx(nil)) %>
+    <% end %>
   </div>
   <div class="cell auto text-right">
     <%= admin_filters_pagination %>
   </div>
 </div>
+<script>
+    $( document ).ready(function() {
+        $(".change-date").each(function() {
+            $(this).change(function() {
+                var url = new URL(location.href);
+                var search_params = url.searchParams;
+
+                search_params.set($(this).attr("name"), $(this).val());
+                url.search = search_params.toString();
+                var new_url = url.toString();
+                $('.filter-status').append($(this).data("content"))
+                location = new_url;
+                // location.reload();
+
+            })
+        });
+    });
+</script>

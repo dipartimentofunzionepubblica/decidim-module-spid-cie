@@ -33,6 +33,12 @@ module Decidim
             identity_ids = Decidim::Identity.where(provider: Decidim::Cie.tenants.map(&:name))
             @logs = @logs.where(resource_type: "Decidim::Identity", resource_id: identity_ids)
           end
+          if params[:q][:from].present?
+            @logs = @logs.where("created_at >= ?", Date.parse(params[:q][:from]).at_beginning_of_day)
+          end
+          if params[:q][:to].present?
+            @logs = @logs.where("created_at <= ?", Date.parse(params[:q][:to]).at_end_of_day)
+          end
           @logs = @logs.where(action: params[:q][:action_type]) if params[:q][:action_type].present?
         end
 
@@ -40,6 +46,10 @@ module Decidim
         @logs = @logs.order(created_at: :desc)
                   .page(params[:page])
                   .per(params[:per_page])
+      end
+
+      def collection
+        logs
       end
 
     end

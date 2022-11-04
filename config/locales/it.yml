@@ -26,6 +26,10 @@ it:
             'registration': Registrazione
             'login': Login
             'logout': Logout
+        from:
+          label: Data da
+        to:
+          label: Data a
     admin_log:
       identity:
         logout: "%{user_name} ha effettuato il logout con il provider %{resource_name} %{space_name}"

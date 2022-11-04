@@ -34,6 +34,8 @@ module Decidim
               action_type: %w(registration login logout),
             }
           end
+
+
         end
       end
     end
