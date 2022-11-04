@@ -28,8 +28,8 @@ en:
             'logout': Logout
         from:
           label: Data from
-          to:
-            label: Date to
+        to:
+          label: Date to
     admin_log:
       identity:
         logout: "%{user_name} logged out with provider %{resource_name} %{space_name}"
