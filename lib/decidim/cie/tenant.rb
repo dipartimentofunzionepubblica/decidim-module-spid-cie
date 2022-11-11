@@ -273,7 +273,7 @@ module Decidim
                                    metadata_path].compact.map { |a| URI(a).path }.include?(env["PATH_INFO"])
 
                               rescue
-                                false
+                                metadata_path.presence ? (env["PATH_INFO"] == URI(metadata_path).path) : false
                               end
           if exnovo_metadata || existing_metadata
             env["devise.mapping"] = ::Devise.mappings[:user]

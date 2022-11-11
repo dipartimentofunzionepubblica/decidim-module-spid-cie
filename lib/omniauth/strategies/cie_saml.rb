@@ -122,7 +122,7 @@ module OmniAuth
             URI(options["metadata_path"]).path == current_path ||
             URI(options["logout_services"][options["current_logout_index"]]['ResponseLocation']).path == current_path
         rescue
-          false
+          options["metadata_path"].presence ? (URI(options["metadata_path"]).path == current_path) : false
         end
       end
 

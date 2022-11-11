@@ -19,7 +19,7 @@
     <% Decidim::Cie::Idp.all.each do |k, p| %>
       <div data-idp="<%= k %>" data-url="">
         <%= form_tag url, method: method do %>
-          <%= image_pack_tag "media/images/entra_con_cie.svg", alt: "CIE ID Login", class: "cie-italia-it-button cie-italia-it-button-size-#{size} button-cie" %>
+          <%= image_pack_tag "media/images/entra_con_cie.svg", alt: "CIE Login", class: "cie-italia-it-button cie-italia-it-button-size-#{size} button-cie" %>
           <%= hidden_field_tag "sso[idp]", k %>
           <%= hidden_field_tag "sso[origin]", origin %>
           <%= submit_tag "Submit" %>

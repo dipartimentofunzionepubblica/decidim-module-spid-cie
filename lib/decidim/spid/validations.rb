@@ -32,7 +32,8 @@ module Decidim
 
       def append_error(error_msg, soft_override = nil)
         @response.errors << error_msg
-
+        Rails.logger.debug("decidim-module-spid-cie || #{error_msg}")
+        
         unless soft_override.nil? ? @response.soft : soft_override
           raise OneLogin::RubySaml::ValidationError.new(error_msg)
         end
@@ -119,7 +120,13 @@ module Decidim
         response_to = extract_value('/p:Response/a:Assertion//a:SubjectConfirmation/a:SubjectConfirmationData/@InResponseTo')
         after = extract_value('/p:Response/a:Assertion//a:SubjectConfirmation/a:SubjectConfirmationData/@NotOnOrAfter')
 
-        return true if !recipient.nil? && !response_to.nil? && !after.nil?
+        if @response.settings.consumer_services.present?
+          url = @response.settings.consumer_services[@response.settings.current_consumer_index]['Location']
+        else
+          url = @response.settings.assertion_consumer_service_url
+        end
+
+        return true if !recipient.to_s.blank? && !response_to.nil? && !after.nil? && url == recipient.to_s
 
         append_error("Assertion SubjectConfirmation deve essere presente e conforme")
         false

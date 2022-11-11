@@ -14,7 +14,7 @@ module Decidim
 
         def cie_icon
           content_tag :span, class: 'cie-badge' do
-            image_pack_tag 'media/images/Logo_CIE_ID.svg', alt: "CIE ID Icon"
+            image_pack_tag 'media/images/Logo_CIE_ID.svg', alt: "CIE Icon"
           end
         end
 

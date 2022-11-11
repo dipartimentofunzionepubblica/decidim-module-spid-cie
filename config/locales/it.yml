@@ -6,7 +6,7 @@ it:
         decidim/user:
           attributes:
             email:
-              cant_recover_password_due_spid: Devi effettuare l'accesso tramite SPID o CIE ID
+              cant_recover_password_due_spid: Devi effettuare l'accesso tramite SPID o CIE
   decidim:
     admin:
       filters:
@@ -16,7 +16,7 @@ it:
             'false': Non abilitato
             'true': Abilitato
         cie_presence:
-          label: CIE ID
+          label: CIE
           values:
             'false': Non abilitato
             'true': Abilitato
@@ -25,9 +25,9 @@ it:
           values:
             'true': Solo SPID
         cie_operation:
-          label: CIE ID
+          label: CIE
           values:
-            'true': Solo CIE ID
+            'true': Solo CIE
         action_type:
           label: Tipo di azione
           values:
@@ -47,7 +47,7 @@ it:
       spid:
         name: Spid
       cie:
-        name: CIE ID
+        name: CIE
     cie:
       sso_request:
         failure: Il login non è andato a buon fine
@@ -62,7 +62,7 @@ it:
     spid:
       admin:
         actions:
-          export: Export utenti
+          export: Esporta utenti privati
       devise:
         invitations:
           edit:
@@ -131,3 +131,8 @@ it:
             certificate: "Il certificato scade il %{date}"
             new_certificate: "Il nuovo certificato scade il %{date}"
             button_size: "Grandezza bottone deve essere in [ s, m, l, xl]. Default: m"
+
+  devise:
+    failure:
+      user:
+        invalid_due_spid: Devi effettuare l'accesso tramite SPID o CIE

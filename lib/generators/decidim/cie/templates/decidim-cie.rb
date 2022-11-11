@@ -14,7 +14,7 @@ Decidim::Cie.configure do |config|
   # config.sp_entity_id = "https://www.example.org/users/auth/cie/metadata"
   config.sp_entity_id = "<%= entity_id %>"
 
-  # Le chiavi che verranno salvate nell'autorizzazione
+  # Le chiavi che verranno salvate sul DB nell'autorizzazione
   config.metadata_attributes = {
     name: "name",
     surname: "familyName",
@@ -22,8 +22,9 @@ Decidim::Cie.configure do |config|
     birthday: "dateOfBirth",
   }
 
-  # I campi da escludere dall'export a causa della polocy GDPR.
-  # Deve contenere un'array di chiavi presenti in metadata_attributes
+  # I campi da escludere dall'export nei processi a causa della policy GDPR.
+  # Deve contenere un'array di chiavi presenti in metadata_attributes.
+  # Se l'array è vuoto saranno inseriti tutti quelli disponibili
   config.export_exclude_attributes = [
     :name, :surname, :fiscal_code
   ]

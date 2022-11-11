@@ -22,8 +22,12 @@ module Decidim
 
         if persisted = @user.persisted?
           @user.skip_confirmation! if !@user.confirmed? && @user.email == verified_email
-          @user.nickname = form.normalized_nickname if form.invitation_token.present?
-          @user.name = form.name if form.invitation_token.present?
+          # @user.nickname = form.normalized_nickname if form.invitation_token.present?
+          # @user.name = form.name if form.invitation_token.present?
+          @user.name = form.name
+          @user.nickname = form.nickname
+          @user.password = generated_password
+          @user.password_confirmation = generated_password
         else
           @user.email = (verified_email || form.email)
           @user.name = form.name
@@ -42,7 +46,7 @@ module Decidim
         end
 
         @user.tos_agreement = "1"
-        @user.save! && persisted && Decidim::Spid::SpidJob.perform_later(@user)
+        @user.save! && persisted && !@user.must_log_with_spid? && Decidim::Spid::SpidJob.perform_later(@user)
       end
 
     end

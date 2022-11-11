@@ -90,7 +90,7 @@ module Decidim
 
         results = {}
         auth.metadata.keys.each do |k|
-          next if tenant.export_exclude_attributes.include?(k.to_sym)
+          next if tenant.export_exclude_attributes.present? && tenant.export_exclude_attributes.include?(k.to_sym)
           results[k] = auth.metadata[k]
         end
 

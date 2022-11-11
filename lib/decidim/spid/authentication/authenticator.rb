@@ -30,16 +30,19 @@ module Decidim
         def user_params_from_oauth_hash
           return nil if oauth_data.empty?
           return nil if user_identifier.blank?
-
+          existing_user = Decidim::User.find_by(organization: organization, email: verified_email)
+          existing_user = nil if existing_user && !existing_user.must_log_with_spid?
           {
             provider: oauth_data[:provider],
             uid: user_identifier,
-            name: oauth_data[:info][:name],
+            name: existing_user.try(:name) || oauth_data[:info][:name],
             # nickname: oauth_data[:info][:nickname] || oauth_data[:info][:name],
             oauth_signature: user_signature,
             avatar_url: oauth_data[:info][:image],
             raw_data: oauth_hash
-          }
+          }.merge(
+            existing_user ? { nickname: existing_user.try(:nickname) } : {}
+          )
         end
 
         def validate!

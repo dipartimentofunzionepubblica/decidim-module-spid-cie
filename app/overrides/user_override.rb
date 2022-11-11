@@ -21,14 +21,8 @@ module Decidim
       super
     end
 
-    def self.find_for_authentication(warden_conditions)
-      organization = warden_conditions.dig(:env, "decidim.current_organization")
-      user = find_by(
-        email: warden_conditions[:email].to_s.downcase,
-        decidim_organization_id: organization.id
-      )
-      return nil if user.is_a?(Decidim::User) && user.must_log_with_spid?
-      user
+    def unauthenticated_message
+      must_log_with_spid? ? :invalid_due_spid : :invalid
     end
   end
 end

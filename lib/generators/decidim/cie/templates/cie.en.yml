@@ -2,7 +2,7 @@ en:
   decidim:
     authorization_handlers:
       <%= tenant_name %>_identity:
-        name: "CIE ID"
-        explanation: "Connect your account by logging in with CIE ID"
+        name: "CIE"
+        explanation: "Connect your account by logging in with CIE"
         title: Migrate account
-        description: Your Decidim account will be associated with your CIE ID account. Your credentials will be deactivated and you can continue to log in with your CIE ID account.
+        description: Your Decidim account will be associated with your CIE account. Your credentials will be deactivated and you can continue to log in with your CIE ID account.

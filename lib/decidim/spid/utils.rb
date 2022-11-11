@@ -41,7 +41,7 @@ module Decidim
           msg = 'decidim.spid.sso_request.success'
         else
           matches = nil
-          if r.errors && r.errors.any?{ |a| matches = a.match(/The status code of the Response was not Success, was Responder => AuthnFailed -> ErrorCode nr(19|2[1-5])/) } && (error_code = matches.try(:[], 1)).present?
+          if r.errors && r.errors.any?{ |a| matches = a.match(/The status code of the Response was not Success, was Responder => AuthnFailed -> ErrorCode nr(19|2[0-5])/) } && (error_code = matches.try(:[], 1)).present?
             msg = "decidim.spid.sso_request.failure_#{error_code}"
           else
             msg = 'decidim.spid.sso_request.failure'

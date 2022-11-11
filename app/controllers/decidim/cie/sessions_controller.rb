@@ -14,11 +14,11 @@ module Decidim
 
       def destroy
         if session.delete("decidim-cie.signed_in")
-          i = current_user.identities.find_by(uid: session["#{Decidim::Cie::Utils.session_prefix}uid"]) rescue nil
+          i = current_user.identities.find_by(uid: session["#{session_prefix}uid"]) rescue nil
           Decidim::ActionLogger.log(:logout, current_user, i, {}) if i
           redirect_to decidim_cie.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:cie, :tenant_name)}_omniauth_spslo_url")
         elsif session.delete("decidim-spid.signed_in")
-          i = current_user.identities.find_by(uid: session["#{Decidim::Spid::Utils.session_prefix}uid"]) rescue nil
+          i = current_user.identities.find_by(uid: session["#{session_prefix}uid"]) rescue nil
           Decidim::ActionLogger.log(:logout, current_user, i, {}) if i
           redirect_to decidim_spid.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:spid, :tenant_name)}_omniauth_spslo_url")
         else
@@ -33,6 +33,23 @@ module Decidim
 
         redirect_to params[:path] || decidim.root_path
       end
+
+      def session_prefix
+        tenant.name + '_cie_'
+      end
+
+      def tenant
+        @tenant ||= begin
+                      name = session["tenant-cie-name"]
+                      raise "Invalid SPID tenant" unless name
+
+                      tenant = Decidim::Cie.tenants.find { |t| t.name == name }
+                      raise "Unkown CIE tenant: #{name}" unless tenant
+
+                      tenant
+                    end
+      end
+
     end
   end
 end

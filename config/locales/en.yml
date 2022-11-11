@@ -6,7 +6,7 @@ en:
         decidim/user:
           attributes:
             email:
-              cant_recover_password_due_spid: You must login via SPID or CIE ID
+              cant_recover_password_due_spid: You must login via SPID or CIE
   decidim:
     admin:
       filters:
@@ -16,7 +16,7 @@ en:
             'false': Not enabled
             'true': Enabled
         cie_presence:
-          label: CIE ID
+          label: CIE
           values:
             'false': Not enabled
             'true': Enabled
@@ -25,7 +25,7 @@ en:
           values:
             'true': Only SPID
         cie_operation:
-          label: CIE ID
+          label: CIE
           values:
             'true': Only CIE
         action_type:
@@ -47,11 +47,11 @@ en:
       decidim_spid:
         name: SPID
       decidim_cie:
-        name: CIE ID
+        name: CIE
       spid:
         name: SPID
       cie:
-        name: CIE ID
+        name: CIE
     cie:
       sso_request:
         failure: The login was not successful
@@ -66,7 +66,7 @@ en:
     spid:
       admin:
         actions:
-          export: Export users
+          export: Export private users
       devise:
         invitations:
           edit:
@@ -135,3 +135,7 @@ en:
             certificate: "The certificate expires on %{date}"
             new_certificate: "The new certificate expires on %{date}"
             button_size: "Button size must to be in [ s, m, l, xl]. Default: m"
+  devise:
+    failure:
+      user:
+        invalid_due_spid: You must login via SPID or CIE

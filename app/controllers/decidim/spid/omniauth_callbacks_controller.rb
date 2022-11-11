@@ -64,6 +64,8 @@ module Decidim
           @form.email ||= invited_user.email
           verified_e = invited_user.email
         else
+          form_params[:name] = params.dig(:user, :name) if params.dig(:user, :name).present?
+          form_params[:nickname] = params.dig(:user, :nickname) if params.dig(:user, :nickname).present?
           @form = form(OmniauthSpidRegistrationForm).from_params(form_params)
           @form.email ||= verified_e
           verified_e ||= form_params.dig(:email)
