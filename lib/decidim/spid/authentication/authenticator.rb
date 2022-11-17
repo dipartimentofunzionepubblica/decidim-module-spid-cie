@@ -131,8 +131,13 @@ module Decidim
             user.skip_reconfirmation!
           end
           # user.newsletter_notifications_at = Time.zone.now if user_newsletter_subscription?(user)
-
-          user.save! if user_changed
+          if user.valid?
+            user.save! if user_changed
+          else
+            if (user.errors.details.all?{ |k,v| k == :email && v.flatten.map{ |k| k[:error] }.all?(:taken) } rescue false)
+              user.reload
+            end
+          end
         end
 
         protected
