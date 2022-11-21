@@ -101,7 +101,7 @@ module OmniAuth
           @env['omniauth.strategy'] ||= self
           setup_phase
 
-          if on_subpath?(:metadata) || on_custom_metadata
+          if (on_subpath?(:metadata) || on_custom_metadata) && match_current_organization?
             other_phase_for_metadata
           elsif on_subpath?(:slo) || on_custom_slo?(:slo)
             other_phase_for_slo
@@ -132,6 +132,19 @@ module OmniAuth
 
       def on_custom_metadata
         metadata_path == current_path
+      end
+
+      def match_current_organization?
+        begin
+          # if options[:metadata_path]
+          #   options[:metadata_path].match(request.env["decidim.current_organization"].try(:host))
+          # else
+          #  request.env["decidim.current_organization"].enabled_omniauth_providers.dig(:spid, :tenant_name) == options[:name]
+          # end
+          request.env["decidim.current_organization"].enabled_omniauth_providers.dig(:spid, :tenant_name) == options[:name]
+        rescue
+          false
+        end
       end
 
       uid do
@@ -221,8 +234,9 @@ module OmniAuth
       end
 
       def with_settings
-        options[:consumer_services] = options[:consumer_services].present? ? options[:consumer_services] : callback_url
-        options[:logout_services] = options[:logout_services].present? ? options[:logout_services] : logout_url
+        # Commentato per errore in multi tenant
+        # options[:consumer_services] = options[:consumer_services].present? ? options[:consumer_services] : callback_url
+        # options[:logout_services] = options[:logout_services].present? ? options[:logout_services] : logout_url
         yield OneLogin::RubySaml::Settings.new(options)
       end
 
