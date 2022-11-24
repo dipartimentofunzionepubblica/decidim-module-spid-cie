@@ -9,7 +9,7 @@ module Decidim
     class WorkflowManifest
 
       def system_name
-        I18n.t("#{key}.system_name", scope: "decidim.authorization_handlers", default: name.humanize).concat(name.match(/_identity/) ? " (tenant: #{name.gsub("_identity", "")})" : '')
+        fullname.concat(name.match(/_identity/) ? " (tenant: #{name.gsub("_identity", "")})" : '')
       end
 
     end
