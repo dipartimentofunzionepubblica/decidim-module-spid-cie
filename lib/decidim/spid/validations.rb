@@ -32,7 +32,7 @@ module Decidim
 
       def append_error(error_msg, soft_override = nil)
         @response.errors << error_msg
-        Rails.logger.debug("decidim-module-spid-cie || #{error_msg}")
+        Rails.logger.info("decidim-module-spid-cie || #{error_msg}")
         
         unless soft_override.nil? ? @response.soft : soft_override
           raise OneLogin::RubySaml::ValidationError.new(error_msg)

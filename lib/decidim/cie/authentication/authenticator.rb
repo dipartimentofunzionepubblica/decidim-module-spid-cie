@@ -114,7 +114,7 @@ module Decidim
           }
           authorization.save!
 
-          authorization.grant!
+          authorization.grant! unless authorization.granted?
 
           authorization
         end

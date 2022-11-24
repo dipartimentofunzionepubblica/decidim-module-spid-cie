@@ -118,7 +118,7 @@ module Decidim
           }
           authorization.save!
 
-          authorization.grant!
+          authorization.grant! unless authorization.granted?
 
           authorization
         end
@@ -135,7 +135,7 @@ module Decidim
             user.save! if user_changed
           else
             if (user.errors.details.all?{ |k,v| k == :email && v.flatten.map{ |k| k[:error] }.all?(:taken) } rescue false)
-              Rails.logger.debug("decidim-module-spid-cie || L'utente #{user.id} ha un'altro account decidim con la stessa email dello SPID richiesto. Non aggiorno l'email.")
+              Rails.logger.info("decidim-module-spid-cie || L'utente #{user.id} ha un'altro account decidim con la stessa email dello SPID richiesto. Non aggiorno l'email.")
               user.reload
             end
           end

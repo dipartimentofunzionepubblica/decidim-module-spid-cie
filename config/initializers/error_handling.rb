@@ -16,7 +16,7 @@ module OneLogin
       # soft for just this invocation.
       def append_error(error_msg, soft_override = nil)
         @errors << error_msg
-        Rails.logger.debug("decidim-module-spid-cie || #{error_msg}")
+        Rails.logger.info("decidim-module-spid-cie || #{error_msg}")
 
         unless soft_override.nil? ? soft : soft_override
           raise ValidationError.new(error_msg)
