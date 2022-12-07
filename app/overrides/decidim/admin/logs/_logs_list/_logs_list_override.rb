@@ -6,7 +6,7 @@
 # Agginge filtri di ricerca per i log
 Deface::Override.new(virtual_path: "decidim/admin/logs/_logs_list",
                      name: "add-log_filters",
-                     insert_before: "ul.logs.table", original: '3780c8d6d0b33ef1d66e7efadb0d92a7e6d498ff' ) do
+                     insert_before: "ul.logs.table" ) do
   '
   <% if controller_name == "logs" %>
     <%= render partial: "decidim/admin/shared/identity_filters", locals: { i18n_ctx: nil } %>
@@ -16,7 +16,7 @@ end
 
 Deface::Override.new(virtual_path: "decidim/admin/logs/_logs_list",
                      name: "add-log_filters-no-results",
-                     insert_before: "div.logs.table", original: '3780c8d6d0b33ef1d66e7efadb0d92a7e6d498ff' ) do
+                     insert_before: "div.logs.table" ) do
   '
   <% if controller_name == "logs" %>
     <%= render partial: "decidim/admin/shared/identity_filters", locals: { i18n_ctx: nil } %>
