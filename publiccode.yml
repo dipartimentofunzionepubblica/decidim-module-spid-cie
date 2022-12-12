@@ -61,5 +61,5 @@ name: Decidim-spid-cie
 platforms:
   - web
 releaseDate: '2022-12-07'
-softwareType: standalone/mobile
+softwareType: addon
 url: 'https://github.com/dipartimentofunzionepubblica/decidim-module-spid-cie'
