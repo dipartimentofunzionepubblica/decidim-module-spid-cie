@@ -61,7 +61,7 @@ module OmniAuth
       option :idp_slo_session_destroy, proc { |_env, session| session.clear }
 
       def request_phase
-        redirect sso_saml(sso_params, options)
+        redirect_to sso_saml(sso_params, options)
       end
 
       def sso_params
@@ -295,7 +295,7 @@ module OmniAuth
       end
 
       def other_phase_for_spslo
-        redirect slo_saml(slo_params, options)
+        redirect_to slo_saml(slo_params, options)
       end
 
       def add_request_attributes_to(settings)
@@ -317,6 +317,33 @@ module OmniAuth
             end
           end
         end
+      end
+
+      def redirect_to(uri)
+        pp = CGI.parse(URI.parse(uri).query)
+        if pp["Signature"].present?
+          r = Rack::Response.new
+          if options[:iframe]
+            r.write("<script type='text/javascript' charset='utf-8'>top.location.href = '#{uri}';</script>")
+          else
+            r.write("Redirecting to #{uri}...")
+            r.redirect(uri)
+          end
+        else
+          r = Rack::Response.new"
+            <html><body onload='javascript:document.forms[0].submit()'>
+              <form method='post' action='#{uri.split("?").first}'>
+                <input type='hidden' name='SAMLRequest' value='#{Base64.encode64(OneLogin::RubySaml::SamlMessage.new.send(:decode_raw_saml, pp["SAMLRequest"].first))}'>
+                <input type='hidden' name='RelayState' value='#{pp["RelayState"].first}'>
+                <input type='submit' value='Invia'/>
+              </form>
+          </body></html>",
+                                200,
+            { 'Content-Type' => 'text/html' }
+
+        end
+
+        r.finish
       end
 
     end

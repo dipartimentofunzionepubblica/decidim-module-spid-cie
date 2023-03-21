@@ -52,6 +52,7 @@ module Decidim
             current_consumer_index: @current_consumer_index,
             current_attribute_index: @current_attribute_index,
             current_logout_index: @current_logout_index,
+            name_identifier_value: @name_identifier_value
           }
         end
 
@@ -59,7 +60,7 @@ module Decidim
           idp = Spid::Idp.find(@idp.to_s)
           bindings = @bindings.map { |verb| self.class.saml_bindings[verb] }
           parser = OneLogin::RubySaml::IdpMetadataParser.new
-          parser.parse_remote_to_hash(idp.metadata_url, idp.validate_cert?, sso_binding: bindings, slo_binding: bindings)
+          parser.parse_remote_to_hash(idp.metadata_url, idp.validate_cert?)
         end
 
         def valid?
