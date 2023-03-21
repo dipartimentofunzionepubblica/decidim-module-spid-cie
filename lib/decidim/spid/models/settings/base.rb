@@ -53,7 +53,8 @@ module Decidim
             current_attribute_index: @current_attribute_index,
             current_logout_index: @current_logout_index,
             name_identifier_value: @name_identifier_value,
-            idp_name_qualifier: @idp_name_qualifier
+            idp_name_qualifier: @idp_name_qualifier,
+            name_identifier_format: @name_identifier_format
           }
         end
 
