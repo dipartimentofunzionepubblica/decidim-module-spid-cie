@@ -35,14 +35,14 @@ module Decidim
         def validate_signature_encryption
           signature_algorithms = Decidim::Cie::Certificate.signature_algorithms
           if signature_algorithms.exclude?(sp_attributes.dig(:security, :signature_method))
-            errors << 'Signature deve essere presente (impostare encryption sha a 256, 384, 512)'
+            errors << 'Signature deve essere presente (impostare encryption sha a 1, 256, 384, 512)'
           end
         end
 
         def validate_digest_encryption
           digest_algorithms = Decidim::Cie::Certificate.digest_algorithms
           if digest_algorithms.exclude?(sp_attributes.dig(:security, :digest_method))
-            errors << 'Signature deve essere presente (impostare encryption sha a 256, 384, 512)'
+            errors << 'Signature deve essere presente (impostare encryption sha a 1, 256, 384, 512)'
           end
         end
 

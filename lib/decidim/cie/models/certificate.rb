@@ -9,6 +9,8 @@ module Decidim
 
       def self.signature_algorithm sha
         case sha.to_s
+        when '1'
+          XMLSecurity::Document::RSA_SHA1
         when '256'
           XMLSecurity::Document::RSA_SHA256
         when '384'
@@ -20,6 +22,8 @@ module Decidim
 
       def self.digest_algorithm sha
         case sha.to_s
+        when '1'
+          XMLSecurity::Document::SHA1
         when '256'
           XMLSecurity::Document::SHA256
         when '384'
@@ -31,6 +35,7 @@ module Decidim
 
       def self.signature_algorithms
         [
+          XMLSecurity::Document::RSA_SHA1,
           XMLSecurity::Document::RSA_SHA256,
           XMLSecurity::Document::RSA_SHA384,
           XMLSecurity::Document::RSA_SHA512,
@@ -39,6 +44,7 @@ module Decidim
 
       def self.digest_algorithms
         [
+          XMLSecurity::Document::SHA1,
           XMLSecurity::Document::SHA256,
           XMLSecurity::Document::SHA384,
           XMLSecurity::Document::SHA512,
