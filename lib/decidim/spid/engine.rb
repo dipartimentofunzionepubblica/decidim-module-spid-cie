@@ -44,7 +44,11 @@ module Decidim
       initializer "decidim_spid.setup", before: "devise.omniauth" do
         Decidim::Spid.setup!
       end
-
+       
+      initializer "decidim_spid.session.same_site_none", after: "Expire sessions" do
+        Rails.application.config.action_dispatch.cookies_same_site_protection = :none
+      end
+      
       overrides = "#{Decidim::Spid::Engine.root}/app/overrides"
       config.to_prepare do
         Rails.autoloaders.main.ignore(overrides)
