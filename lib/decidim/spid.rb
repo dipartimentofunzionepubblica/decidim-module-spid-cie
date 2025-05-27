@@ -8,6 +8,8 @@
 require 'deface'
 require "omniauth/strategies/spid_saml"
 
+require_relative "spid_cie/tenant"
+
 require_relative "spid/version"
 require_relative "spid/engine"
 require_relative "spid/admin"

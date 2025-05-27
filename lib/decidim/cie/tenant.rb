@@ -5,8 +5,6 @@
 
 # frozen_string_literal: true
 
-require 'decidim/spid/token_verifier'
-
 module Decidim
   module Cie
     class Tenant
@@ -73,13 +71,13 @@ module Decidim
 
       # Documentazione https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider
       # Verificare obbligatorietà degli attributi in combinazione tra loro
-      config_accessor :contact_people_administrative do
+      config_accessor :contact_people_other do
         {}
       end
 
       # Documentazione https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/metadata.html#service-provider
       # Verificare obbligatorietà degli attributi in combinazione tra loro
-      config_accessor :contact_people_technical do
+      config_accessor :contact_people_billing do
         {}
       end
 
@@ -261,7 +259,6 @@ module Decidim
         # Customizzazione in caso di fallimenti altrimenti verrebbe sollevata
         # l'eccezione ActionController::InvalidAuthenticityToken.
         devise_failure_app = OmniAuth.config.on_failure
-        OmniAuth.config.request_validation_phase = Decidim::Spid::TokenVerifier.new
         OmniAuth.config.on_failure = proc do |env|
           exnovo_metadata = env["PATH_INFO"] && env["PATH_INFO"].match?(%r{^/users/auth/#{config.name}($|/.+)})
           existing_metadata = begin

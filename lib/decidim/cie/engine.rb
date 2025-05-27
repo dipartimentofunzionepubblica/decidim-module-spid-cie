@@ -37,12 +37,31 @@ module Decidim
         end
       end
 
+      initializer "decidim_cie.webpacker.assets_path" do
+        Decidim.register_assets_path File.expand_path("app/packs", root)
+      end
+
       initializer "decidim_cie.setup", before: "devise.omniauth" do
         Decidim::Cie.setup!
       end
 
-      initializer "decidim_cie.webpacker.assets_path" do
-        Decidim.register_assets_path File.expand_path("app/packs", root)
+      initializer "decidim_cie.session.same_site_none", after: "Expire sessions" do
+        Rails.application.config.action_dispatch.cookies_same_site_protection = lambda { |request|
+          if Decidim::SpidCie.tenants.any? { |t| request.path.starts_with?("/users/auth/#{t.name}") }
+            :none
+          else
+            :lax
+          end
+
+        }
+      end
+
+      overrides = "#{Decidim::Cie::Engine.root}/app/overrides"
+      config.to_prepare do
+        Rails.autoloaders.main.ignore(overrides)
+        Dir.glob("#{overrides}/**/*_override.rb").each do |override|
+          load override
+        end
       end
 
     end

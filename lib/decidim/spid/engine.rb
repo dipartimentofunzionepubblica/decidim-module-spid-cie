@@ -45,6 +45,17 @@ module Decidim
         Decidim::Spid.setup!
       end
 
+      initializer "decidim_spid.session.same_site_none", after: "Expire sessions" do
+        Rails.application.config.action_dispatch.cookies_same_site_protection = lambda { |request|
+          if Decidim::SpidCie.tenants.any? { |t| request.path.starts_with?("/users/auth/#{t.name}") }
+            :none
+          else
+            :lax
+          end
+
+        }
+      end
+
       overrides = "#{Decidim::Spid::Engine.root}/app/overrides"
       config.to_prepare do
         Rails.autoloaders.main.ignore(overrides)

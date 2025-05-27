@@ -16,7 +16,7 @@ module Decidim
 
       def cie
         session["decidim-cie.signed_in"] = true
-        session["decidim-cie.tenant"] = tenant.name
+        session["tenant-cie-name"] = tenant.name
 
         authenticator.validate!
 
@@ -46,7 +46,7 @@ module Decidim
       def create
         form_params = user_params_from_oauth_hash || params.require(:user).permit!
         form_params.merge!(params.require(:user).permit!) if params.dig(:user).present?
-        origin = Base64.strict_decode64(session[:"#{session_prefix}sso_params"]["relay_state"]) rescue ''
+        origin = Base64.strict_decode64(session[:"#{session_prefix}"]["origin"]) rescue ''
 
         invitation_token = invitation_token(origin)
         verified_e = verified_email
@@ -106,7 +106,7 @@ module Decidim
               if existing_identity
                 Decidim::ActionLogger.log(:login, user, existing_identity, {})
               else
-                i = user.identities.find_by(uid: session["#{session_prefix}uid"]) rescue nil
+                i = user.identities.find_by(uid: session["cie-uid"]) rescue nil
                 Decidim::ActionLogger.log(:registration, user, i, {})
               end
               sign_in_and_redirect user, verified_email: verified_e, event: :authentication
@@ -133,7 +133,7 @@ module Decidim
       end
 
       def session_prefix
-        tenant.name + '_cie_'
+        'cie-params'
       end
 
       def failure
@@ -169,7 +169,7 @@ module Decidim
 
       def failure_message
         error = request.respond_to?(:get_header) ? request.get_header("omniauth.error") : request.env["omniauth.error"]
-        I18n.t(error) rescue nil
+        I18n.exists?(error, current_locale) ? I18n.t(error) : ( I18n.exists?(error, :en) ? I18n.t(error, locale: :en) : error) rescue nil
       end
 
       private

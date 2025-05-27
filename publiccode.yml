@@ -9,7 +9,7 @@ dependsOn:
   open:
     - name: Decidim
       optional: false
-      version: '0.25'
+      version: '0.27'
       versionMax: ''
       versionMin: ''
 description:
@@ -19,7 +19,7 @@ description:
     genericName: Module for Decidim web application
     longDescription: |
       Modulo Decidim, rilasciato come gem Ruby, installabile su Decidim a
-      partire dalla versione 0.25.2. Integra l'autenticazione con SPID e CIE
+      partire dalla versione 0.27.x. Integra l'autenticazione con SPID e CIE
       attraverso SAML2 utilizzando la gem Ruby-SAML.
 
 

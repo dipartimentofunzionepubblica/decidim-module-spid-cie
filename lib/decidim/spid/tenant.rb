@@ -5,8 +5,6 @@
 
 # frozen_string_literal: true
 
-require 'decidim/spid/token_verifier'
-
 module Decidim
   module Spid
     class Tenant
@@ -261,7 +259,6 @@ module Decidim
         # Customizzazione in caso di fallimenti altrimenti verrebbe sollevata
         # l'eccezione ActionController::InvalidAuthenticityToken.
         devise_failure_app = OmniAuth.config.on_failure
-        OmniAuth.config.request_validation_phase = Decidim::Spid::TokenVerifier.new
         OmniAuth.config.on_failure = proc do |env|
           exnovo_metadata = env["PATH_INFO"] && env["PATH_INFO"].match?(%r{^/users/auth/#{config.name}($|/.+)})
           existing_metadata = begin

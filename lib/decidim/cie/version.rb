@@ -9,7 +9,11 @@ module Decidim
   # This holds the decidim-core version.
   module Cie
     def self.version
-      "0.25.2"
+      "#{decidim_version}"
+    end
+
+    def self.decidim_version
+      "0.27.0"
     end
   end
 end

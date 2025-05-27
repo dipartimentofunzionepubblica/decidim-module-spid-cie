@@ -11,7 +11,7 @@ base_path = "../" if File.basename(__dir__) == "development_app"
 require_relative "#{base_path}lib/decidim/spid/version"
 DECIDIM_VERSION = Decidim::Spid.decidim_version
 
-gem "decidim", DECIDIM_VERSION
+gem "decidim", "~> #{DECIDIM_VERSION}"
 gem "decidim-spid-cie", path: "."
 
 gem "puma", ">= 4.3"
@@ -21,7 +21,7 @@ gem "uglifier", "~> 4.1"
 group :development, :test do
   gem "byebug", "~> 11.0", platform: :mri
 
-  gem "decidim-dev", DECIDIM_VERSION
+  gem "decidim-dev", "~> #{DECIDIM_VERSION}"
   gem "rspec-rails"
 end
 
