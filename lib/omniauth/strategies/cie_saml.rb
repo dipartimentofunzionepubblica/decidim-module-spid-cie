@@ -351,7 +351,7 @@ module OmniAuth
 
       def other_phase_for_spslo
         with_auth_settings do |settings|
-          redirect(generate_logout_request(settings))
+          redirect_to(generate_logout_request(settings))
         end
       end
 

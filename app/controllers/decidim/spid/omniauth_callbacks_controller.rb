@@ -110,8 +110,8 @@ module Decidim
               if existing_identity
                 Decidim::ActionLogger.log(:login, user, existing_identity, {})
               else
-                i = user.identities.find_by(uid: session["spid-uid"]) rescue nil
-                Decidim::ActionLogger.log(:registration, user, i, {})
+                i = user.identities.find_by(uid: session["#{session['tenant-spid-name']}-uid"]) rescue nil
+                Decidim::ActionLogger.log(:registration, user, i, {}) if i
               end
               sign_in_and_redirect user, verified_email: verified_e, event: :authentication
               set_flash_message :notice, :success, kind: "SPID"
