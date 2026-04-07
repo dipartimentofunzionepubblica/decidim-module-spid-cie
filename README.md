@@ -37,10 +37,6 @@ Qualora si voglia eliminare la gemma è sufficiente eliminare o ripristinare i f
 Associare nel pannello di amministratore di sistema (/system) il `tenant_name` ad ogni organizzazione sia per SPID che per CIE.
 Completare le configurazioni nell'`initializer` di ogni tenant.
 
-NB: bisogna forzare secure a true e installare un certificato SSL. In config/initializers/decidim.rb => config.force_ssl = true
-Oppure
-Rails.application.config.session_store :cookie_store, secure: true, expire_after: Decidim.config.expire_session_after
-
 ```ruby
 # config/initializers/decidim-spid-#{tenant_name}.rb
 Decidim::Spid.configure do |config|
