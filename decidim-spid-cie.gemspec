@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email = ["l.angelone@kapusons.it"]
   s.licenses = ["MIT"]
   s.homepage = "https://github.com/dipartimentofunzionepubblica/decidim-module-spic-cie"
-  s.required_ruby_version = ">= 3.0.6"
+  s.required_ruby_version = ">= 3.1.1"
 
   s.name = "decidim-spid-cie"
   s.summary = "A decidim SPID & CIE module"
