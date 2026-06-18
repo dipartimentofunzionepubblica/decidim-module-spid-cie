@@ -6,49 +6,58 @@
 'use strict';
 
 var _popup = function _popup() {
-    var container = document.querySelector('.spid-selector-container ')
+    var container = document.querySelector('.spid-selector-container');
+    // Se il container principale non esiste, esci subito dalla funzione
+    if (!container) return;
+
     var button = container.querySelector('.italia-it-button');
-    var popupSelector = container.querySelector('.spid-selector');
     var popupContainer = container.querySelector('.spid-container');
     var questionContainer = container.querySelector('.spid-alert');
     var questionSelector = container.querySelector('.spid-question-mark');
 
+    // Funzione di chiusura globale sicura
     document.onclick = function(e) {
-        popupContainer.classList.remove('opened')
-        questionContainer.classList.remove('opened')
-    }
-    button.onclick = function(e) {
-        e.stopPropagation();
-        questionContainer.classList.remove('opened')
-        var list = popupContainer.querySelectorAll('div[data-idp]'); // All children
-        for (var i = list.length; i >= 0; i--) {
-            popupContainer.prepend(list[Math.random() * i | 0]);
-        }
-        popupContainer.classList.toggle('opened')
+        if (popupContainer) popupContainer.classList.remove('opened');
+        if (questionContainer) questionContainer.classList.remove('opened');
     };
 
-    questionContainer.onclick = function(e) {
-        e.stopPropagation();
-    }
-    questionSelector.onclick = function(e) {
-        e.stopPropagation();
-        popupContainer.classList.remove('opened')
-        questionContainer.classList.toggle('opened')
-    };
-
-    popupContainer.querySelectorAll( "[data-idp]").forEach(function (button) {
-        button.addEventListener('click', function (e) {
+    // Gestione bottone SPID
+    if (button && popupContainer && questionContainer) {
+        button.onclick = function(e) {
             e.stopPropagation();
-            button.querySelector( "form").submit();
-        });
-    });
+            questionContainer.classList.remove('opened');
+            var list = popupContainer.querySelectorAll('div[data-idp]');
+            for (var i = list.length; i >= 0; i--) {
+                popupContainer.prepend(list[Math.random() * i | 0]);
+            }
+            popupContainer.classList.toggle('opened');
+        };
+    }
 
+    // Gestione alert info
+    if (questionContainer) {
+        questionContainer.onclick = function(e) { e.stopPropagation(); };
+    }
+    
+    if (questionSelector && popupContainer && questionContainer) {
+        questionSelector.onclick = function(e) {
+            e.stopPropagation();
+            popupContainer.classList.remove('opened');
+            questionContainer.classList.toggle('opened');
+        };
+    }
+
+    // Gestione click sugli IDP
+    if (popupContainer) {
+        popupContainer.querySelectorAll("[data-idp]").forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                var form = btn.querySelector("form");
+                if (form) form.submit();
+            });
+        });
+    }
 };
 
-document.addEventListener("DOMContentLoaded", function (event) {
-    _popup();
-});
-
-document.addEventListener('turbolinks:load', function () {
-    _popup();
-});
+document.addEventListener("DOMContentLoaded", _popup);
+document.addEventListener('turbolinks:load', _popup);
