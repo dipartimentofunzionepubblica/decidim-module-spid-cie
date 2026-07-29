@@ -34,7 +34,11 @@ module Decidim
                       when Hash
                         saml_attributes.public_send(defs[:type], defs[:name])
                       when String
-                        saml_attributes.dig(defs.to_sym).try(:first)
+                        if saml_attributes.is_a?(::OneLogin::RubySaml::Attributes)
+                          saml_attributes.fetch(defs.to_sym)
+                        else
+                          saml_attributes.find{ |a| a.try(:first) == defs }.try(:last).try(:first)
+                        end
                       end
                     end
 

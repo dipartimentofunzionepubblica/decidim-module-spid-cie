@@ -1,16 +1,40 @@
-# Copyright (C) 2022 Formez PA
-# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
-# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
-# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>
-
-# modulo con validazioni SAML
+require "onelogin/ruby-saml/response"
 
 module Decidim
-  module Spid
-    module Validations
+  module SpidCie
+    #
+    class Response < ::OneLogin::RubySaml::Response
 
-      def validate!
+      def initialize(response, options = {}, params)
+        @params = params
+        super(response, options)
+      end
+
+      def validate(collect_errors = false)
+        reset_errors!
+        return false unless validate_response_state
+
         validations = [
+          :validate_version,
+          :validate_id,
+          :validate_success_status,
+          :validate_num_assertion,
+          :validate_signed_elements,
+          :validate_structure,
+          :validate_no_duplicated_attributes,
+          :validate_in_response_to,
+          :validate_one_conditions,
+          :validate_conditions,
+          :validate_one_authnstatement,
+          :validate_audience,
+          :validate_destination,
+          :validate_issuer,
+          :validate_session_expiration,
+          :validate_subject_confirmation,
+          :validate_name_id,
+          :validate_signature,
+
+          # CUSTOM
           :issue_instant_min,
           :issue_instant_max,
           :destination_presence,
@@ -26,25 +50,47 @@ module Decidim
           :check_attributes_presence
         ]
 
-        validations.each { |validation| send(validation) }
-        @response.errors.empty?
+        if collect_errors
+          validations.each { |validation| send(validation) }
+          @errors.empty?
+        else
+          validations.all? { |validation| send(validation) }
+        end
       end
 
-      def append_error(error_msg, soft_override = nil)
-        @response.errors << error_msg
-        Rails.logger.info("decidim-module-spid-cie || #{error_msg}")
-        
-        unless soft_override.nil? ? @response.soft : soft_override
-          raise OneLogin::RubySaml::ValidationError.new(error_msg)
+      def validate_destination
+        return true if destination.nil?
+        return true if options[:skip_destination]
+
+        if destination.empty?
+          error_msg = "The response has an empty Destination value"
+          return append_error(error_msg)
         end
 
-        false
+        if settings.consumer_services.present?
+          url = settings.consumer_services[settings.current_consumer_index]['Location'] rescue ''
+          unless ::OneLogin::RubySaml::Utils.uri_match?(destination, url)
+            error_msg = "The response was received at #{destination} instead of #{url}"
+            return append_error(error_msg)
+          else
+            return true
+          end
+        else
+          return true if settings.assertion_consumer_service_url.nil? || settings.assertion_consumer_service_url.empty?
+        end
+
+        unless ::OneLogin::RubySaml::Utils.uri_match?(destination, settings.assertion_consumer_service_url)
+          error_msg = "The response was received at #{destination} instead of #{settings.assertion_consumer_service_url}"
+          return append_error(error_msg)
+        end
+
+        true
       end
 
       def issue_instant_min
         instant = extract_value('/p:Response/@IssueInstant').to_s
         return true if (instant.present? && Time.parse(instant).iso8601(3).to_time >=
-          Time.parse(@sso_params.dig("issue_instant")).iso8601(3).to_time rescue false)
+          Time.parse(@params.dig("issue_instant")).iso8601(3).to_time rescue false)
 
         append_error("IssueInstant deve essere presente e maggiore a quello inviato nella Request")
         false
@@ -53,7 +99,7 @@ module Decidim
       def issue_instant_max
         instant = extract_value('/p:Response/@IssueInstant').to_s
         return true if (instant.present? && Time.parse(instant).iso8601(3).to_time <=
-          (Time.parse(@sso_params.dig("issue_instant")).iso8601(3).to_time + 3.minutes) rescue false)
+          (Time.parse(@params.dig("issue_instant")).iso8601(3).to_time + 3.minutes) rescue false)
 
         append_error("IssueInstant deve essere presente e maggiore a quello inviato nella Request")
         false
@@ -88,7 +134,7 @@ module Decidim
       def assertion_issue_instant_min
         instant = extract_value('/p:Response/a:Assertion/@IssueInstant').to_s
         return true if (instant.present? && Time.parse(instant).iso8601(3).to_time >=
-          Time.parse(@sso_params.dig("issue_instant")).iso8601(3).to_time rescue false)
+          Time.parse(@params.dig("issue_instant")).iso8601(3).to_time rescue false)
 
         append_error("IssueInstant deve essere presente e maggiore a quello inviato nella Request")
         false
@@ -97,7 +143,7 @@ module Decidim
       def assertion_issue_instant_max
         instant = extract_value('/p:Response/a:Assertion/@IssueInstant').to_s
         return true if (instant.present? && Time.parse(instant).iso8601(3).to_time <=
-          (Time.parse(@sso_params.dig("issue_instant")).iso8601(3).to_time + 3.minutes) rescue false)
+          (Time.parse(@params.dig("issue_instant")).iso8601(3).to_time + 3.minutes) rescue false)
 
         append_error("IssueInstant deve essere presente e maggiore a quello inviato nella Request")
         false
@@ -120,20 +166,20 @@ module Decidim
         response_to = extract_value('/p:Response/a:Assertion//a:SubjectConfirmation/a:SubjectConfirmationData/@InResponseTo')
         after = extract_value('/p:Response/a:Assertion//a:SubjectConfirmation/a:SubjectConfirmationData/@NotOnOrAfter')
 
-        if @response.settings.consumer_services.present?
-          url = @response.settings.consumer_services[@response.settings.current_consumer_index]['Location']
+        if settings.consumer_services.present?
+          url = settings.consumer_services[settings.current_consumer_index]['Location']
         else
-          url = @response.settings.assertion_consumer_service_url
+          url = settings.assertion_consumer_service_url
         end
 
-        return true if !recipient.to_s.blank? && !response_to.nil? && !after.nil? && url == recipient.to_s
+        return true if !recipient.to_s.blank? && !response_to.nil? && !after.nil? && url == recipient.to_s && response_to.to_s == @params.dig("uuid")
 
         append_error("Assertion SubjectConfirmation deve essere presente e conforme")
         false
       end
 
       def assertion_conditions_empty
-        conditions = extract_value('/p:Response/a:Assertion/a:Conditions').has_elements?
+        conditions = extract_value('/p:Response/a:Assertion/a:Conditions').has_elements? rescue nil
         before = extract_value('/p:Response/a:Assertion/a:Conditions/@NotBefore')
         after = extract_value('/p:Response/a:Assertion/a:Conditions/@NotOnOrAfter')
 
@@ -144,7 +190,7 @@ module Decidim
       end
 
       def assertion_authncontext
-        ref = extract_value('/p:Response/a:Assertion/a:AuthnStatement/a:AuthnContext/a:AuthnContextClassRef').get_text()
+        ref = extract_value('/p:Response/a:Assertion/a:AuthnStatement/a:AuthnContext/a:AuthnContextClassRef').get_text() rescue nil
 
         return true if ref.present?
 
@@ -153,17 +199,17 @@ module Decidim
       end
 
       def check_authn_context_class_ref
-        ref = extract_value('/p:Response/a:Assertion/a:AuthnStatement/a:AuthnContext/a:AuthnContextClassRef').get_text().to_s
-        auth, level = ref[0..-2], ref[-1]
+        ref = extract_value('/p:Response/a:Assertion/a:AuthnStatement/a:AuthnContext/a:AuthnContextClassRef').get_text().to_s rescue nil
+        auth, level = ref[0..-2], ref[-1] if ref
 
-        return true if (ref.present? && level.present? && auth == @authn_context && level.to_i >= @sso_params.dig(key_level) rescue false)
+        return true if (ref.present? && level.present? && settings.authn_context && settings.authn_context.match(auth) && level.to_i >= settings.try(:spid_level) || settings.try(:cie_level) rescue false)
 
         append_error("Assertion AuthContextClassRef non sufficiente")
         false
       end
 
       def check_attributes_presence
-        return true if @response.attributes.attributes.all? { |k, v| v.present? }
+        return true if attributes.attributes.all? { |k, v| v.present? }
 
         append_error("AttributeStatement AttributeStatement non specificato")
         false
@@ -171,9 +217,9 @@ module Decidim
 
       def extract_value(value)
         REXML::XPath.first(
-          response.document, value,
-          { "p" => response.class::PROTOCOL, "a" => response.class::ASSERTION },
-          { 'id' => response.document.signed_element_id }
+          document, value,
+          { "p" => self.class::PROTOCOL, "a" => self.class::ASSERTION },
+          { 'id' => document.signed_element_id }
         )
       end
 

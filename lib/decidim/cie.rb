@@ -7,6 +7,8 @@
 
 require "omniauth/strategies/cie_saml"
 
+require_relative "spid_cie/tenant"
+
 require_relative "cie/engine"
 require_relative "cie/admin"
 require_relative "cie/admin_engine"

@@ -7,19 +7,29 @@
 
 require 'rails'
 module Decidim
-  module Spid
+  module SpidCie
     class Idp
 
       attr_reader :metadata_url
 
-      def self.find(name)
-        raise 'Idp not found' unless list.key?(name)
-        idp_attributes = list[name]
-        new(idp_attributes.symbolize_keys)
+      def self.find_cie(name)
+        raise 'Idp not found' unless list('cie').key?(name)
+        idp_attributes = list('cie')[name]
+        new(**idp_attributes.symbolize_keys)
       end
 
-      def self.all
-        list
+      def self.find_spid(name)
+        raise 'Idp not found' unless list('spid').key?(name)
+        idp_attributes = list('spid')[name]
+        new(**idp_attributes.symbolize_keys)
+      end
+
+      def self.all_spid
+        list('spid')
+      end
+
+      def self.all_cie
+        list('cie')
       end
 
       def self.import(file_path)
@@ -29,7 +39,7 @@ module Decidim
         end
       end
 
-      def initialize(metadata_url:, validate_cert: true, protocols: nil, entityName: nil, logo: nil)
+      def initialize(metadata_url:, validate_cert: , entityName:, logo:)
         @metadata_url = metadata_url
         @validate_cert = validate_cert
       end
@@ -38,8 +48,8 @@ module Decidim
         @validate_cert
       end
 
-      def self.list
-        list = YAML.load_file(Rails.root.join('config', 'idp_list.yml')).dig("#{Rails.env}").dig("spid")
+      def self.list(type)
+        list ||= YAML.load_file(Rails.root.join('config', 'idp_list.yml')).dig("#{Rails.env}").dig(type)
       end
 
     end

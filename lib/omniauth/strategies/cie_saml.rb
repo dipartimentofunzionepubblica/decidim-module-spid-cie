@@ -5,21 +5,15 @@
 
 require 'omniauth'
 require 'ruby-saml'
-require 'decidim/cie/utils'
-require 'decidim/cie/models'
+require 'decidim/spid_cie/loader'
 
 # Strategia CIE SAML personalizzata secondo le configurazioni nell'initializer
 
 module OmniAuth
   module Strategies
-    class CieSaml
-      include OmniAuth::Strategy
+    class CieSaml < SAML
 
-      def self.inherited(subclass)
-        OmniAuth::Strategy.included(subclass)
-      end
-
-      include Decidim::Cie::Utils
+      # include Decidim::Cie::Utils
       def initialize(app, *args, &block)
         super
         # Decidim::Cie::Utils.current_name = options[:name]
@@ -49,7 +43,7 @@ module OmniAuth
         { :name => 'first_name', :name_format => 'urn:oasis:names:tc:SAML:2.0:attrname-format:basic', :friendly_name => 'Given name' },
         { :name => 'last_name', :name_format => 'urn:oasis:names:tc:SAML:2.0:attrname-format:basic', :friendly_name => 'Family name' }
       ]
-      option :attribute_service_name, I18n.t('decidim_cie.required_attributes')
+      option :attribute_service_name, "Required attributes"
       option :attribute_statements, {
         name: ["name"],
         email: ["email", "mail"],
@@ -61,39 +55,25 @@ module OmniAuth
       option :idp_slo_session_destroy, proc { |_env, session| session.clear }
 
       def request_phase
-        redirect sso_saml(sso_params, options)
-      end
+        authn_request = Decidim::SpidCie::Authrequest.new
 
-      def sso_params
-        sso_params = {}
-        sso_params[:sso] = { idp: request.params.dig("sso", "idp") }
-        sso_params[:cie_level] = options.cie_level
-        sso_params[:host] = options.sp_entity_id
-        sso_params[:relay_state] = Base64.strict_encode64(request.params.dig("sso", "origin").presence || options.relay_state || options.sp_entity_id )
-        sso_params
+        with_auth_settings do |settings|
+          session[:"tenant-cie-name"] = options["name"]
+          session[:"#{options["name"]}-params"] = request.params.dig("sso").merge(issue_instant: authn_request.issue_instant, uuid: authn_request.uuid)
+          redirect_to(authn_request.create(settings, additional_params_for_authn_request.merge('RelayState' => Base64.strict_encode64(session['omniauth.origin'] || '/'))))
+        end
       end
 
       def callback_phase
         raise OneLogin::RubySaml::ValidationError.new("SAML response missing") unless request.params["SAMLResponse"]
-
-        with_settings do |settings|
+        with_auth_settings do |settings|
           handle_response(request.params["SAMLResponse"], options_for_response_object, settings) do
-            super
+            env['omniauth.auth'] = auth_hash
+            call_app!
           end
         end
       rescue OneLogin::RubySaml::ValidationError
         fail!(:invalid_ticket, $!)
-      end
-
-      def response_fingerprint
-        response = request.params["SAMLResponse"]
-        response = (response =~ /^</) ? response : Base64.decode64(response)
-        document = XMLSecurity::SignedDocument::new(response)
-        cert_element = REXML::XPath.first(document, "//ds:X509Certificate", { "ds"=> 'http://www.w3.org/2000/09/xmldsig#' })
-        base64_cert = cert_element.text
-        cert_text = Base64.decode64(base64_cert)
-        cert = OpenSSL::X509::Certificate.new(cert_text)
-        Digest::SHA1.hexdigest(cert.to_der).upcase.scan(/../).join(':')
       end
 
       def other_phase
@@ -101,7 +81,7 @@ module OmniAuth
           @env['omniauth.strategy'] ||= self
           setup_phase
 
-          if on_subpath?(:metadata) || on_custom_metadata
+          if (on_subpath?(:metadata) || on_custom_metadata) && match_current_organization?
             other_phase_for_metadata
           elsif on_subpath?(:slo) || on_custom_slo?(:slo)
             other_phase_for_slo
@@ -134,8 +114,12 @@ module OmniAuth
         metadata_path == current_path
       end
 
-      def response_path
-        response_path ||= URI(options["logout_services"][options["current_logout_index"]]['ResponseLocation']).path rescue nil
+      def match_current_organization?
+        begin
+          request.env["decidim.current_organization"].enabled_omniauth_providers.dig(:cie, :tenant_name) == options[:name]
+        rescue
+          false
+        end
       end
 
       uid do
@@ -160,7 +144,7 @@ module OmniAuth
       end
 
       # extra { { :raw_info => @attributes, :session_index => @session_index, :response_object =>  @response_object } }
-      extra { { :raw_info => @attributes.attributes } }
+      extra { { :raw_info => @attributes } }
 
       def find_attribute_by(keys)
         keys.each do |key|
@@ -178,7 +162,6 @@ module OmniAuth
             request.params["SAMLResponse"],
             options_for_response_object.merge(settings: settings)
           )
-          # response.attributes["fingerprint"] = settings.idp_cert_fingerprint
           response
         end
       end
@@ -194,40 +177,100 @@ module OmniAuth
       end
 
       def handle_response(raw_response, opts, settings)
-        valid, msg, r = sso_request(raw_response, options)
+        response = Decidim::SpidCie::Response.new(raw_response, opts.merge(settings: settings), session[:"#{options["name"]}-params"])
+        valid = response.is_valid?(true)
         if valid
-          @name_id = r.name_id.try(:strip)
-          @response_object = r
-          r.attributes["fingerprint"] = r.settings.idp_cert_fingerprint if r.settings.idp_cert_fingerprint
-          @attributes =  r.attributes
+
+          @name_id = response.name_id.try(:strip)
+          session[:"#{options["name"]}-uid"] = response.attributes[options.uid_attribute] || @name_id
+          session[:"#{options["name"]}-index"] = response.sessionindex
+          @attributes = response.attributes
           yield if block_given?
         else
+          matches = nil
+          if response.errors && response.errors.any? { |a| matches = a.match(/The status code of the Response was not Success, was Responder => AuthnFailed -> ErrorCode nr(19|2[0-5])/) } && (error_code = matches.try(:[], 1)).present?
+            msg = "decidim.cie.sso_request.failure_#{error_code}"
+          else
+            if !Rails.env.development?
+              msg = 'decidim.cie.sso_request.failure'
+            else
+              msg = response.errors.try(:first)
+            end
+          end
           raise OneLogin::RubySaml::ValidationError.new(msg)
         end
 
       end
 
-      def slo_relay_state
-        if request.params.has_key?("RelayState") && request.params["RelayState"] != ""
-          request.params["RelayState"]
-        else
-          slo_default_relay_state = options.slo_default_relay_state
-          if slo_default_relay_state.respond_to?(:call)
-            if slo_default_relay_state.arity == 1
-              slo_default_relay_state.call(request)
-            else
-              slo_default_relay_state.call
-            end
-          else
-            slo_default_relay_state
-          end
+      def response_fingerprint
+        return nil unless request.params["SAMLResponse"]
+        response = request.params["SAMLResponse"]
+        response = (response =~ /^</) ? response : Base64.decode64(response)
+        document = XMLSecurity::SignedDocument::new(response)
+        cert_element = REXML::XPath.first(document, "//ds:X509Certificate", { "ds" => 'http://www.w3.org/2000/09/xmldsig#' })
+        base64_cert = cert_element.text
+        cert_text = Base64.decode64(base64_cert)
+        cert = OpenSSL::X509::Certificate.new(cert_text)
+        Digest::SHA1.hexdigest(cert.to_der).upcase.scan(/../).join(':')
+      rescue
+        nil
+      end
+
+      def current_idp
+        request.params.try(:[], 'sso').try(:[], 'idp') || session[:"#{options["name"]}-params"].try(:[], 'idp')
+      end
+
+      def idp_options
+        idp = Decidim::SpidCie::Idp.find_cie(current_idp)
+        idp_metadata_parser = ::OneLogin::RubySaml::IdpMetadataParser.new
+
+        if options.idp_metadata_file
+          return idp_metadata_parser.parse_to_hash(
+            File.read(options.idp_metadata_file)
+          )
+        end
+
+        begin
+          idp_metadata_parser.parse_remote_to_hash(
+            idp.metadata_url,
+            !Rails.env.development?
+          )
+        rescue ::URI::InvalidURIError
+          {}
         end
       end
 
+      def authn_options
+        s = {}
+        s[:authn_context] = "https://www.spid.gov.it/SpidL#{options.cie_level}"
+        s[:authn_context_comparison] = 'minimum'
+        s[:force_authn] = options.cie_level != 1
+        s[:protocol_binding] = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
+        s[:relay_state] = options.relay_state
+        s[:current_consumer_index] = options.current_consumer_index
+        s[:current_attribute_index] = options.current_attribute_index
+
+        s[:idp_cert_fingerprint] = response_fingerprint
+
+        idp_options.merge(s)
+      end
+
+      def metadata_options
+        options.attribute_services ? {
+          attribute_services: options.attribute_services
+        } : {}
+      end
+
+      def with_auth_settings
+        yield Decidim::SpidCie::Settings.new(options.merge(authn_options))
+      end
+
+      def with_metadata_settings
+        yield Decidim::SpidCie::Settings.new(options.merge(metadata_options))
+      end
+
       def with_settings
-        options[:consumer_services] = options[:consumer_services].present? ? options[:consumer_services] : callback_url
-        options[:logout_services] = options[:logout_services].present? ? options[:logout_services] : logout_url
-        yield OneLogin::RubySaml::Settings.new(options)
+        yield Decidim::SpidCie::Settings.new(options)
       end
 
       def logout_url
@@ -244,6 +287,11 @@ module OmniAuth
                         end
       end
 
+      def response_path
+        response_path ||= URI(options["logout_services"][options["current_logout_index"]]['ResponseLocation']).path rescue nil
+      end
+
+
       def metadata_path
         metadata_path ||= begin
                             path = URI(options[:metadata_path]).path if options[:metadata_path].is_a?(String)
@@ -254,55 +302,84 @@ module OmniAuth
                           end
       end
 
-      def options_for_response_object
-        opts = options.select {|k,_| RUBYSAML_RESPONSE_OPTIONS.include?(k.to_sym)}
-
-        opts.inject({}) do |new_hash, (key, value)|
-          new_hash[key.to_sym] = value
-          new_hash
-        end
-      end
-
       def other_phase_for_metadata
-        metadata = Decidim::Cie::Metadata.new
-        xml = metadata.to_xml(Decidim::Cie::Settings::Metadata.new(options))
-        Rack::Response.new(xml, 200, { "Content-Type" => "application/xml" }).finish
+        with_metadata_settings do |settings|
+          response = Decidim::SpidCie::Metadata.new
+          Rack::Response.new(
+            response.generate(settings),
+            200,
+            "Content-Type" => "application/xml"
+          ).finish
+        end
       end
 
       def other_phase_for_slo
-        path = Base64.strict_decode64(session[:"#{session_prefix}sso_params"]["relay_state"]) rescue options["relay_state"]
-        valid, msg = slo_request(request.params["SAMLResponse"], options)
+        path = request.params["RelayState"] rescue options["relay_state"]
+        with_auth_settings do |settings|
+          logout_response = ::Decidim::SpidCie::Logoutresponse.new(request.params["SAMLResponse"], settings, matches_request_id: session["saml_transaction_id"])
 
-        if valid
-          redirect("/users/slo_callback?success=#{valid}&path=#{path}")
-        else
-          raise OneLogin::RubySaml::ValidationError.new(msg)
+          logout_response.soft = false
+
+          if valid = logout_response.validate
+            session.delete("tenant-#{options.name}-name")
+            session.delete("#{options.name}-uid")
+            session.delete("#{options.name}-index")
+            session.delete("#{options.name}-params")
+            session.delete("saml_transaction_id")
+
+            redirect("/users/slo_callback?path=#{path}")
+          else
+            raise OneLogin::RubySaml::ValidationError.new('decidim.cie.slo_request.failure')
+          end
         end
+      end
+
+      def generate_logout_request(settings)
+        logout_request = Decidim::SpidCie::Logoutrequest.new()
+        session["saml_transaction_id"] = logout_request.uuid
+
+        if settings.name_identifier_value.nil?
+          settings.name_identifier_value = session[:"#{options["name"]}-uid"]
+        end
+
+        if settings.sessionindex.nil?
+          settings.sessionindex = session[:"#{options["name"]}-index"]
+        end
+
+        logout_request.create(settings, RelayState: '/')
       end
 
       def other_phase_for_spslo
-        redirect slo_saml(slo_params, options)
-      end
-
-      def add_request_attributes_to(settings)
-        settings.attribute_consuming_service.service_name options.attribute_service_name
-        settings.sp_entity_id = options.sp_entity_id
-
-        options.request_attributes.each do |attribute|
-          settings.attribute_consuming_service.add_attribute attribute
+        with_auth_settings do |settings|
+          redirect_to(generate_logout_request(settings))
         end
       end
 
-      def additional_params_for_authn_request
-        {}.tap do |additional_params|
-          runtime_request_parameters = options.delete(:idp_sso_service_url_runtime_params)
-
-          if runtime_request_parameters
-            runtime_request_parameters.each_pair do |request_param_key, mapped_param_key|
-              additional_params[mapped_param_key] = request.params[request_param_key.to_s] if request.params.has_key?(request_param_key.to_s)
-            end
+      def redirect_to(uri)
+        pp = CGI.parse(URI.parse(uri).query)
+        if pp["Signature"].present?
+          r = Rack::Response.new
+          if options[:iframe]
+            r.write("<script type='text/javascript' charset='utf-8'>top.location.href = '#{uri}';</script>")
+          else
+            r.write("Redirecting to #{uri}...")
+            r.redirect(uri)
           end
+        else
+          r = Rack::Response.new "
+            <html><body onload='javascript:document.forms[0].submit()'>
+              <form method='post' action='#{uri.split("?").first}'>
+                <input type='hidden' name='SAMLRequest' value='#{Base64.encode64(OneLogin::RubySaml::SamlMessage.new.send(:decode_raw_saml, pp["SAMLRequest"].first))}'>
+                <input type='hidden' name='RelayState' value='#{pp["RelayState"].first}'>
+                <input type='submit' value='Invia'/>
+              </form>
+          </body></html>",
+                                 200,
+                                 { 'Content-Type' => 'text/html' }
+
         end
+
+        r.finish
       end
 
     end
