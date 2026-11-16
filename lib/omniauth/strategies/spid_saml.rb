@@ -57,6 +57,7 @@ module OmniAuth
         with_auth_settings do |settings|
           session[:"tenant-spid-name"] = options["name"]
           session[:"#{options["name"]}-params"] = request.params.dig("sso").merge(issue_instant: authn_request.issue_instant, uuid: authn_request.uuid)
+          session["saml_transaction_id"] = authn_request.uuid
           redirect_to(authn_request.create(settings, additional_params_for_authn_request.merge('RelayState' => Base64.strict_encode64(session['omniauth.origin'] || '/'))))
         end
       end
@@ -140,8 +141,13 @@ module OmniAuth
         Hash[found_attributes]
       end
 
-      # extra { { :raw_info => @attributes.attributes, :session_index => @session_index, :response_object =>  @response_object } }
-      extra { { :raw_info => @attributes } }
+      extra do
+        {
+          raw_info: @attributes,
+          session_index: @session_index,
+          saml_transaction_id: @saml_transaction_id
+        }
+      end
 
       def find_attribute_by(keys)
         keys.each do |key|
@@ -174,13 +180,15 @@ module OmniAuth
       end
 
       def handle_response(raw_response, opts, settings)
-        response = Decidim::SpidCie::Response.new(raw_response, opts.merge(settings: settings), session[:"#{options["name"]}-params"])
+        response = Decidim::SpidCie::Response.new(raw_response, opts.merge(settings: settings), session[:"#{options["name"]}-params"] || session[:"#{options["name"]}_spid_sso_params"])
         valid = response.is_valid?(true)
         if valid
 
           @name_id = response.name_id.try(:strip)
+          @session_index = response.sessionindex
+          @saml_transaction_id = response.in_response_to.presence || response.response_id.presence || session[:"#{options["name"]}-params"].try(:[], "uuid") || session[:"#{options["name"]}_spid_sso_params"].try(:[], "uuid") || session["saml_transaction_id"]
           session[:"#{options["name"]}-uid"] = response.attributes[options.uid_attribute] || @name_id
-          session[:"#{options["name"]}-index"] = response.sessionindex
+          session[:"#{options["name"]}-index"] = @session_index
           @attributes = response.attributes
           yield if block_given?
         else
@@ -214,7 +222,11 @@ module OmniAuth
       end
 
       def current_idp
-        request.params.try(:[], 'sso').try(:[], 'idp') || session[:"#{options["name"]}-params"].try(:[], 'idp')
+        request.params.try(:[], 'sso').try(:[], 'idp') ||
+          session[:"#{options["name"]}-params"].try(:[], 'idp') ||
+          session[:"#{options["name"]}-params"].try(:[], :idp) ||
+          session[:"#{options["name"]}_spid_sso_params"].try(:dig, "sso", "idp") ||
+          session[:"#{options["name"]}_spid_sso_params"].try(:dig, :sso, :idp)
       end
 
       def idp_options

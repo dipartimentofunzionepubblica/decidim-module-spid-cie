@@ -24,8 +24,22 @@ module Decidim
           "activemodel.attributes.identity"
         end
 
+        def i18n_params
+          {
+            user_name: user_presenter.present,
+            resource_name: resource_presenter.try(:present),
+            space_name: space_presenter.try(:present) || "",
+            timestamp_utc: action_log.extra.try(:[], "timestamp_utc") || action_log.extra.try(:dig, "extra", "timestamp_utc") || "",
+            saml_transaction_id: action_log.extra.try(:[], "saml_transaction_id") || action_log.extra.try(:dig, "extra", "saml_transaction_id") || ""
+          }
+        end
+
         def resource_presenter
-          @resource_presenter ||= Decidim::Spid::IdentityPresenter.new(action_log.resource, h, action_log.extra["resource"])
+          @resource_presenter ||= Decidim::Spid::IdentityPresenter.new(action_log.resource, h, action_log.extra.try(:[], "resource") || {})
+        end
+
+        def space_presenter
+          nil
         end
       end
     end

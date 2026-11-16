@@ -203,19 +203,19 @@ module Decidim
       end
 
       def certificate
-        return File.read(certificate_path) if certificate_path && File.exists?(Rails.root.join(certificate_path))
+        return File.read(certificate_path) if certificate_path && File.exist?(Rails.root.join(certificate_path))
 
         config.certificate_path
       end
 
       def private_key
-        return File.read(private_key_path) if private_key_path && File.exists?(Rails.root.join(private_key_path))
+        return File.read(private_key_path) if private_key_path && File.exist?(Rails.root.join(private_key_path))
 
         config.private_key_path
       end
 
       def new_certificate
-        return File.read(new_certificate_path) if new_certificate_path && File.exists?(Rails.root.join(new_certificate_path))
+        return File.read(new_certificate_path) if new_certificate_path && File.exist?(Rails.root.join(new_certificate_path))
 
         config.new_certificate_path
       end
@@ -223,6 +223,8 @@ module Decidim
       def omniauth_settings
         {
           name: name,
+          issuer: sp_entity_id,
+          sha: sha,
           strategy_class: OmniAuth::Strategies::SpidSaml,
           sp_entity_id: sp_entity_id,
           sp_name_qualifier: sp_entity_id,
@@ -283,48 +285,49 @@ module Decidim
       end
 
       def setup_routes!
-        config = self.config
-        sso_route = URI(config.consumer_services[config.current_consumer_index]['Location']).path rescue "/users/auth/#{config.name}/callback"
-        slo_route = URI(config.logout_services[config.current_consumer_index]['Location']).path rescue "/users/auth/#{config.name}/slo"
-        Decidim::Spid::Engine.routes do
+        tenant_name = name
+        sso_route = (URI(consumer_services[current_consumer_index]['Location']).path rescue nil) || "/users/auth/#{tenant_name}/callback"
+        slo_route = (URI(logout_services[current_logout_index]['Location']).path rescue nil) || "/users/auth/#{tenant_name}/slo"
+        route_block = proc do
           devise_scope :user do
             # Mappatura delle route
             match(
-              "/users/auth/#{config.name}",
+              "/users/auth/#{tenant_name}",
               to: "omniauth_callbacks#passthru",
-              as: "user_#{config.name}_omniauth_authorize",
+              as: "user_#{tenant_name}_omniauth_authorize",
               via: [:get, :post]
             )
 
             match(
               sso_route,
               to: "omniauth_callbacks#spid",
-              as: "user_#{config.name}_omniauth_callback",
+              as: "user_#{tenant_name}_omniauth_callback",
               via: [:get, :post]
             )
 
             match(
-              "/users/auth/#{config.name}/create",
+              "/users/auth/#{tenant_name}/create",
               to: "omniauth_callbacks#create",
-              as: "user_#{config.name}_omniauth_create",
+              as: "user_#{tenant_name}_omniauth_create",
               via: [:post, :put, :patch]
             )
 
             match(
               slo_route,
               to: "sessions#slo",
-              as: "user_#{config.name}_omniauth_slo",
+              as: "user_#{tenant_name}_omniauth_slo",
               via: [:get, :post]
             )
 
             match(
-              "/users/auth/#{config.name}/spslo",
+              "/users/auth/#{tenant_name}/spslo",
               to: "sessions#spslo",
-              as: "user_#{config.name}_omniauth_spslo",
+              as: "user_#{tenant_name}_omniauth_spslo",
               via: [:get, :post]
             )
           end
         end
+        Decidim::Spid::Engine.routes.send(:eval_block, route_block)
       end
 
       # Usato per determinare il default service provider entity ID in caso non specificato in sp_entity_id.

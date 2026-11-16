@@ -51,9 +51,6 @@ module Decidim
       end
 
       def setup!
-        raise "Il modulo SPID è già stato inizializzato!" if initialized?
-
-        @initialized = true
         tenants.each(&:setup!)
       end
 

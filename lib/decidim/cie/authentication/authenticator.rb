@@ -44,9 +44,7 @@ module Decidim
         def validate!
           raise ValidationError, "No SAML data provided" unless saml_attributes
 
-          actual_attributes = saml_attributes
-          # actual_attributes = saml_attributes.attributes
-          # actual_attributes.delete("fingerprint")
+          actual_attributes = saml_attributes.respond_to?(:attributes) ? saml_attributes.attributes : saml_attributes
           raise ValidationError, "No SAML data provided" if actual_attributes.blank?
 
           data_blank = actual_attributes.all? { |_k, val| val.blank? }
@@ -71,8 +69,17 @@ module Decidim
             provider: oauth_data[:provider],
             uid: user_identifier
           )
-          Decidim::ActionLogger.log(:login, user, identity, {}) if identity
-          return identity if identity
+          if identity
+            extra_data = {
+              resource: {
+                title: identity.provider.upcase
+              },
+              timestamp_utc: Time.now.utc.iso8601(3),
+              saml_transaction_id: oauth_hash.dig(:extra, :saml_transaction_id)
+            }
+            Decidim::ActionLogger.log(:login, user, identity, nil, extra_data)
+            return identity
+          end
 
           # Check that the identity is not already bound to another user.
           id = ::Decidim::Identity.find_by(
@@ -89,7 +96,14 @@ module Decidim
             uid: user_identifier
           )
 
-          Decidim::ActionLogger.log(:registration, user, i, {})
+          extra_data = {
+            resource: {
+              title: i.provider.upcase
+            },
+            timestamp_utc: Time.now.utc.iso8601(3),
+            saml_transaction_id: oauth_hash.dig(:extra, :saml_transaction_id)
+          }
+          Decidim::ActionLogger.log(:registration, user, i, nil, extra_data)
 
           i
         end

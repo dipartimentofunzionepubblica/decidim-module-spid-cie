@@ -18,3 +18,4 @@ development_app
 .idea/
 .ruby-version
 *.gem
+.junie/

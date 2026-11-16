@@ -106,12 +106,19 @@ module Decidim
               user.accept_invitation!
             end
 
+            extra_data = {
+              resource: {
+                title: existing_identity.try(:provider).try(:upcase) || "SPID"
+              },
+              timestamp_utc: Time.now.utc.iso8601(3),
+              saml_transaction_id: oauth_hash.dig(:extra, :saml_transaction_id)
+            }
             if user.active_for_authentication?
               if existing_identity
-                Decidim::ActionLogger.log(:login, user, existing_identity, {})
+                Decidim::ActionLogger.log(:login, user, existing_identity, nil, extra_data)
               else
                 i = user.identities.find_by(uid: session["#{session['tenant-spid-name']}-uid"]) rescue nil
-                Decidim::ActionLogger.log(:registration, user, i, {}) if i
+                Decidim::ActionLogger.log(:registration, user, i, nil, extra_data) if i
               end
               sign_in_and_redirect user, verified_email: verified_e, event: :authentication
               set_flash_message :notice, :success, kind: "SPID"
@@ -205,6 +212,8 @@ module Decidim
       def tenant
         @tenant ||= begin
                       name = session["tenant-spid-name"]
+                      name ||= request.path.match(%r{^/users/auth/([^/]+)})[1] rescue nil
+                      name ||= oauth_hash[:provider].to_s if oauth_hash[:provider].present?
                       raise "Invalid SPID tenant" unless name
 
                       tenant = Decidim::Spid.tenants.find { |t| t.name == name }

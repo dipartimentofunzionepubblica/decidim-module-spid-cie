@@ -1,3 +1,21 @@
+test:
+  spid:
+    local:
+      metadata_url: 'https://localhost:8443/metadata.xml'
+      validate_cert: false
+      entityName: validator
+      logo: spid-idp-dummy.svg
+    local2:
+      metadata_url: 'https://localhost:8443/demo/metadata.xml'
+      validate_cert: false
+      entityName: demo
+      logo: spid-idp-dummy.svg
+  cie:
+    local:
+      metadata_url: 'https://localhost:8443/metadata.xml'
+      validate_cert: false
+      entityName: validator
+      logo: spid-idp-dummy.svg
 development:
   spid:
     local:

@@ -10,5 +10,4 @@ require "decidim/core"
 require "decidim/core/test"
 require "decidim/admin/test"
 
-require "decidim/dev/test/rspec_support/component"
 require "decidim/dev/test/rspec_support/authorization"

@@ -49,9 +49,6 @@ module Decidim
       end
 
       def setup!
-        raise "Il modulo CIE è già stato inizializzato!" if initialized?
-
-        @initialized = true
         tenants.each(&:setup!)
       end
 

@@ -11,8 +11,9 @@ module Decidim
 
       # For testing with signed in user
       let(:identity) do
-        i = create(:identity, provider: "ciao")
-        create(:authorization, user: i.user, name: "ciao_identity", metadata: {
+        user = create(:user, organization: organization)
+        i = create(:identity, user: user, provider: "ciao")
+        create(:authorization, user: user, name: "ciao_identity", metadata: {
           "name" => "Matti Mainio",
           "first_name" => "Matti",
           "last_name" => "Mainio",
@@ -22,14 +23,13 @@ module Decidim
       end
 
       before do
-        Rack::Test::DEFAULT_HOST = URI(tenant.sp_entity_id).host
         # Make the time validation of the SAML response work properly
         allow(Time).to receive(:now).and_return(
           Time.utc(2020, 9, 2, 6, 0, 0)
         )
 
-        allow(Decidim::Spid::Idp).to receive(:list).and_return(
-          YAML.load_file(Rails.root.join('config', 'idp_list.yml')).dig("development").dig("spid")
+        allow(Decidim::SpidCie::Idp).to receive(:list).and_return(
+          YAML.load_file(Decidim::Spid::Engine.root.join('config', 'idp_list.yml')).dig("development").dig("spid")
         )
 
         # Configure the metadata attributes to be collected
@@ -54,10 +54,9 @@ module Decidim
           strategy = env["omniauth.strategy"]
           strategy.options[:assertion_consumer_service_url] = "/users/auth/ciao/callback"
         end
-        OmniAuth.config.path_prefix = ""
 
         # Set the correct host
-        host! URI(organization.host).host
+        host! organization.host
       end
 
       after do
@@ -127,6 +126,16 @@ module Decidim
           expect(response).to redirect_to("/")
         end
 
+        it "logs the registration action with UTC millisecond timestamp and SAML transaction id" do
+          expect do
+            omniauth_callback_get
+          end.to change { Decidim::ActionLog.where(action: "registration").count }.by(1)
+
+          action_log = Decidim::ActionLog.where(action: "registration").last
+          expect(action_log.extra["timestamp_utc"]).to match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/)
+          expect(action_log.extra["saml_transaction_id"]).to eq("_5c829f04-8b65-4d76-b681-42e584f29402")
+        end
+
         context "when uid is returned from the IdP that matches existing user" do
           let(:saml_attributes) do
             {
@@ -134,8 +143,17 @@ module Decidim
             }
           end
 
+          it "logs the login action with UTC millisecond timestamp and SAML transaction id" do
+            expect do
+              omniauth_callback_get(identity: identity)
+            end.to change { Decidim::ActionLog.where(action: "login").count }.by(1)
+
+            action_log = Decidim::ActionLog.where(action: "login").last
+            expect(action_log.extra["timestamp_utc"]).to match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/)
+            expect(action_log.extra["saml_transaction_id"]).to eq("_5c829f04-8b65-4d76-b681-42e584f29402")
+          end
+
           it "hijacks the account for the returned email" do
-            Decidim::User.destroy_all
             omniauth_callback_get(identity: identity)
 
             authorization = Authorization.find_by(
@@ -230,38 +248,42 @@ module Decidim
         end
 
         def omniauth_callback_get(identity: nil)
-          sso_params = {}
-          sso_params["sso"] = { "idp" => "local" }
-          sso_params["cie_level"] = 2
-          sso_params["host"] = host
-          sso_params["relay_state"] = host
-          sso_params
-
-          r = Decidim::Spid::SsoResponse.new(saml_response, sso_params, tenant.config)
+          auth_hash = {
+            "provider" => "ciao",
+            "uid" => identity.try(:uid) || "SPID-002",
+            "nickname" => "matti-mainio",
+            "info" => {
+              "name" => "Matti Mainio",
+              "email" => "aabyron@hotmail.com",
+            },
+            "credentials" => {},
+            "extra" => {
+              "raw_info" => {
+                "name" => ["Matti"],
+                "familyName" => ["Mainio"],
+                "fiscalNumber" => ["TINIT-LVLDAA85T50G702B"],
+                "spidCode" => ["SPID-002"],
+                "email" => ["aabyron@hotmail.com"],
+                "gender" => ["F"],
+                "dateOfBirth" => ["1985-07-15"],
+                "placeOfBirth" => ["G702"],
+                "address" => ["Via Listz 21 00144 Roma"],
+                "mobilePhone" => ["123456"],
+                "idCard" => ["passaporto KK1234567 questuraLivorno 2016-09-04 2026-09-03"]
+              },
+              "session_index" => nil,
+              "response_object" => nil,
+              "saml_transaction_id" => "_5c829f04-8b65-4d76-b681-42e584f29402"
+            }
+          }
 
           # Call the endpoint with the SAML response
           get "/users/auth/ciao/callback",
-              { params: { SAMLResponse: saml_response},
-                env: {
-                  "rack.session" => { :"ciao_spid_sso_params" => sso_params, "ciao_spid_uid" => r.response.attributes[tenant.config.uid_attribute] || r.response.name_id.try(:strip) },
-                  "rack.session.options" => {},
-                  "decidim.current_organization" => identity.try(:organization) || organization,
-                  "omniauth.auth" => {
-                    "provider" => "ciao",
-                    "uid" => identity.try(:uid) || "SPID-002",
-                    "nickname" => "matti-mainio",
-                    "info" => {
-                      "name" => "Matti Mainio",
-                      "email" => "aabyron@hotmail.com",
-                    },
-                    "credentials" => {},
-                    "extra" => {
-                      "raw_info" => r.response.attributes,
-                      "session_index" => nil,
-                      "response_object" => r.response
-                    }
-                  }
-                }}
+              headers: { "HOST" => organization.host },
+              params: { SAMLResponse: saml_response },
+              env: {
+                "omniauth.auth" => auth_hash
+              }
         end
       end
 

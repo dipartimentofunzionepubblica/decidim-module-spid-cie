@@ -63,18 +63,15 @@ module OmniAuth
       end
 
       let(:security_options) {
-        dig_alg = Decidim::Spid::Certificate.digest_algorithm(tenant.config[:sha])
-        sig_alg = Decidim::Spid::Certificate.signature_algorithm(tenant.config[:sha])
         {
           metadata_signed: true,
-          digest_method: dig_alg,
-          signature_method: sig_alg,
+          digest_method: "http://www.w3.org/2001/04/xmlenc#sha256",
+          signature_method: "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
           authn_requests_signed: true,
           want_assertions_signed: true,
           logout_requests_signed: true,
           check_sp_cert_expiration: false # quando il certificato scade viene sollevata un eccezione
         }
-
       }
       let(:sp_entity_id) { "http://192.168.1.52/" }
       let(:strategy) { [described_class, saml_options] }
@@ -86,13 +83,6 @@ module OmniAuth
         sso_params["relay_state"] = Base64.strict_encode64(tenant.relay_state)
         sso_params
       }
-
-      before do
-        Rack::Test::DEFAULT_HOST = URI(tenant.sp_entity_id).host
-        allow(Decidim::Spid::Idp).to receive(:list).and_return(
-          YAML.load_file(Rails.root.join('config', 'idp_list.yml')).dig("development").dig("spid")
-        )
-      end
 
       describe "#initialize" do
         subject do
@@ -264,11 +254,8 @@ module OmniAuth
               Time.utc(2022, 5, 10, 13, 4, 0)
             )
 
-            allow(Decidim::Spid::Idp).to receive(:list).and_return(
-              YAML.load_file(Rails.root.join('config', 'idp_list.yml')).dig("development").dig("spid")
-            )
-
-            allow_any_instance_of(OneLogin::RubySaml::Response).to receive(:validate_signature).and_return(true)
+            allow_any_instance_of(OneLogin::RubySaml::IdpMetadataParser).to receive(:parse_remote_to_hash).and_return(idp_attributes)
+            allow_any_instance_of(Decidim::SpidCie::Response).to receive(:validate).and_return(true)
 
             saml_response = base64_file("#{xml}.xml")
 
@@ -278,6 +265,10 @@ module OmniAuth
               { "rack.session" => { :"ciao_spid_sso_params" => sso_params } }
                   # "rack.session.options" => request.session.options
             )
+          end
+
+          it "sets the saml_transaction_id in the extra hash" do
+            expect(auth_hash["extra"]["saml_transaction_id"]).to be_present
           end
 
           # it "sets the info hash correctly" do

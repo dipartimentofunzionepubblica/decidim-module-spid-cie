@@ -29,6 +29,8 @@ module Decidim
         end
 
         def instance_initialize
+          Decidim::Spid.tenants.clear
+          Decidim::Cie.tenants.clear
           yield self if block_given?
         end
       end

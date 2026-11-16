@@ -6,7 +6,9 @@ module Decidim
     #
     class Settings < ::OneLogin::RubySaml::Settings
 
-      attr_accessor :errors
+      attr_accessor :errors, :consumer_services, :logout_services, :attribute_services,
+                    :attribute_service_names, :current_consumer_index,
+                    :current_attribute_index, :current_logout_index, :config
 
       def initialize(overrides = {}, keep_security_attributes = true)
         @errors = []
@@ -29,12 +31,15 @@ module Decidim
 
         raise OmniAuth::Strategies::SAML::ValidationError.new(@errors.first) unless valid?
         default_service = ::OneLogin::RubySaml::AttributeService.new
-        overrides.fields && overrides.fields.each do |field|
+        fields = overrides.try(:fields) || overrides[:fields]
+        attribute_service_names = overrides.try(:attribute_service_names) || overrides[:attribute_service_names] || []
+        attribute_services = overrides.try(:attribute_services) || overrides[:attribute_services]
+        fields && fields.each do |field|
           default_service.add_attribute(field)
         end
         default_service.service_index(0)
-        default_service.service_name(overrides.attribute_service_names[0] || "Set 0")
-        @attribute_consuming_service = overrides.attribute_services.present? ? overrides.attribute_services : default_service
+        default_service.service_name(attribute_service_names[0] || "Set 0")
+        @attribute_consuming_service = attribute_services.present? ? attribute_services : default_service
       end
 
       def valid?

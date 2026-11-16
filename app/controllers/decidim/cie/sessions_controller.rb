@@ -11,13 +11,21 @@ module Decidim
     class SessionsController < ::Decidim::Devise::SessionsController
 
       def destroy
+        logout_extra_data = {
+          resource: {
+            title: "CIE"
+          },
+          timestamp_utc: Time.now.utc.iso8601(3),
+          saml_transaction_id: session["saml_transaction_id"]
+        }
         if session.delete("decidim-cie.signed_in")
           i = current_user.identities.find_by(uid: session[:"cie-uid"]) rescue nil
-          Decidim::ActionLogger.log(:logout, current_user, i, {}) if i
+          Decidim::ActionLogger.log(:logout, current_user, i, nil, logout_extra_data) if i
           redirect_to decidim_cie.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:cie, :tenant_name)}_omniauth_spslo_url")
         elsif session.delete("decidim-spid.signed_in")
+          logout_extra_data[:resource][:title] = "SPID"
           i = current_user.identities.find_by(uid: session[:"spid-uid"]) rescue nil
-          Decidim::ActionLogger.log(:logout, current_user, i, {}) if i
+          Decidim::ActionLogger.log(:logout, current_user, i, nil, logout_extra_data) if i
           redirect_to decidim_spid.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:spid, :tenant_name)}_omniauth_spslo_url")
         else
           super

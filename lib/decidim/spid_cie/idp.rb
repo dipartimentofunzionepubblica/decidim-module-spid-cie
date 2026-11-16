@@ -13,14 +13,16 @@ module Decidim
       attr_reader :metadata_url
 
       def self.find_cie(name)
-        raise 'Idp not found' unless list('cie').key?(name)
-        idp_attributes = list('cie')[name]
+        target = list('cie').with_indifferent_access
+        raise 'Idp not found' unless target.key?(name.to_s)
+        idp_attributes = target[name.to_s]
         new(**idp_attributes.symbolize_keys)
       end
 
       def self.find_spid(name)
-        raise 'Idp not found' unless list('spid').key?(name)
-        idp_attributes = list('spid')[name]
+        target = list('spid').with_indifferent_access
+        raise 'Idp not found' unless target.key?(name.to_s)
+        idp_attributes = target[name.to_s]
         new(**idp_attributes.symbolize_keys)
       end
 
@@ -49,7 +51,13 @@ module Decidim
       end
 
       def self.list(type)
-        list ||= YAML.load_file(Rails.root.join('config', 'idp_list.yml')).dig("#{Rails.env}").dig(type)
+        idp_path = if File.exist?(Rails.root.join('config', 'idp_list.yml'))
+                     Rails.root.join('config', 'idp_list.yml')
+                   else
+                     Decidim::Spid::Engine.root.join('config', 'idp_list.yml')
+                   end
+        yaml = YAML.load_file(idp_path)
+        yaml.dig(Rails.env.to_s, type.to_s) || yaml.dig("development", type.to_s) || {}
       end
 
     end

@@ -67,7 +67,7 @@ module Decidim
           return append_error(error_msg)
         end
 
-        if settings.consumer_services.present?
+        if settings.respond_to?(:consumer_services) && settings.consumer_services.present?
           url = settings.consumer_services[settings.current_consumer_index]['Location'] rescue ''
           unless ::OneLogin::RubySaml::Utils.uri_match?(destination, url)
             error_msg = "The response was received at #{destination} instead of #{url}"
@@ -166,7 +166,7 @@ module Decidim
         response_to = extract_value('/p:Response/a:Assertion//a:SubjectConfirmation/a:SubjectConfirmationData/@InResponseTo')
         after = extract_value('/p:Response/a:Assertion//a:SubjectConfirmation/a:SubjectConfirmationData/@NotOnOrAfter')
 
-        if settings.consumer_services.present?
+        if settings.respond_to?(:consumer_services) && settings.consumer_services.present?
           url = settings.consumer_services[settings.current_consumer_index]['Location']
         else
           url = settings.assertion_consumer_service_url

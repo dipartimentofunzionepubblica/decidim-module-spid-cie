@@ -40,9 +40,9 @@ it:
           label: Data a
     admin_log:
       identity:
-        logout: "%{user_name} ha effettuato il logout con il provider %{resource_name} %{space_name}"
-        login: "%{user_name}  ha effettuato il login con il provider %{resource_name} %{space_name}"
-        registration: "%{user_name} si è registrato con il provider %{resource_name} %{space_name} "
+        logout: "%{user_name} ha effettuato il logout con il provider %{resource_name} %{space_name} [UTC: %{timestamp_utc}, ID SAML: %{saml_transaction_id}]"
+        login: "%{user_name} ha effettuato il login con il provider %{resource_name} %{space_name} [UTC: %{timestamp_utc}, ID SAML: %{saml_transaction_id}]"
+        registration: "%{user_name} si è registrato con il provider %{resource_name} %{space_name} [UTC: %{timestamp_utc}, ID SAML: %{saml_transaction_id}]"
     components:
       spid:
         name: Spid
