@@ -13,7 +13,7 @@ module Decidim
       def destroy
         logout_extra_data = {
           resource: {
-            title: "CIE"
+            title: I18n.t("decidim.admin_log.identity.providers.cie", default: "CIE")
           },
           timestamp_utc: Time.now.utc.iso8601(3),
           saml_transaction_id: session["saml_transaction_id"]
@@ -23,7 +23,7 @@ module Decidim
           Decidim::ActionLogger.log(:logout, current_user, i, nil, logout_extra_data) if i
           redirect_to decidim_cie.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:cie, :tenant_name)}_omniauth_spslo_url")
         elsif session.delete("decidim-spid.signed_in")
-          logout_extra_data[:resource][:title] = "SPID"
+          logout_extra_data[:resource][:title] = I18n.t("decidim.admin_log.identity.providers.spid", default: "SPID")
           i = current_user.identities.find_by(uid: session[:"spid-uid"]) rescue nil
           Decidim::ActionLogger.log(:logout, current_user, i, nil, logout_extra_data) if i
           redirect_to decidim_spid.public_send("user_#{current_organization.enabled_omniauth_providers.dig(:spid, :tenant_name)}_omniauth_spslo_url")

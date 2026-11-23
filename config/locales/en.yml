@@ -40,6 +40,9 @@ en:
           label: Date to
     admin_log:
       identity:
+        providers:
+          spid: SPID
+          cie: CIE
         logout: "%{user_name} logged out with provider %{resource_name} %{space_name} [UTC: %{timestamp_utc}, SAML ID: %{saml_transaction_id}]"
         login: "%{user_name} logged in with provider %{resource_name} %{space_name} [UTC: %{timestamp_utc}, SAML ID: %{saml_transaction_id}]"
         registration: "%{user_name} registered with provider %{resource_name} %{space_name} [UTC: %{timestamp_utc}, SAML ID: %{saml_transaction_id}]"

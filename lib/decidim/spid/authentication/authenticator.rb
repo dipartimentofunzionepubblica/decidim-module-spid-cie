@@ -76,7 +76,7 @@ module Decidim
           if identity
             extra_data = {
               resource: {
-                title: identity.provider.upcase
+                title: I18n.t("decidim.admin_log.identity.providers.spid", default: "SPID")
               },
               timestamp_utc: Time.now.utc.iso8601(3),
               saml_transaction_id: oauth_hash.dig(:extra, :saml_transaction_id)
@@ -102,7 +102,7 @@ module Decidim
 
           extra_data = {
             resource: {
-              title: i.provider.upcase
+              title: I18n.t("decidim.admin_log.identity.providers.spid", default: "SPID")
             },
             timestamp_utc: Time.now.utc.iso8601(3),
             saml_transaction_id: oauth_hash.dig(:extra, :saml_transaction_id)

@@ -11,7 +11,13 @@ module Decidim
       private
 
       def present_resource_name
-        resource && resource.provider && (Decidim::Spid.tenants.map(&:name).include?(resource.provider) ? 'SPID' : 'CIE')
+        return unless resource && resource.provider
+
+        if Decidim::Spid.tenants.map(&:name).include?(resource.provider)
+          I18n.t("decidim.admin_log.identity.providers.spid", default: "SPID")
+        else
+          I18n.t("decidim.admin_log.identity.providers.cie", default: "CIE")
+        end
       end
 
     end

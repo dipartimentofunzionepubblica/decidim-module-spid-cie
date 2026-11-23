@@ -126,6 +126,21 @@ module Decidim
               end
             end
           end
+
+          context "when provider label is customized via I18n (e.g. FEDERA)" do
+            let(:action) { :login }
+            let(:identity) { create(:identity, user: user, provider: Decidim::Spid.tenants.first&.name || "spid") }
+
+            before do
+              I18n.backend.store_translations(:it, decidim: { admin_log: { identity: { providers: { spid: "FEDERA" } } } })
+            end
+
+            it "renders the localized provider name instead of SPID" do
+              result = presenter.present
+              expect(result).to include("FEDERA")
+              expect(result).not_to include("provider SPID")
+            end
+          end
         end
       end
     end
